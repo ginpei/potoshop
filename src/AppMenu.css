@@ -15,8 +15,8 @@
 }
 .AppMenu-close {
   position: absolute;
-  right: 10px;
-  top: 10px;
+  right: var(--app-space);
+  top: calc(var(--app-header-height) + var(--app-space));
 }
 .AppMenu-menu {
   bottom: 0;

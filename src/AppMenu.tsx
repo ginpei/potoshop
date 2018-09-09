@@ -1,5 +1,6 @@
 import * as React from 'react';
 import './AppMenu.css';
+import AppHeader from './components/AppHeader';
 
 interface IAppMenuProps {
   visible: boolean;
@@ -25,6 +26,7 @@ class AppMenu extends React.Component<IAppMenuProps, IAppMenuState> {
       <div className={`AppMenu ${this.props.visible ? '-visible' : ''}`}
         onClick={this.onClick}
         >
+        <AppHeader/>
         <div className="AppMenu-close">
           <i className="fa fa-times" aria-hidden="true" />
         </div>

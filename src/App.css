@@ -1,18 +1,25 @@
 .App {
 }
 .AppTutorialOverlay {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  left: 0;
+  position: fixed;
+  top: 0;
+  width: 100%;
+}
+.AppTutorialOverlay > * {
+  height: 100%;
+}
+.AppTutorialOverlay-body {
   align-items: center;
   box-shadow: 0 0 30vmin #0003 inset;
   display: flex;
   flex-direction: column;
-  height: 100%;
   justify-content: center;
-  left: 0;
-  position: fixed;
   text-align: center;
   text-shadow: 1px 1px 0 #fff;
-  top: 0;
-  width: 100%;
 }
 .AppTutorialOverlay-emphasized {
   animation: blink 1s infinite step-end;

@@ -3,6 +3,7 @@ import * as React from 'react';
 import './App.css';
 import AppCanvas from './AppCanvas';
 import AppMenu from './AppMenu';
+import AppHeader from './components/AppHeader';
 import LongTapper from './components/LongTapper';
 import { ISize } from './misc';
 import firebase from './plugin/firebase';
@@ -53,17 +54,24 @@ class App extends React.Component<IAppPros, IAppState> {
         onLongTap={this.onTutorialLongTap}
         >
         <div className="AppTutorialOverlay">
-          <h1>Giazo</h1>
-          <p>
-            Where you can draw and share.
-            <br/>
-            Hint: long tap to open menu.
-          </p>
-          <p><a href="/about.ja.html">This service uses cookie.</a></p>
-          <p className="AppTutorialOverlay-emphasized">Try long tap to start.</p>
+          <AppHeader/>
+          <div className="AppTutorialOverlay-body">
+            <h1>Giazo</h1>
+            <p>
+              Where you can draw and share.
+              <br/>
+              Hint: long tap to open menu.
+            </p>
+            <p><a href="/about.ja.html">This service uses cookie.</a></p>
+            <p className="AppTutorialOverlay-emphasized">Try long tap to start.</p>
+          </div>
         </div>
       </LongTapper>
     );
+
+    if (this.state.justAfterStarted) {
+      return tutorialOverlay;
+    }
 
     return (
       <div className="App">
