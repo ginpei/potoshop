@@ -140,10 +140,7 @@ class AppCanvas extends React.Component<IAppCanvasProps, IAppCanvasState> {
       return;
     }
 
-    this.setState({
-      lining: false,
-    });
-
+    this.stopLining();
     this.stopPressing();
   }
 
@@ -172,10 +169,7 @@ class AppCanvas extends React.Component<IAppCanvasProps, IAppCanvasState> {
       return;
     }
 
-    this.setState({
-      lining: false,
-    });
-
+    this.stopLining();
     this.stopPressing();
   }
 
@@ -223,6 +217,12 @@ class AppCanvas extends React.Component<IAppCanvasProps, IAppCanvasState> {
     });
   }
 
+  protected stopLining () {
+    this.setState({
+      lining: false,
+    });
+  }
+
   protected startPressing (pos: IPos) {
     this.setState({
       pressStartedAt: Date.now(),
@@ -242,8 +242,9 @@ class AppCanvas extends React.Component<IAppCanvasProps, IAppCanvasState> {
       this.tmPressing = requestAnimationFrame(() => this.progressPressing());
     }
     else {
-      this.onLongTap();
+      this.stopLining();
       this.stopPressing();
+      this.onLongTap();
     }
   }
 
