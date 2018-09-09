@@ -10,11 +10,16 @@ interface IPressIndicatorProps {
 }
 // tslint:disable-next-line:no-empty-interface
 interface IPressIndicatorState {
-  size: number;
-  width: number;
 }
 
 class PressIndicator extends React.Component<IPressIndicatorProps, IPressIndicatorState> {
+  protected get size () {
+    return this.props.size || 150;
+  }
+  protected get width () {
+    return this.props.width || 5;
+  }
+
   private get styles (): React.CSSProperties {
     return {
       display: this.props.progress ? 'block' : 'none',
@@ -25,8 +30,8 @@ class PressIndicator extends React.Component<IPressIndicatorProps, IPressIndicat
 
   protected get path (): string {
     const progress = this.props.progress;
-    const half = this.state.size / 2;
-    const { width } = this.state;
+    const half = this.size / 2;
+    const { width } = this;
 
     const r = half - width;
     const degreeOffset = Math.PI * -0.5;
@@ -46,24 +51,22 @@ class PressIndicator extends React.Component<IPressIndicatorProps, IPressIndicat
     `;
   }
 
-  constructor (props: IPressIndicatorProps) {
-    super(props);
-    this.state = {
-      size: props.size || 150,
-      width: props.width || 5,
-    };
-  }
+  // constructor (props: IPressIndicatorProps) {
+  //   super(props);
+  //   this.state = {
+  //   };
+  // }
 
   public render () {
     return (
       <svg className="PressIndicator"
         style={this.styles}
-        width={this.state.size}
-        height={this.state.size}
+        width={this.size}
+        height={this.size}
         >
         <path className="PressIndicator-progress"
           d={this.path}
-          strokeWidth={this.state.width}
+          strokeWidth={this.width}
           />
       </svg>
     );
