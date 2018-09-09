@@ -108,9 +108,9 @@ class App extends React.Component<IAppPros, IAppState> {
       margin: '0',
     });
 
-    const blob = await new Promise((resolve) => {
+    const blob = await new Promise<Blob>((resolve) => {
       this.elCanvas!.toBlob(resolve as any);
-    }) as Blob;
+    });
 
     const key = Date.now() + (Math.random() * 1000).toString().padStart(4, '0');
     const path = `${this.currentUser!.uid}/${key}.png`;
