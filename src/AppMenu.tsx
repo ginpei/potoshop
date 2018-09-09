@@ -3,7 +3,9 @@ import './AppMenu.css';
 
 interface IAppMenuProps {
   visible: boolean;
-  onOverlayClick?: () => void;
+  onOverlayClick: () => void;
+  onSave: () => void;
+  onReset: () => void;
 }
 // tslint:disable-next-line:no-empty-interface
 interface IAppMenuState {
@@ -13,21 +15,25 @@ class AppMenu extends React.Component<IAppMenuProps, IAppMenuState> {
   constructor (props: IAppMenuProps) {
     super(props);
     this.onClick = this.onClick.bind(this);
+    this.onSaveClick = this.onSaveClick.bind(this);
+    this.onResetClick = this.onResetClick.bind(this);
   }
 
   public render () {
-    const styles: React.CSSProperties = {
-      display: this.props.visible ? 'block' : 'none',
-    };
-
     return (
-      <div className="AppMenu"
-        style={styles}
+      <div className={`AppMenu ${this.props.visible ? '-visible' : ''}`}
         onClick={this.onClick}
         >
+        <div className="AppMenu-close">
+          <i className="fa fa-times" aria-hidden="true" />
+        </div>
         <div className="AppMenu-menu">
-          <button>Save &amp; Share</button>
-          <button>Reset</button>
+          <button
+            onClick={this.onSaveClick}
+            >Save &amp; Share</button>
+          <button
+            onClick={this.onResetClick}
+            >Reset</button>
         </div>
       </div>
     );
@@ -38,8 +44,17 @@ class AppMenu extends React.Component<IAppMenuProps, IAppMenuState> {
       return;
     }
 
-    if (this.props.onOverlayClick) {
-      this.props.onOverlayClick();
+    this.props.onOverlayClick();
+  }
+
+  protected onSaveClick (event: React.MouseEvent<HTMLButtonElement>) {
+    this.props.onSave();
+  }
+
+  protected onResetClick (event: React.MouseEvent<HTMLButtonElement>) {
+    const text = 'Are you sure you want to erase all you have drawn?';
+    if (window.confirm(text)) {
+      this.props.onReset();
     }
   }
 }

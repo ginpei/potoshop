@@ -8,6 +8,7 @@ type IAppPros = any;
 interface IAppState {
   canvasSize: ISize;
   menuVisible: boolean;
+  resetting: boolean;
 }
 
 class App extends React.Component<IAppPros, IAppState> {
@@ -19,21 +20,30 @@ class App extends React.Component<IAppPros, IAppState> {
         width: 0,
       },
       menuVisible: false,
+      resetting: false,
     };
     this.onCanvasLongTap = this.onCanvasLongTap.bind(this);
     this.onMenuOverlayClick = this.onMenuOverlayClick.bind(this);
+    this.onSave = this.onSave.bind(this);
+    this.onReset = this.onReset.bind(this);
   }
 
   public render () {
+    const canvas = this.state.resetting ? undefined : (
+      <AppCanvas
+        size={this.state.canvasSize}
+        onLongTap={this.onCanvasLongTap}
+        />
+      );
+
     return (
       <div className="App">
-        <AppCanvas
-          size={this.state.canvasSize}
-          onLongTap={this.onCanvasLongTap}
-          />
+        {canvas}
         <AppMenu
           visible={this.state.menuVisible}
           onOverlayClick={this.onMenuOverlayClick}
+          onSave={this.onSave}
+          onReset={this.onReset}
           />
       </div>
     );
@@ -59,6 +69,23 @@ class App extends React.Component<IAppPros, IAppState> {
     this.setState({
       menuVisible: false,
     });
+  }
+
+  protected onSave () {
+    alert('save');
+  }
+
+  protected onReset () {
+    this.setState({
+      resetting: true,
+    });
+
+    setTimeout(() => {
+      this.setState({
+        menuVisible: false,
+        resetting: false,
+      });
+    }, 1);
   }
 }
 
