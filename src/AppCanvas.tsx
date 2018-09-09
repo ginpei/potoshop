@@ -146,9 +146,7 @@ class AppCanvas extends React.Component<IAppCanvasProps, IAppCanvasState> {
       };
       this.drawLine(pos);
 
-      const threshold = 30;
-      const at = this.state.pressedAt;
-      if (Math.max(Math.abs(at.x - pos.x), Math.abs(at.y - pos.y)) > threshold) {
+      if (this.isPressMoved(pos)) {
         this.stopPressing();
       }
     }
@@ -181,10 +179,7 @@ class AppCanvas extends React.Component<IAppCanvasProps, IAppCanvasState> {
       };
       this.drawLine(pos);
 
-      const pressingFluctuation = 30;
-      const at = this.state.pressedAt;
-      if (Math.abs(at.x - pos.x) > pressingFluctuation
-        || Math.abs(at.y - pos.y) > pressingFluctuation) {
+      if (this.isPressMoved(pos)) {
         this.stopPressing();
       }
     }
@@ -289,6 +284,12 @@ class AppCanvas extends React.Component<IAppCanvasProps, IAppCanvasState> {
       pressProgress: 0,
       pressStartedAt: 0,
     });
+  }
+
+  protected isPressMoved (pos: IPos) {
+    const threshold = 30;
+    const at = this.state.pressedAt;
+    return Math.max(Math.abs(at.x - pos.x), Math.abs(at.y - pos.y)) > threshold;
   }
 
   protected stashImage () {
