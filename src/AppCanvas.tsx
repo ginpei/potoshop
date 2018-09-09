@@ -15,6 +15,7 @@ interface IAppCanvasState {
   lining: boolean;
   offsetX: number;
   offsetY: number;
+  pressedAt: IPos;
   pressProgress: number;
   pressStartedAt: unixMs;
 }
@@ -22,6 +23,7 @@ interface IAppCanvasState {
 class AppCanvas extends React.Component<IAppCanvasProps, IAppCanvasState> {
   protected refCanvas = React.createRef<HTMLCanvasElement>();
   protected tmPressing: AnimationFrameId = 0;
+  protected lastImage: ImageData = new ImageData(1, 1);
 
   protected vCtx: CanvasRenderingContext2D | null;
   protected get ctx (): CanvasRenderingContext2D | null {
@@ -62,6 +64,7 @@ class AppCanvas extends React.Component<IAppCanvasProps, IAppCanvasState> {
       offsetY: 0,
       pressProgress: 0,
       pressStartedAt: 0,
+      pressedAt: { x: 0, y: 0 },
     };
     this.onTouchStart = this.onTouchStart.bind(this);
     this.onTouchMove = this.onTouchMove.bind(this);
@@ -142,7 +145,12 @@ class AppCanvas extends React.Component<IAppCanvasProps, IAppCanvasState> {
         y: t.clientY,
       };
       this.drawLine(pos);
-      this.stopPressing();
+
+      const threshold = 30;
+      const at = this.state.pressedAt;
+      if (Math.max(Math.abs(at.x - pos.x), Math.abs(at.y - pos.y)) > threshold) {
+        this.stopPressing();
+      }
     }
   }
 
@@ -171,7 +179,13 @@ class AppCanvas extends React.Component<IAppCanvasProps, IAppCanvasState> {
         y: event.clientY,
       };
       this.drawLine(pos);
-      this.stopPressing();
+
+      const pressingFluctuation = 30;
+      const at = this.state.pressedAt;
+      if (Math.abs(at.x - pos.x) > pressingFluctuation
+        || Math.abs(at.y - pos.y) > pressingFluctuation) {
+        this.stopPressing();
+      }
     }
   }
 
@@ -229,6 +243,7 @@ class AppCanvas extends React.Component<IAppCanvasProps, IAppCanvasState> {
   }
 
   protected stopLining () {
+    this.stashImage();
     this.setState({
       lining: false,
     });
@@ -237,6 +252,7 @@ class AppCanvas extends React.Component<IAppCanvasProps, IAppCanvasState> {
   protected startPressing (pos: IPos) {
     this.setState({
       pressStartedAt: Date.now(),
+      pressedAt: pos,
     });
 
     this.progressPressing();
@@ -253,6 +269,7 @@ class AppCanvas extends React.Component<IAppCanvasProps, IAppCanvasState> {
       this.tmPressing = requestAnimationFrame(() => this.progressPressing());
     }
     else {
+      this.restoreLastImage();
       this.stopLining();
       this.stopPressing();
       this.onLongTap();
@@ -271,6 +288,23 @@ class AppCanvas extends React.Component<IAppCanvasProps, IAppCanvasState> {
       pressProgress: 0,
       pressStartedAt: 0,
     });
+  }
+
+  protected stashImage () {
+    if (!this.ctx) {
+      throw new Error('Canvas is not ready');
+    }
+
+    const { size } = this.props;
+    this.lastImage = this.ctx.getImageData(0, 0, size.width, size.height);
+  }
+
+  protected restoreLastImage () {
+    if (!this.ctx) {
+      throw new Error('Canvas is not ready');
+    }
+
+    this.ctx.putImageData(this.lastImage, 0, 0);
   }
 }
 
