@@ -170,6 +170,7 @@ class AppCanvas extends React.Component<IAppCanvasProps, IAppCanvasState> {
       y: event.clientY,
     };
     this.startLining(pos);
+    this.startPressing(pos);
   }
 
   protected onMouseMove (event: MouseEvent) {
