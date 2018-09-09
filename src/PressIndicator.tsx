@@ -20,7 +20,7 @@ class PressIndicator extends React.Component<IPressIndicatorProps, IPressIndicat
     return this.props.width || 5;
   }
 
-  private get styles (): React.CSSProperties {
+  protected get styles (): React.CSSProperties {
     return {
       display: this.props.progress ? 'block' : 'none',
       left: this.props.pos.x,
