@@ -1,5 +1,5 @@
 {
-  "name": "quick-draw",
+  "name": "giazo",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -101,7 +101,7 @@
     ],
     "globals": {
       "ts-jest": {
-        "tsConfigFile": "/mnt/c/Users/ginpei/projects/quick-draw/tsconfig.test.json"
+        "tsConfigFile": "/mnt/c/Users/ginpei/projects/giazo/tsconfig.test.json"
       }
     }
   },
