@@ -9,6 +9,7 @@ import firebase from './plugin/firebase';
 type IAppPros = any;
 interface IAppState {
   canvasSize: ISize;
+  justAfterStarted: boolean;
   menuVisible: boolean;
   resetting: boolean;
 }
@@ -25,9 +26,11 @@ class App extends React.Component<IAppPros, IAppState> {
         height: 0,
         width: 0,
       },
+      justAfterStarted: true,
       menuVisible: false,
       resetting: false,
     };
+    this.onTutorialPress = this.onTutorialPress.bind(this);
     this.onCanvasReceive = this.onCanvasReceive.bind(this);
     this.onCanvasLongTap = this.onCanvasLongTap.bind(this);
     this.onMenuOverlayClick = this.onMenuOverlayClick.bind(this);
@@ -43,6 +46,16 @@ class App extends React.Component<IAppPros, IAppState> {
         onLongTap={this.onCanvasLongTap}
         />
       );
+    const tutorialOverlay = !this.state.justAfterStarted ? undefined : (
+      <div className="App-tutorialOverlay"
+        onTouchStart={this.onTutorialPress}
+        onMouseDown={this.onTutorialPress}
+        >
+        <h1>Giazo</h1>
+        <p>Tap to start.</p>
+        <p>Hint: Long tap to open menu.</p>
+      </div>
+    );
 
     return (
       <div className="App">
@@ -53,6 +66,7 @@ class App extends React.Component<IAppPros, IAppState> {
           onSave={this.onSave}
           onReset={this.onReset}
           />
+        {tutorialOverlay}
       </div>
     );
   }
@@ -70,6 +84,12 @@ class App extends React.Component<IAppPros, IAppState> {
       await firebase.auth().signInAnonymously();
     }
     this.currentUser = firebase.auth().currentUser;
+  }
+
+  protected onTutorialPress () {
+    this.setState({
+      justAfterStarted: false,
+    });
   }
 
   protected onCanvasReceive (el: HTMLCanvasElement | null) {

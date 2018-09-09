@@ -1,2 +1,15 @@
 .App {
 }
+.App-tutorialOverlay {
+  align-items: center;
+  box-shadow: 0 0 30vmin #0003 inset;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: center;
+  left: 0;
+  position: fixed;
+  text-shadow: 1px 1px 0 #fff;
+  top: 0;
+  width: 100%;
+}
