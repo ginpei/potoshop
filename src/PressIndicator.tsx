@@ -15,8 +15,6 @@ interface IPressIndicatorState {
 }
 
 class PressIndicator extends React.Component<IPressIndicatorProps, IPressIndicatorState> {
-  protected width = 10;
-
   private get styles (): React.CSSProperties {
     return {
       display: this.props.progress ? 'block' : 'none',
@@ -28,7 +26,7 @@ class PressIndicator extends React.Component<IPressIndicatorProps, IPressIndicat
   protected get path (): string {
     const progress = this.props.progress;
     const half = this.state.size / 2;
-    const { width } = this;
+    const { width } = this.state;
 
     const r = half - width;
     const degreeOffset = Math.PI * -0.5;
@@ -51,8 +49,8 @@ class PressIndicator extends React.Component<IPressIndicatorProps, IPressIndicat
   constructor (props: IPressIndicatorProps) {
     super(props);
     this.state = {
-      size: props.size || 100,
-      width: props.width || 10,
+      size: props.size || 150,
+      width: props.width || 5,
     };
   }
 
