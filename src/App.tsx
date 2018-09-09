@@ -1,8 +1,10 @@
+// import * as firebase from 'firebase';
 import * as React from 'react';
 import './App.css';
 import AppCanvas from './AppCanvas';
 import AppMenu from './AppMenu';
 import { ISize } from './misc';
+import firebase from './plugin/firebase';
 
 type IAppPros = any;
 interface IAppState {
@@ -12,7 +14,9 @@ interface IAppState {
 }
 
 class App extends React.Component<IAppPros, IAppState> {
+  protected currentUser: firebase.User | null;
   protected elCanvas: HTMLCanvasElement | null;
+  protected storageRef = firebase.storage().ref('giazo/v1');
 
   constructor (props: IAppPros) {
     super(props);
@@ -53,7 +57,7 @@ class App extends React.Component<IAppPros, IAppState> {
     );
   }
 
-  public componentWillMount () {
+  public async componentWillMount () {
     const el = document.documentElement;
     this.setState({
       canvasSize: {
@@ -61,6 +65,11 @@ class App extends React.Component<IAppPros, IAppState> {
         width: el.clientWidth,
       },
     });
+
+    if (!firebase.auth().currentUser) {
+      await firebase.auth().signInAnonymously();
+    }
+    this.currentUser = firebase.auth().currentUser;
   }
 
   protected onCanvasReceive (el: HTMLCanvasElement | null) {
@@ -79,23 +88,41 @@ class App extends React.Component<IAppPros, IAppState> {
     });
   }
 
-  protected onSave () {
+  protected async onSave () {
     if (!this.elCanvas) {
       throw new Error('Canvas is not ready');
     }
 
-    const w = window.open()!;
-    const elImage = w.document.createElement('img');
-    elImage.src = this.elCanvas.toDataURL();
-    w.document.title = (new Date()).toString();
+    const w = window.open('about:blank')!;
+    const elHeading = w.document.createElement('p');
+    elHeading.textContent = 'Uploading...';
+    w.document.body.appendChild(elHeading);
+    const el = w.document.createElement('p');
+    w.document.body.appendChild(el);
     Object.assign(w.document.body.style, {
       alignItems: 'center',
       backgroundColor: 'black',
+      color: 'white',
       display: 'flex',
       justifyContent: 'center',
       margin: '0',
     });
-    w.document.body.appendChild(elImage);
+
+    const blob = await new Promise((resolve) => {
+      this.elCanvas!.toBlob(resolve as any);
+    }) as Blob;
+
+    const key = Date.now() + (Math.random() * 1000).toString().padStart(4, '0');
+    const path = `${this.currentUser!.uid}/${key}.png`;
+    const ref = this.storageRef.child(path);
+    const task = ref.put(blob);
+    task.on('state_changed', (s: firebase.storage.UploadTaskSnapshot) => {
+      const progress = s.bytesTransferred / s.totalBytes;
+      el.textContent = `${Math.round(progress * 100)}%`;
+    });
+
+    const url = await (await task).ref.getDownloadURL();
+    w!.location.href = url;
   }
 
   protected onReset () {
