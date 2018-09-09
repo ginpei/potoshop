@@ -5,6 +5,7 @@ import PressIndicator from './PressIndicator';
 
 interface IAppCanvasProps {
   size: ISize;
+  onCanvasReceive: (el: HTMLCanvasElement | null) => void;
   onLongTap: () => void;
 }
 interface IAppCanvasState {
@@ -92,6 +93,10 @@ class AppCanvas extends React.Component<IAppCanvasProps, IAppCanvasState> {
     elCanvas.addEventListener('mousedown', this.onMouseDown);
     document.addEventListener('mousemove', this.onMouseMove);
     document.addEventListener('mouseup', this.onMouseUp);
+
+    this.ctx!.fillStyle = '#fff';
+    this.ctx!.fillRect(0, 0, this.props.size.width, this.props.size.height);
+    this.props.onCanvasReceive(elCanvas);
   }
 
   public componentWillUnmount () {
@@ -103,6 +108,8 @@ class AppCanvas extends React.Component<IAppCanvasProps, IAppCanvasState> {
     elCanvas.removeEventListener('mousedown', this.onMouseDown);
     document.removeEventListener('mousemove', this.onMouseMove);
     document.removeEventListener('mouseup', this.onMouseUp);
+
+    this.props.onCanvasReceive(null);
   }
 
   protected onTouchStart (event: TouchEvent) {

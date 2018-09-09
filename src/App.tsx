@@ -12,6 +12,8 @@ interface IAppState {
 }
 
 class App extends React.Component<IAppPros, IAppState> {
+  protected elCanvas: HTMLCanvasElement | null;
+
   constructor (props: IAppPros) {
     super(props);
     this.state = {
@@ -22,6 +24,7 @@ class App extends React.Component<IAppPros, IAppState> {
       menuVisible: false,
       resetting: false,
     };
+    this.onCanvasReceive = this.onCanvasReceive.bind(this);
     this.onCanvasLongTap = this.onCanvasLongTap.bind(this);
     this.onMenuOverlayClick = this.onMenuOverlayClick.bind(this);
     this.onSave = this.onSave.bind(this);
@@ -32,6 +35,7 @@ class App extends React.Component<IAppPros, IAppState> {
     const canvas = this.state.resetting ? undefined : (
       <AppCanvas
         size={this.state.canvasSize}
+        onCanvasReceive={this.onCanvasReceive}
         onLongTap={this.onCanvasLongTap}
         />
       );
@@ -59,6 +63,10 @@ class App extends React.Component<IAppPros, IAppState> {
     });
   }
 
+  protected onCanvasReceive (el: HTMLCanvasElement | null) {
+    this.elCanvas = el;
+  }
+
   protected onCanvasLongTap () {
     this.setState({
       menuVisible: true,
@@ -72,7 +80,22 @@ class App extends React.Component<IAppPros, IAppState> {
   }
 
   protected onSave () {
-    alert('save');
+    if (!this.elCanvas) {
+      throw new Error('Canvas is not ready');
+    }
+
+    const w = window.open()!;
+    const elImage = w.document.createElement('img');
+    elImage.src = this.elCanvas.toDataURL();
+    w.document.title = (new Date()).toString();
+    Object.assign(w.document.body.style, {
+      alignItems: 'center',
+      backgroundColor: 'black',
+      display: 'flex',
+      justifyContent: 'center',
+      margin: '0',
+    });
+    w.document.body.appendChild(elImage);
   }
 
   protected onReset () {
