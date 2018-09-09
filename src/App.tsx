@@ -42,6 +42,7 @@ class App extends React.Component<IAppPros, IAppState> {
     const canvas = this.state.resetting ? undefined : (
       <AppCanvas
         size={this.state.canvasSize}
+        inactive={this.state.menuVisible}
         onCanvasReceive={this.onCanvasReceive}
         onLongTap={this.onCanvasLongTap}
         />

@@ -5,6 +5,7 @@ import PressIndicator from './PressIndicator';
 
 interface IAppCanvasProps {
   size: ISize;
+  inactive: boolean;
   onCanvasReceive: (el: HTMLCanvasElement | null) => void;
   onLongTap: () => void;
 }
@@ -37,7 +38,10 @@ class AppCanvas extends React.Component<IAppCanvasProps, IAppCanvasState> {
   }
 
   protected get styles (): React.CSSProperties {
-    return this.props.size;
+    return {
+      ...this.props.size,
+      filter: this.props.inactive ? 'blur(5px)' : '',
+    };
   }
 
   protected get pressIndicatorPos (): IPos {
