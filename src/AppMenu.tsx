@@ -17,6 +17,7 @@ class AppMenu extends React.Component<IAppMenuProps, IAppMenuState> {
     this.onClick = this.onClick.bind(this);
     this.onSaveClick = this.onSaveClick.bind(this);
     this.onResetClick = this.onResetClick.bind(this);
+    this.onAboutClick = this.onAboutClick.bind(this);
   }
 
   public render () {
@@ -34,6 +35,9 @@ class AppMenu extends React.Component<IAppMenuProps, IAppMenuState> {
           <button
             onClick={this.onResetClick}
             >Reset</button>
+          <button
+            onClick={this.onAboutClick}
+            >About</button>
         </div>
       </div>
     );
@@ -56,6 +60,10 @@ class AppMenu extends React.Component<IAppMenuProps, IAppMenuState> {
     if (window.confirm(text)) {
       this.props.onReset();
     }
+  }
+
+  protected onAboutClick (event: React.MouseEvent<HTMLButtonElement>) {
+    window.open('/about.ja.html');
   }
 }
 
