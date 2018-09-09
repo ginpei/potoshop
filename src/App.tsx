@@ -3,6 +3,7 @@ import * as React from 'react';
 import './App.css';
 import AppCanvas from './AppCanvas';
 import AppMenu from './AppMenu';
+import LongTapper from './components/LongTapper';
 import { ISize } from './misc';
 import firebase from './plugin/firebase';
 
@@ -30,7 +31,7 @@ class App extends React.Component<IAppPros, IAppState> {
       menuVisible: false,
       resetting: false,
     };
-    this.onTutorialPress = this.onTutorialPress.bind(this);
+    this.onTutorialLongTap = this.onTutorialLongTap.bind(this);
     this.onCanvasReceive = this.onCanvasReceive.bind(this);
     this.onCanvasLongTap = this.onCanvasLongTap.bind(this);
     this.onMenuOverlayClick = this.onMenuOverlayClick.bind(this);
@@ -48,18 +49,19 @@ class App extends React.Component<IAppPros, IAppState> {
         />
       );
     const tutorialOverlay = !this.state.justAfterStarted ? undefined : (
-      <div className="AppTutorialOverlay"
-        onTouchStart={this.onTutorialPress}
-        onMouseDown={this.onTutorialPress}
+      <LongTapper
+        onLongTap={this.onTutorialLongTap}
         >
-        <h1>Giazo</h1>
-        <p>
-          Where you can draw and share.
-          <br/>
-          Hint: long tap to open menu.
-        </p>
-        <p className="AppTutorialOverlay-emphasized">Tap to start.</p>
-      </div>
+        <div className="AppTutorialOverlay">
+          <h1>Giazo</h1>
+          <p>
+            Where you can draw and share.
+            <br/>
+            Hint: long tap to open menu.
+          </p>
+          <p className="AppTutorialOverlay-emphasized">Try long tap to start.</p>
+        </div>
+      </LongTapper>
     );
 
     return (
@@ -91,7 +93,7 @@ class App extends React.Component<IAppPros, IAppState> {
     this.currentUser = firebase.auth().currentUser;
   }
 
-  protected onTutorialPress () {
+  protected onTutorialLongTap () {
     this.setState({
       justAfterStarted: false,
     });
