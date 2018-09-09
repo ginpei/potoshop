@@ -1,7 +1,7 @@
 import * as React from 'react';
 import './AppCanvas.css';
-import { AnimationFrameId, IPos, ISize, unixMs } from './misc';
-import PressIndicator from './PressIndicator';
+import LongTapper from './components/LongTapper';
+import { AnimationFrameId, IPos, ISize } from './misc';
 
 interface IAppCanvasProps {
   size: ISize;
@@ -15,9 +15,6 @@ interface IAppCanvasState {
   lining: boolean;
   offsetX: number;
   offsetY: number;
-  pressedAt: IPos;
-  pressProgress: number;
-  pressStartedAt: unixMs;
 }
 
 class AppCanvas extends React.Component<IAppCanvasProps, IAppCanvasState> {
@@ -62,9 +59,6 @@ class AppCanvas extends React.Component<IAppCanvasProps, IAppCanvasState> {
       lining: false,
       offsetX: 0,
       offsetY: 0,
-      pressProgress: 0,
-      pressStartedAt: 0,
-      pressedAt: { x: 0, y: 0 },
     };
     this.onTouchStart = this.onTouchStart.bind(this);
     this.onTouchMove = this.onTouchMove.bind(this);
@@ -72,22 +66,22 @@ class AppCanvas extends React.Component<IAppCanvasProps, IAppCanvasState> {
     this.onMouseDown = this.onMouseDown.bind(this);
     this.onMouseMove = this.onMouseMove.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
+    this.onLongTap = this.onLongTap.bind(this);
   }
 
   public render () {
     return (
-      <div className="AppCanvas" style={this.styles}>
-        <canvas className="AppCanvas-canvas"
-          width={this.props.size.width}
-          height={this.props.size.height}
-          ref={this.refCanvas}
-          />
-        <PressIndicator
-          pos={this.pressIndicatorPos}
-          progress={this.state.pressProgress}
-          size={100}
-          />
-      </div>
+      <LongTapper
+        onLongTap={this.onLongTap}
+        >
+        <div className="AppCanvas" style={this.styles}>
+          <canvas className="AppCanvas-canvas"
+            width={this.props.size.width}
+            height={this.props.size.height}
+            ref={this.refCanvas}
+            />
+        </div>
+      </LongTapper>
     );
   }
 
@@ -129,7 +123,6 @@ class AppCanvas extends React.Component<IAppCanvasProps, IAppCanvasState> {
         y: t.clientY,
       };
       this.startLining(pos);
-      this.startPressing(pos);
     }
   }
 
@@ -145,10 +138,6 @@ class AppCanvas extends React.Component<IAppCanvasProps, IAppCanvasState> {
         y: t.clientY,
       };
       this.drawLine(pos);
-
-      if (this.isPressMoved(pos)) {
-        this.stopPressing();
-      }
     }
   }
 
@@ -158,7 +147,6 @@ class AppCanvas extends React.Component<IAppCanvasProps, IAppCanvasState> {
     }
 
     this.stopLining();
-    this.stopPressing();
   }
 
   protected onMouseDown (event: MouseEvent) {
@@ -168,7 +156,6 @@ class AppCanvas extends React.Component<IAppCanvasProps, IAppCanvasState> {
       y: event.clientY,
     };
     this.startLining(pos);
-    this.startPressing(pos);
   }
 
   protected onMouseMove (event: MouseEvent) {
@@ -178,10 +165,6 @@ class AppCanvas extends React.Component<IAppCanvasProps, IAppCanvasState> {
         y: event.clientY,
       };
       this.drawLine(pos);
-
-      if (this.isPressMoved(pos)) {
-        this.stopPressing();
-      }
     }
   }
 
@@ -191,13 +174,17 @@ class AppCanvas extends React.Component<IAppCanvasProps, IAppCanvasState> {
     }
 
     this.stopLining();
-    this.stopPressing();
   }
 
   /**
    * @see #progressPressing
    */
   protected onLongTap () {
+    if (this.state.lining) {
+      this.restoreLastImage();
+      this.stopLining();
+    }
+
     this.props.onLongTap();
   }
 
@@ -243,53 +230,6 @@ class AppCanvas extends React.Component<IAppCanvasProps, IAppCanvasState> {
     this.setState({
       lining: false,
     });
-  }
-
-  protected startPressing (pos: IPos) {
-    this.setState({
-      pressStartedAt: Date.now(),
-      pressedAt: pos,
-    });
-
-    this.progressPressing();
-  }
-
-  protected progressPressing () {
-    const duration = 1000;
-    const elapsed = Date.now() - this.state.pressStartedAt;
-    const progress = elapsed / duration;
-    this.setState({
-      pressProgress: Math.max(0, elapsed - duration / 2) / (duration / 2),
-    });
-    if (progress < 1) {
-      this.tmPressing = requestAnimationFrame(() => this.progressPressing());
-    }
-    else {
-      this.restoreLastImage();
-      this.stopLining();
-      this.stopPressing();
-      this.onLongTap();
-    }
-  }
-
-  protected stopPressing () {
-    if (!this.tmPressing) {
-      return;
-    }
-
-    cancelAnimationFrame(this.tmPressing);
-    this.tmPressing = 0;
-
-    this.setState({
-      pressProgress: 0,
-      pressStartedAt: 0,
-    });
-  }
-
-  protected isPressMoved (pos: IPos) {
-    const threshold = 30;
-    const at = this.state.pressedAt;
-    return Math.max(Math.abs(at.x - pos.x), Math.abs(at.y - pos.y)) > threshold;
   }
 
   protected stashImage () {
