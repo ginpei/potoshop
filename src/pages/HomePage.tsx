@@ -1,5 +1,6 @@
 // import * as firebase from 'firebase';
 import * as React from 'react';
+import { Link } from 'react-router-dom';
 import AppCanvas from '../AppCanvas';
 import AppMenu from '../AppMenu';
 import AppHeader from '../components/AppHeader';
@@ -62,7 +63,7 @@ class HomePage extends React.Component<IHomePagePros, IHomePageState> {
               <br/>
               Hint: long tap to open menu.
             </p>
-            <p><a href="/about.ja.html">This service uses cookie.</a></p>
+            <p><Link to="/about">This service uses cookie.</Link></p>
             <p className="AppTutorialOverlay-emphasized">Try long tap to start.</p>
           </div>
         </div>
