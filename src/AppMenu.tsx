@@ -65,7 +65,7 @@ class AppMenu extends React.Component<IAppMenuProps, IAppMenuState> {
   }
 
   protected onAboutClick (event: React.MouseEvent<HTMLButtonElement>) {
-    window.open('/about.ja.html');
+    window.open('/about');
   }
 }
 
