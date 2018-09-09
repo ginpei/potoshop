@@ -121,20 +121,23 @@ class App extends React.Component<IAppPros, IAppState> {
       throw new Error('Canvas is not ready');
     }
 
-    const w = window.open('about:blank')!;
-    const elHeading = w.document.createElement('p');
-    elHeading.textContent = 'Uploading...';
-    w.document.body.appendChild(elHeading);
-    const el = w.document.createElement('p');
-    w.document.body.appendChild(el);
-    Object.assign(w.document.body.style, {
-      alignItems: 'center',
-      backgroundColor: 'black',
-      color: 'white',
-      display: 'flex',
-      justifyContent: 'center',
-      margin: '0',
-    });
+    const w = window.open('about:blank');
+    const el = w && w.document.createElement('p');
+    if (w) {
+      const elHeading = w.document.createElement('p');
+      elHeading.textContent = 'Uploading...';
+      w.document.body.appendChild(elHeading);
+      w.document.body.appendChild(el!);
+
+      Object.assign(w.document.body.style, {
+        alignItems: 'center',
+        backgroundColor: 'black',
+        color: 'white',
+        display: 'flex',
+        justifyContent: 'center',
+        margin: '0',
+      });
+    }
 
     const blob = await new Promise<Blob>((resolve) => {
       this.elCanvas!.toBlob(resolve as any);
@@ -146,11 +149,13 @@ class App extends React.Component<IAppPros, IAppState> {
     const task = ref.put(blob);
     task.on('state_changed', (s: firebase.storage.UploadTaskSnapshot) => {
       const progress = s.bytesTransferred / s.totalBytes;
-      el.textContent = `${Math.round(progress * 100)}%`;
+      if (el) {
+        el.textContent = `${Math.round(progress * 100)}%`;
+      }
     });
 
     const url = await (await task).ref.getDownloadURL();
-    w!.location.href = url;
+    (w || window).location.href = url;
   }
 
   protected onReset () {
