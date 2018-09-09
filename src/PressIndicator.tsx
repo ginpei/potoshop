@@ -58,8 +58,8 @@ class PressIndicator extends React.Component<IPressIndicatorProps, IPressIndicat
     return (
       <svg className="PressIndicator"
         style={this.styles}
-        width={this.props.size}
-        height={this.props.size}
+        width={this.state.size}
+        height={this.state.size}
         >
         <path className="PressIndicator-progress"
           d={this.path}
