@@ -1,6 +1,6 @@
 .App {
 }
-.App-tutorialOverlay {
+.AppTutorialOverlay {
   align-items: center;
   box-shadow: 0 0 30vmin #0003 inset;
   display: flex;
@@ -9,7 +9,15 @@
   justify-content: center;
   left: 0;
   position: fixed;
+  text-align: center;
   text-shadow: 1px 1px 0 #fff;
   top: 0;
   width: 100%;
+}
+.AppTutorialOverlay-emphasized {
+  animation: blink 1s infinite step-end;
+}
+@keyframes blink {
+    0% { visibility: hidden; }
+   50% { visibility: visible; }
 }

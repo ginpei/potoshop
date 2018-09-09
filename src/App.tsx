@@ -48,13 +48,17 @@ class App extends React.Component<IAppPros, IAppState> {
         />
       );
     const tutorialOverlay = !this.state.justAfterStarted ? undefined : (
-      <div className="App-tutorialOverlay"
+      <div className="AppTutorialOverlay"
         onTouchStart={this.onTutorialPress}
         onMouseDown={this.onTutorialPress}
         >
         <h1>Giazo</h1>
-        <p>Tap to start.</p>
-        <p>Hint: Long tap to open menu.</p>
+        <p>
+          Where you can draw and share.
+          <br/>
+          Hint: long tap to open menu.
+        </p>
+        <p className="AppTutorialOverlay-emphasized">Tap to start.</p>
       </div>
     );
 
