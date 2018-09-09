@@ -1,5 +1,6 @@
 .AppCanvas {
 }
 .AppCanvas-canvas {
-  box-shadow: 0 0 10px #0003;
+  box-shadow: 0 0 10px #0003 inset;
+  display: block;
 }

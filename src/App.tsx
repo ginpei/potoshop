@@ -1,22 +1,64 @@
 import * as React from 'react';
 import './App.css';
 import AppCanvas from './AppCanvas';
-import logo from './logo.svg';
+import AppMenu from './AppMenu';
+import { ISize } from './misc';
 
-class App extends React.Component {
+type IAppPros = any;
+interface IAppState {
+  canvasSize: ISize;
+  menuVisible: boolean;
+}
+
+class App extends React.Component<IAppPros, IAppState> {
+  constructor (props: IAppPros) {
+    super(props);
+    this.state = {
+      canvasSize: {
+        height: 0,
+        width: 0,
+      },
+      menuVisible: false,
+    };
+    this.onCanvasLongTap = this.onCanvasLongTap.bind(this);
+    this.onMenuOverlayClick = this.onMenuOverlayClick.bind(this);
+  }
+
   public render () {
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <AppCanvas />
+        <AppCanvas
+          size={this.state.canvasSize}
+          onLongTap={this.onCanvasLongTap}
+          />
+        <AppMenu
+          visible={this.state.menuVisible}
+          onOverlayClick={this.onMenuOverlayClick}
+          />
       </div>
     );
+  }
+
+  public componentWillMount () {
+    const el = document.documentElement;
+    this.setState({
+      canvasSize: {
+        height: el.clientHeight,
+        width: el.clientWidth,
+      },
+    });
+  }
+
+  protected onCanvasLongTap () {
+    this.setState({
+      menuVisible: true,
+    });
+  }
+
+  protected onMenuOverlayClick () {
+    this.setState({
+      menuVisible: false,
+    });
   }
 }
 

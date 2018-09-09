@@ -1,8 +1,11 @@
 import * as React from 'react';
 import './AppCanvas.css';
+import { AnimationFrameId, IPos, ISize, unixMs } from './misc';
+import PressIndicator from './PressIndicator';
 
-// tslint:disable-next-line:no-empty-interface
 interface IAppCanvasProps {
+  size: ISize;
+  onLongTap: () => void;
 }
 interface IAppCanvasState {
   lastX: number;
@@ -10,14 +13,14 @@ interface IAppCanvasState {
   lining: boolean;
   offsetX: number;
   offsetY: number;
-}
-interface IPos {
-  x: number;
-  y: number;
+  pressProgress: number;
+  pressStartedAt: unixMs;
 }
 
 class AppCanvas extends React.Component<IAppCanvasProps, IAppCanvasState> {
   protected refCanvas = React.createRef<HTMLCanvasElement>();
+  protected tmPressing: AnimationFrameId = 0;
+
   protected vCtx: CanvasRenderingContext2D | null;
   protected get ctx (): CanvasRenderingContext2D | null {
     if (!this.vCtx) {
@@ -32,6 +35,18 @@ class AppCanvas extends React.Component<IAppCanvasProps, IAppCanvasState> {
     return this.vCtx;
   }
 
+  protected get styles (): React.CSSProperties {
+    return this.props.size;
+  }
+
+  protected get pressIndicatorPos (): IPos {
+    const s = this.state;
+    return {
+      x: s.lastX,
+      y: s.lastY,
+    };
+  }
+
   constructor (props: IAppCanvasProps) {
     super(props);
     this.state = {
@@ -40,6 +55,8 @@ class AppCanvas extends React.Component<IAppCanvasProps, IAppCanvasState> {
       lining: false,
       offsetX: 0,
       offsetY: 0,
+      pressProgress: 0,
+      pressStartedAt: 0,
     };
     this.onTouchStart = this.onTouchStart.bind(this);
     this.onTouchMove = this.onTouchMove.bind(this);
@@ -51,9 +68,16 @@ class AppCanvas extends React.Component<IAppCanvasProps, IAppCanvasState> {
 
   public render () {
     return (
-      <div className="AppCanvas">
+      <div className="AppCanvas" style={this.styles}>
         <canvas className="AppCanvas-canvas"
+          width={this.props.size.width}
+          height={this.props.size.height}
           ref={this.refCanvas}
+          />
+        <PressIndicator
+          pos={this.pressIndicatorPos}
+          progress={this.state.pressProgress}
+          size={100}
           />
       </div>
     );
@@ -91,6 +115,7 @@ class AppCanvas extends React.Component<IAppCanvasProps, IAppCanvasState> {
         y: t.clientY,
       };
       this.startLining(pos);
+      this.startPressing(pos);
     }
   }
 
@@ -106,6 +131,7 @@ class AppCanvas extends React.Component<IAppCanvasProps, IAppCanvasState> {
         y: t.clientY,
       };
       this.drawLine(pos);
+      this.stopPressing();
     }
   }
 
@@ -117,6 +143,8 @@ class AppCanvas extends React.Component<IAppCanvasProps, IAppCanvasState> {
     this.setState({
       lining: false,
     });
+
+    this.stopPressing();
   }
 
   protected onMouseDown (event: MouseEvent) {
@@ -135,6 +163,7 @@ class AppCanvas extends React.Component<IAppCanvasProps, IAppCanvasState> {
         y: event.clientY,
       };
       this.drawLine(pos);
+      this.stopPressing();
     }
   }
 
@@ -146,6 +175,15 @@ class AppCanvas extends React.Component<IAppCanvasProps, IAppCanvasState> {
     this.setState({
       lining: false,
     });
+
+    this.stopPressing();
+  }
+
+  /**
+   * @see #progressPressing
+   */
+  protected onLongTap () {
+    this.props.onLongTap();
   }
 
   protected startLining ({ x, y }: IPos) {
@@ -182,6 +220,44 @@ class AppCanvas extends React.Component<IAppCanvasProps, IAppCanvasState> {
     this.setState({
       lastX: x,
       lastY: y,
+    });
+  }
+
+  protected startPressing (pos: IPos) {
+    this.setState({
+      pressStartedAt: Date.now(),
+    });
+
+    this.progressPressing();
+  }
+
+  protected progressPressing () {
+    const duration = 1000;
+    const elapsed = Date.now() - this.state.pressStartedAt;
+    const progress = elapsed / duration;
+    this.setState({
+      pressProgress: Math.max(0, elapsed - duration / 2) / (duration / 2),
+    });
+    if (progress < 1) {
+      this.tmPressing = requestAnimationFrame(() => this.progressPressing());
+    }
+    else {
+      this.onLongTap();
+      this.stopPressing();
+    }
+  }
+
+  protected stopPressing () {
+    if (!this.tmPressing) {
+      return;
+    }
+
+    cancelAnimationFrame(this.tmPressing);
+    this.tmPressing = 0;
+
+    this.setState({
+      pressProgress: 0,
+      pressStartedAt: 0,
     });
   }
 }

@@ -1,0 +1,10 @@
+.PressIndicator {
+  pointer-events: none;
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
+.PressIndicator-progress {
+  fill: none;
+  stroke-linecap: round;
+  stroke: #0ff9;
+}
