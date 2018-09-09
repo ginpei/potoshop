@@ -59,6 +59,7 @@ class App extends React.Component<IAppPros, IAppState> {
             <br/>
             Hint: long tap to open menu.
           </p>
+          <p><a href="/about.ja.html">This service uses cookie.</a></p>
           <p className="AppTutorialOverlay-emphasized">Try long tap to start.</p>
         </div>
       </LongTapper>
