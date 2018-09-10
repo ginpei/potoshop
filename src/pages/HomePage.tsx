@@ -1,11 +1,12 @@
 // import * as firebase from 'firebase';
+import { Color } from 'csstype';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import AppCanvas from '../AppCanvas';
 import AppMenu from '../AppMenu';
 import AppHeader from '../components/AppHeader';
 import LongTapper from '../components/LongTapper';
-import { Color, defaultStrokeColors, defaultStrokeWidth, ISize } from '../misc';
+import { defaultStrokeColors, defaultStrokeWidth, ISize } from '../misc';
 import firebase from '../plugin/firebase';
 import './HomePage.css';
 
@@ -146,7 +147,7 @@ class HomePage extends React.Component<IHomePagePros, IHomePageState> {
     });
   }
 
-  protected onColorChange (color: string) {
+  protected onColorChange (color: Color) {
     this.setState({
       strokeColor: color,
     });

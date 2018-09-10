@@ -1,4 +1,3 @@
-export type Color = string;
 export const strokeColors = [
   '#f33',
   '#090',

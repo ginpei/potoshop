@@ -1,3 +1,4 @@
+import { Color } from 'csstype';
 import * as React from 'react';
 import './AppMenu.css';
 import AppHeader from './components/AppHeader';
@@ -7,7 +8,7 @@ interface IAppMenuProps {
   visible: boolean;
   onOverlayClick: () => void;
   onStrokeWidthChange: (width: number) => void;
-  onColorChange: (color: string) => void;
+  onColorChange: (color: Color) => void;
   onSave: () => void;
   onReset: () => void;
 }
@@ -70,8 +71,8 @@ function StrokeWidths (props: IStrokeWidthsButtonProps) {
 }
 
 interface IColorButtonProps {
-  color: string;
-  onClick: (color: string) => void;
+  color: Color;
+  onClick: (color: Color) => void;
 }
 
 function ColorButton (props: IColorButtonProps) {
@@ -88,10 +89,10 @@ function ColorButton (props: IColorButtonProps) {
 
 interface IColorsProps {
   colors: string[];
-  onChange: (color: string) => void;
+  onChange: (color: Color) => void;
 }
 function Colors (props: IColorsProps) {
-  const onClick = (color: string) => {
+  const onClick = (color: Color) => {
     props.onChange(color);
   };
 
@@ -178,7 +179,7 @@ class AppMenu extends React.Component<IAppMenuProps, IAppMenuState> {
     this.props.onStrokeWidthChange(width);
   }
 
-  protected onColorChange (color: string) {
+  protected onColorChange (color: Color) {
     this.props.onColorChange(color);
   }
 

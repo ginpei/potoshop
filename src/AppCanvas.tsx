@@ -1,7 +1,8 @@
+import { Color } from 'csstype';
 import * as React from 'react';
 import './AppCanvas.css';
 import LongTapper from './components/LongTapper';
-import { AnimationFrameId, Color, IPos, ISize } from './misc';
+import { AnimationFrameId, IPos, ISize } from './misc';
 
 interface IAppCanvasProps {
   size: ISize;
