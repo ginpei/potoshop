@@ -5,6 +5,7 @@ import './LongTapper.css';
 
 interface ILongTapperProps {
   children: React.ReactNode;
+  containing?: boolean;
   duration?: number;
   moveThreshold?: number;
   size?: number;
@@ -20,6 +21,11 @@ interface ILongTapperState {
 class LongTapper extends React.Component<ILongTapperProps, ILongTapperState> {
   protected el = React.createRef<HTMLDivElement>();
   protected tmPressing: AnimationFrameId = 0;
+
+  protected get containing () {
+    const { containing } = this.props;
+    return containing !== undefined ? containing : true;
+  }
 
   protected get duration () {
     return this.props.duration || 1000;
@@ -57,7 +63,7 @@ class LongTapper extends React.Component<ILongTapperProps, ILongTapperState> {
 
   public render () {
     return (
-      <div className="LongTapper"
+      <div className={`LongTapper ${this.containing ? '-containing' : ''}`}
         ref={this.el}
         >
         {this.props.children}
