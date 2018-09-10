@@ -5,6 +5,7 @@ import AppHeader from './components/AppHeader';
 interface IAppMenuProps {
   visible: boolean;
   onOverlayClick: () => void;
+  onColorChange: (color: string) => void;
   onSave: () => void;
   onReset: () => void;
 }
@@ -12,10 +13,63 @@ interface IAppMenuProps {
 interface IAppMenuState {
 }
 
+interface IColorButtonProps {
+  color: string;
+  onClick: (color: string) => void;
+}
+
+function ColorButton (props: IColorButtonProps) {
+  const onClick = () => props.onClick(props.color);
+  return (
+    <span className="ColorButton">
+      <button className="ColorButton-button"
+        style={{ backgroundColor: props.color }}
+        onClick={onClick}
+        >{props.color}</button>
+    </span>
+  );
+}
+
+interface IColorsProps {
+  colors: string[];
+  onChange: (color: string) => void;
+}
+function Colors (props: IColorsProps) {
+  const onClick = (color: string) => {
+    props.onChange(color);
+  };
+
+  return (
+    <div className="AppMenu-colors">
+      <ColorButton
+        color="#f33"
+        onClick={onClick}
+        />
+      <ColorButton
+        color="#090"
+        onClick={onClick}
+        />
+      <ColorButton
+        color="#36f"
+        onClick={onClick}
+        />
+      <ColorButton
+        color="#fff"
+        onClick={onClick}
+        />
+      <ColorButton
+        color="#333"
+        onClick={onClick}
+        />
+    </div>
+  );
+}
+
 class AppMenu extends React.Component<IAppMenuProps, IAppMenuState> {
   constructor (props: IAppMenuProps) {
     super(props);
     this.onClick = this.onClick.bind(this);
+    this.onColorChange = this.onColorChange.bind(this);
     this.onSaveClick = this.onSaveClick.bind(this);
     this.onResetClick = this.onResetClick.bind(this);
     this.onAboutClick = this.onAboutClick.bind(this);
@@ -41,6 +95,18 @@ class AppMenu extends React.Component<IAppMenuProps, IAppMenuState> {
             onClick={this.onAboutClick}
             >About</button>
         </div>
+        <div className="AppMenu-penMenu">
+          <Colors
+            colors={[
+              '#f33',
+              '#090',
+              '#36f',
+              '#fff',
+              '#333',
+            ]}
+            onChange={this.onColorChange}
+            />
+        </div>
       </div>
     );
   }
@@ -51,6 +117,10 @@ class AppMenu extends React.Component<IAppMenuProps, IAppMenuState> {
     }
 
     this.props.onOverlayClick();
+  }
+
+  protected onColorChange (color: string) {
+    this.props.onColorChange(color);
   }
 
   protected onSaveClick (event: React.MouseEvent<HTMLButtonElement>) {

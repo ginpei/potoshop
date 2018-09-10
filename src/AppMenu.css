@@ -18,6 +18,27 @@
   right: var(--app-space);
   top: calc(var(--app-header-height) + var(--app-space));
 }
+
+.AppMenu-penMenu {
+  bottom: calc(100px + var(--app-space));
+  box-sizing: border-box;
+  left: 0;
+  opacity: 0;
+  padding: 0 var(--app-space);
+  position: absolute;
+  transform: translateY(30vh);
+  transition: all 300ms;
+  width: 100%;
+}
+.AppMenu.-visible .AppMenu-penMenu {
+  opacity: 1;
+  transform: translateY(0);
+}
+.AppMenu-colors {
+  display: flex;
+  justify-content: space-evenly;
+}
+
 .AppMenu-menu {
   bottom: 0;
   display: flex;
@@ -35,4 +56,13 @@
 }
 .AppMenu-menu > * {
   width: 100%;
+}
+
+.ColorButton-button {
+  border-radius: 50%;
+  border: none;
+  box-shadow: 0 0 5px #0003;
+  height: 50px;
+  width: 50px;
+  font-size: 0;
 }

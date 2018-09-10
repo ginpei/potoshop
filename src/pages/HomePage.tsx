@@ -5,7 +5,7 @@ import AppCanvas from '../AppCanvas';
 import AppMenu from '../AppMenu';
 import AppHeader from '../components/AppHeader';
 import LongTapper from '../components/LongTapper';
-import { ISize } from '../misc';
+import { Color, ISize } from '../misc';
 import firebase from '../plugin/firebase';
 import './HomePage.css';
 
@@ -15,6 +15,7 @@ interface IHomePageState {
   justAfterStarted: boolean;
   menuVisible: boolean;
   resetting: boolean;
+  strokeColor: Color;
 }
 
 class HomePage extends React.Component<IHomePagePros, IHomePageState> {
@@ -32,11 +33,13 @@ class HomePage extends React.Component<IHomePagePros, IHomePageState> {
       justAfterStarted: true,
       menuVisible: false,
       resetting: false,
+      strokeColor: '#333', // TODO define colors
     };
     this.onTutorialLongTap = this.onTutorialLongTap.bind(this);
     this.onCanvasReceive = this.onCanvasReceive.bind(this);
     this.onCanvasLongTap = this.onCanvasLongTap.bind(this);
     this.onMenuOverlayClick = this.onMenuOverlayClick.bind(this);
+    this.onColorChange = this.onColorChange.bind(this);
     this.onSave = this.onSave.bind(this);
     this.onReset = this.onReset.bind(this);
   }
@@ -46,6 +49,7 @@ class HomePage extends React.Component<IHomePagePros, IHomePageState> {
       <AppCanvas
         size={this.state.canvasSize}
         inactive={this.state.menuVisible}
+        strokeColor={this.state.strokeColor}
         onCanvasReceive={this.onCanvasReceive}
         onLongTap={this.onCanvasLongTap}
         />
@@ -80,6 +84,7 @@ class HomePage extends React.Component<IHomePagePros, IHomePageState> {
         <AppMenu
           visible={this.state.menuVisible}
           onOverlayClick={this.onMenuOverlayClick}
+          onColorChange={this.onColorChange}
           onSave={this.onSave}
           onReset={this.onReset}
           />
@@ -127,6 +132,12 @@ class HomePage extends React.Component<IHomePagePros, IHomePageState> {
   protected onMenuOverlayClick () {
     this.setState({
       menuVisible: false,
+    });
+  }
+
+  protected onColorChange (color: string) {
+    this.setState({
+      strokeColor: color,
     });
   }
 

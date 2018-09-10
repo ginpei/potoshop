@@ -1,11 +1,12 @@
 import * as React from 'react';
 import './AppCanvas.css';
 import LongTapper from './components/LongTapper';
-import { AnimationFrameId, IPos, ISize } from './misc';
+import { AnimationFrameId, Color, IPos, ISize } from './misc';
 
 interface IAppCanvasProps {
   size: ISize;
   inactive: boolean;
+  strokeColor: Color;
   onCanvasReceive: (el: HTMLCanvasElement | null) => void;
   onLongTap: () => void;
 }
@@ -198,6 +199,7 @@ class AppCanvas extends React.Component<IAppCanvasProps, IAppCanvasState> {
     const offsetX = elCanvas.offsetLeft;
     const offsetY = elCanvas.offsetTop;
     ctx.beginPath();
+    ctx.strokeStyle = this.props.strokeColor;
     ctx.moveTo(x - offsetX, y - offsetY);
 
     this.setState({
