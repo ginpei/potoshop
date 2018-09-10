@@ -203,6 +203,7 @@ class AppCanvas extends React.Component<IAppCanvasProps, IAppCanvasState> {
     ctx.beginPath();
     ctx.strokeStyle = this.props.strokeColor;
     ctx.lineWidth = this.props.strokeWidth;
+    ctx.lineCap = 'round';
     ctx.moveTo(x - offsetX, y - offsetY);
 
     this.setState({
