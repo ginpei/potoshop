@@ -4,12 +4,33 @@ import * as React from 'react';
 import { Route, Router } from 'react-router-dom';
 import './App.css';
 import AboutPage from './pages/AboutPage';
+import ErrorPage from './pages/ErrorPage';
 import HomePage from './pages/HomePage';
 
-class App extends React.Component {
+interface IAppState {
+  errorMessage: string;
+}
+
+class App extends React.Component<any, IAppState> {
   protected history = createBrowserHistory();
 
+  constructor (props: any) {
+    super(props);
+    this.state = {
+      errorMessage: '',
+    };
+    this.onError = this.onError.bind(this);
+  }
+
   public render () {
+    if (this.state.errorMessage) {
+      return (
+        <ErrorPage
+          message={this.state.errorMessage}
+          />
+      );
+    }
+
     return (
       <Router history={this.history}>
         <div className="App">
@@ -18,6 +39,20 @@ class App extends React.Component {
         </div>
       </Router>
     );
+  }
+
+  public componentWillMount () {
+    window.addEventListener('error', this.onError);
+  }
+
+  public componentWillUnmount () {
+    window.removeEventListener('error', this.onError);
+  }
+
+  protected onError ({ error }: ErrorEvent) {
+    this.setState({
+      errorMessage: error.message,
+    });
   }
 }
 
