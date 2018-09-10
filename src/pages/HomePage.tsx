@@ -5,7 +5,7 @@ import AppCanvas from '../AppCanvas';
 import AppMenu from '../AppMenu';
 import AppHeader from '../components/AppHeader';
 import LongTapper from '../components/LongTapper';
-import { Color, ISize } from '../misc';
+import { Color, defaultStrokeColors, ISize } from '../misc';
 import firebase from '../plugin/firebase';
 import './HomePage.css';
 
@@ -33,7 +33,7 @@ class HomePage extends React.Component<IHomePagePros, IHomePageState> {
       justAfterStarted: true,
       menuVisible: false,
       resetting: false,
-      strokeColor: '#333', // TODO define colors
+      strokeColor: defaultStrokeColors,
     };
     this.onTutorialLongTap = this.onTutorialLongTap.bind(this);
     this.onCanvasReceive = this.onCanvasReceive.bind(this);

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import './AppMenu.css';
 import AppHeader from './components/AppHeader';
+import { strokeColors } from './misc';
 
 interface IAppMenuProps {
   visible: boolean;
@@ -97,13 +98,7 @@ class AppMenu extends React.Component<IAppMenuProps, IAppMenuState> {
         </div>
         <div className="AppMenu-penMenu">
           <Colors
-            colors={[
-              '#f33',
-              '#090',
-              '#36f',
-              '#fff',
-              '#333',
-            ]}
+            colors={strokeColors}
             onChange={this.onColorChange}
             />
         </div>
