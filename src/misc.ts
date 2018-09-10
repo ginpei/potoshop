@@ -7,6 +7,12 @@ export const strokeColors = [
   '#333',
 ];
 export const defaultStrokeColors = strokeColors[4];
+export const strokeWidths = [
+  2,
+  5,
+  10,
+];
+export const defaultStrokeWidth = strokeWidths[1];
 export type unixMs = number; // e.g. Date.now()
 export type AnimationFrameId = number; // requestAnimationFrame()
 export interface IPos {

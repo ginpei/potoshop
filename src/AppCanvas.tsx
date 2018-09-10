@@ -7,6 +7,7 @@ interface IAppCanvasProps {
   size: ISize;
   inactive: boolean;
   strokeColor: Color;
+  strokeWidth: number;
   onCanvasReceive: (el: HTMLCanvasElement | null) => void;
   onLongTap: () => void;
 }
@@ -200,6 +201,7 @@ class AppCanvas extends React.Component<IAppCanvasProps, IAppCanvasState> {
     const offsetY = elCanvas.offsetTop;
     ctx.beginPath();
     ctx.strokeStyle = this.props.strokeColor;
+    ctx.lineWidth = this.props.strokeWidth;
     ctx.moveTo(x - offsetX, y - offsetY);
 
     this.setState({

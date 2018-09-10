@@ -5,7 +5,7 @@ import AppCanvas from '../AppCanvas';
 import AppMenu from '../AppMenu';
 import AppHeader from '../components/AppHeader';
 import LongTapper from '../components/LongTapper';
-import { Color, defaultStrokeColors, ISize } from '../misc';
+import { Color, defaultStrokeColors, defaultStrokeWidth, ISize } from '../misc';
 import firebase from '../plugin/firebase';
 import './HomePage.css';
 
@@ -16,6 +16,7 @@ interface IHomePageState {
   menuVisible: boolean;
   resetting: boolean;
   strokeColor: Color;
+  strokeWidth: number;
 }
 
 class HomePage extends React.Component<IHomePagePros, IHomePageState> {
@@ -34,11 +35,13 @@ class HomePage extends React.Component<IHomePagePros, IHomePageState> {
       menuVisible: false,
       resetting: false,
       strokeColor: defaultStrokeColors,
+      strokeWidth: defaultStrokeWidth,
     };
     this.onTutorialLongTap = this.onTutorialLongTap.bind(this);
     this.onCanvasReceive = this.onCanvasReceive.bind(this);
     this.onCanvasLongTap = this.onCanvasLongTap.bind(this);
     this.onMenuOverlayClick = this.onMenuOverlayClick.bind(this);
+    this.onStrokeWidthChange = this.onStrokeWidthChange.bind(this);
     this.onColorChange = this.onColorChange.bind(this);
     this.onSave = this.onSave.bind(this);
     this.onReset = this.onReset.bind(this);
@@ -50,6 +53,7 @@ class HomePage extends React.Component<IHomePagePros, IHomePageState> {
         size={this.state.canvasSize}
         inactive={this.state.menuVisible}
         strokeColor={this.state.strokeColor}
+        strokeWidth={this.state.strokeWidth}
         onCanvasReceive={this.onCanvasReceive}
         onLongTap={this.onCanvasLongTap}
         />
@@ -84,6 +88,7 @@ class HomePage extends React.Component<IHomePagePros, IHomePageState> {
         <AppMenu
           visible={this.state.menuVisible}
           onOverlayClick={this.onMenuOverlayClick}
+          onStrokeWidthChange={this.onStrokeWidthChange}
           onColorChange={this.onColorChange}
           onSave={this.onSave}
           onReset={this.onReset}
@@ -132,6 +137,12 @@ class HomePage extends React.Component<IHomePagePros, IHomePageState> {
   protected onMenuOverlayClick () {
     this.setState({
       menuVisible: false,
+    });
+  }
+
+  protected onStrokeWidthChange (width: number) {
+    this.setState({
+      strokeWidth: width,
     });
   }
 

@@ -37,6 +37,7 @@
 .AppMenu-colors {
   display: flex;
   justify-content: space-evenly;
+  margin-bottom: var(--app-space);
 }
 
 .AppMenu-menu {
@@ -56,6 +57,16 @@
 }
 .AppMenu-menu > * {
   width: 100%;
+}
+
+.StrokeWidths {
+  display: flex;
+  justify-content: space-evenly;
+  margin-bottom: var(--app-space);
+}
+.StrokeWidth-button {
+  background-color: transparent;
+  border: none;
 }
 
 .ColorButton-button {
