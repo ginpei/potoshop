@@ -98,7 +98,12 @@ class HomePage extends React.Component<IHomePagePros, IHomePageState> {
     });
 
     if (!firebase.auth().currentUser) {
-      await firebase.auth().signInAnonymously();
+      try {
+        await firebase.auth().signInAnonymously();
+      } catch (error) {
+        const detail = JSON.parse(error.message);
+        throw new Error(detail.error.message);
+      }
     }
     this.currentUser = firebase.auth().currentUser;
   }
