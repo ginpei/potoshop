@@ -1,7 +1,7 @@
 // import * as firebase from 'firebase';
 import { createBrowserHistory } from 'history';
 import * as React from 'react';
-import { Route, Router } from 'react-router-dom';
+import { Route, Router, Switch } from 'react-router-dom';
 import './App.css';
 import AboutPage from './pages/AboutPage';
 import ErrorPage from './pages/ErrorPage';
@@ -10,6 +10,14 @@ import HomePage from './pages/HomePage';
 interface IAppState {
   errorMessage: string;
 }
+
+const ErrorNotFoundPage = () => {
+  return (
+    <ErrorPage
+      title="404 Not found."
+      />
+  );
+};
 
 class App extends React.Component<any, IAppState> {
   protected history = createBrowserHistory();
@@ -34,8 +42,11 @@ class App extends React.Component<any, IAppState> {
     return (
       <Router history={this.history}>
         <div className="App">
-          <Route exact={true} path="/" component={HomePage}/>
-          <Route exact={true} path="/about" component={AboutPage}/>
+          <Switch>
+            <Route exact={true} path="/" component={HomePage}/>
+            <Route exact={true} path="/about" component={AboutPage}/>
+            <Route component={ErrorNotFoundPage}/>
+          </Switch>
         </div>
       </Router>
     );
