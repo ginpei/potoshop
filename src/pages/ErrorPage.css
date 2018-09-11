@@ -1,9 +1,27 @@
 .ErrorPage {
-  background-color: darkslategray;
+  background-color: #244c;
   color: aliceblue;
+  height: 100%;
+  left: 0;
   min-height: 100vh;
   overflow: auto;
+  position: fixed;
   text-shadow: -1px -1px 0 #fff6;
+  top: 0;
+  width: 100%;
+}
+.ErrorPage-ignoreBlock {
+  text-align: right;
+}
+.ErrorPage-ignore {
+  background-color: aliceblue;
+  border: 1px solid currentColor;
+  color: #244;
+  line-height: 2em;
+  text-shadow: inherit;
+}
+.ErrorPage-ignore > i.fa {
+  margin-right: 0.5em;
 }
 .ErrorPage-imageBlock {
   text-align: center;

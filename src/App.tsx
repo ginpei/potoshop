@@ -28,16 +28,16 @@ class App extends React.Component<any, IAppState> {
       errorMessage: '',
     };
     this.onError = this.onError.bind(this);
+    this.onIgnoreError = this.onIgnoreError.bind(this);
   }
 
   public render () {
-    if (this.state.errorMessage) {
-      return (
-        <ErrorPage
-          message={this.state.errorMessage}
-          />
-      );
-    }
+    const errorPage = !this.state.errorMessage ? undefined : (
+      <ErrorPage
+        message={this.state.errorMessage}
+        onIgnore={this.onIgnoreError}
+        />
+    );
 
     return (
       <Router history={this.history}>
@@ -47,6 +47,7 @@ class App extends React.Component<any, IAppState> {
             <Route exact={true} path="/about" component={AboutPage}/>
             <Route component={ErrorNotFoundPage}/>
           </Switch>
+          {errorPage}
         </div>
       </Router>
     );
@@ -63,6 +64,12 @@ class App extends React.Component<any, IAppState> {
   protected onError ({ error }: ErrorEvent) {
     this.setState({
       errorMessage: error.message,
+    });
+  }
+
+  protected onIgnoreError () {
+    this.setState({
+      errorMessage: '',
     });
   }
 }
