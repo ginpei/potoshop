@@ -20,10 +20,11 @@ class ErrorPage extends React.Component<IErrorPageProps> {
         <div className="container">
           <h1>{title}</h1>
           <p>
-            Here is an emergency kitten.
-            <br/>
-            <img className="ErrorPage-image" src="https://cataas.com/cat"/>
+            Here is an emergency kitten, just in case.
           </p>
+          <figure className="ErrorPage-imageBlock">
+            <img className="ErrorPage-image" src="https://cataas.com/cat"/>
+          </figure>
           {message}
         </div>
       </div>

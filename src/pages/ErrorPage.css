@@ -5,6 +5,9 @@
   overflow: auto;
   text-shadow: -1px -1px 0 #fff6;
 }
+.ErrorPage-imageBlock {
+  text-align: center;
+}
 .ErrorPage-image {
   border-radius: 3px;
   border: 1px solid #fff6;
