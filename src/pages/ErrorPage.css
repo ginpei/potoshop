@@ -10,7 +10,9 @@
 }
 .ErrorPage-image {
   border-radius: 3px;
-  border: 1px solid #fff6;
+  border: 1px solid #0009;
+  box-shadow: 0 0 10px #0009;
+  max-height: 90vh;
   max-width: 100%;
 }
 .ErrorPage-message{
