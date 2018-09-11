@@ -1,6 +1,8 @@
 :root {
+  --app-animation-duration: 300ms;
   --app-header-height: 20px;
   --app-space: 16px;
+  --ease-out-back: cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 body {
