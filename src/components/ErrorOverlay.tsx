@@ -1,17 +1,17 @@
 import * as React from 'react';
-import './ErrorPage.css';
+import './ErrorOverlay.css';
 
-interface IErrorPageProps {
+interface IErrorOverlayProps {
   message?: string;
   title?: string;
   onIgnore?: () => void;
 }
-interface IErrorPageState {
+interface IErrorOverlayState {
   loading: boolean;
 }
 
-class ErrorPage extends React.Component<IErrorPageProps, IErrorPageState> {
-  constructor (props: IErrorPageProps) {
+class ErrorOverlay extends React.Component<IErrorOverlayProps, IErrorOverlayState> {
+  constructor (props: IErrorOverlayProps) {
     super(props);
     this.state = {
       loading: true,
@@ -24,8 +24,8 @@ class ErrorPage extends React.Component<IErrorPageProps, IErrorPageState> {
     const title = this.props.title || 'Sorry, something went wrong... X(';
 
     const ignoreBlock = !this.props.onIgnore ? undefined : (
-      <p className="ErrorPage-ignoreBlock">
-        <button className="ErrorPage-ignore" onClick={this.onIgnoreClick}>
+      <p className="ErrorOverlay-ignoreBlock">
+        <button className="ErrorOverlay-ignore" onClick={this.onIgnoreClick}>
           <i className="fa fa-times" aria-hidden="true"/>
           Ignore
         </button>
@@ -33,23 +33,23 @@ class ErrorPage extends React.Component<IErrorPageProps, IErrorPageState> {
     );
 
     const message = !this.props.message ? undefined : (
-      <p className="ErrorPage-message">
+      <p className="ErrorOverlay-message">
         <code>{this.props.message}</code>
       </p>
     );
 
     return (
-      <div className="ErrorPage">
+      <div className="ErrorOverlay">
         <div className="container">
           <h1>{title}</h1>
           {ignoreBlock}
           <p>
             Here is an emergency kitten, just in case.
           </p>
-          <figure className="ErrorPage-imageBlock">
+          <figure className="ErrorOverlay-imageBlock">
             <img
               src="https://cataas.com/cat"
-              className={`ErrorPage-image ${this.state.loading ? '-loading' : ''}`}
+              className={`ErrorOverlay-image ${this.state.loading ? '-loading' : ''}`}
               onLoad={this.onImageLoad}
               />
           </figure>
@@ -70,4 +70,4 @@ class ErrorPage extends React.Component<IErrorPageProps, IErrorPageState> {
   }
 }
 
-export default ErrorPage;
+export default ErrorOverlay;

@@ -3,8 +3,8 @@ import { createBrowserHistory } from 'history';
 import * as React from 'react';
 import { Route, Router, Switch } from 'react-router-dom';
 import './App.css';
+import ErrorOverlay from './components/ErrorOverlay';
 import AboutPage from './pages/AboutPage';
-import ErrorPage from './pages/ErrorPage';
 import HomePage from './pages/HomePage';
 
 interface IAppState {
@@ -13,7 +13,7 @@ interface IAppState {
 
 const ErrorNotFoundPage = () => {
   return (
-    <ErrorPage
+    <ErrorOverlay
       title="404 Not found."
       />
   );
@@ -33,7 +33,7 @@ class App extends React.Component<any, IAppState> {
 
   public render () {
     const errorPage = !this.state.errorMessage ? undefined : (
-      <ErrorPage
+      <ErrorOverlay
         message={this.state.errorMessage}
         onIgnore={this.onIgnoreError}
         />

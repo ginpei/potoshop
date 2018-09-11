@@ -1,4 +1,4 @@
-.ErrorPage {
+.ErrorOverlay {
   background-color: #244c;
   color: aliceblue;
   height: 100%;
@@ -10,23 +10,23 @@
   top: 0;
   width: 100%;
 }
-.ErrorPage-ignoreBlock {
+.ErrorOverlay-ignoreBlock {
   text-align: right;
 }
-.ErrorPage-ignore {
+.ErrorOverlay-ignore {
   background-color: aliceblue;
   border: 1px solid currentColor;
   color: #244;
   line-height: 2em;
   text-shadow: inherit;
 }
-.ErrorPage-ignore > i.fa {
+.ErrorOverlay-ignore > i.fa {
   margin-right: 0.5em;
 }
-.ErrorPage-imageBlock {
+.ErrorOverlay-imageBlock {
   text-align: center;
 }
-.ErrorPage-image {
+.ErrorOverlay-image {
   border-radius: 3px;
   border: 1px solid #0009;
   box-shadow: 0 0 10px #0009;
@@ -36,14 +36,14 @@
     opacity var(--app-animation-duration),
     transform var(--app-animation-duration) var(--ease-out-back);
 }
-.ErrorPage-image.-loading {
+.ErrorOverlay-image.-loading {
   opacity: 0;
   transform: scale(1.1);
 }
-.ErrorPage-message{
-  animation: ErrorPage-delay 1s backwards;
+.ErrorOverlay-message{
+  animation: ErrorOverlay-delay 1s backwards;
 }
-@keyframes ErrorPage-delay {
+@keyframes ErrorOverlay-delay {
   0% { opacity: 0 }
   50% { opacity: 0 }
   100% { opacity: 1 }
