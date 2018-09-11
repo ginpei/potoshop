@@ -1,4 +1,3 @@
-// import * as firebase from 'firebase';
 import { createBrowserHistory } from 'history';
 import * as React from 'react';
 import { Route, Router, Switch } from 'react-router-dom';
