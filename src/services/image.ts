@@ -3,6 +3,12 @@ import firebase from '../plugins/firebase';
 const db = firebase.firestore().collection('v1-images');
 const storageRef = firebase.storage().ref('v1-images');
 
+export interface IImageRecord {
+  createdAt: number;
+  id: string;
+  url: string;
+}
+
 export function readBlob (el: HTMLCanvasElement) {
   return  new Promise<Blob>((resolve) => {
     el.toBlob(resolve as any);
@@ -36,4 +42,19 @@ export async function uploadImage (args: IUploadImageArgs) {
   }, { merge: true });
 
   return uploadedRef;
+}
+
+export async function fetchList (uid: string): Promise<IImageRecord[]> {
+  const ref = firebase.firestore()
+    .collection('v1-images').doc(uid)
+    .collection('images');
+  const images = await ref
+    .orderBy('createdAt', 'desc')
+    .get();
+  const list = images.docs.map((v) => {
+    const data = v.data() as IImageRecord;
+    data.id = v.id;
+    return data;
+  });
+  return list;
 }

@@ -1,0 +1,11 @@
+.HistoryPage {
+}
+.HistoryPage-record {
+}
+.HistoryPage-image {
+  border-radius: 3px;
+  border: 1px solid gray;
+  box-shadow: 0 0 10px #0003;
+  max-height: 90vh;
+  max-width: 100%;
+}

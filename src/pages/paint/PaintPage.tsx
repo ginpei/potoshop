@@ -161,13 +161,11 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
       throw new Error('Canvas is not ready');
     }
 
-    const ref = await uploadImage({
+    await uploadImage({
       blob: await readBlob(this.elCanvas),
       uid: this.currentUser!.uid,
     });
-
-    const url = await ref.getDownloadURL();
-    location.href = url;
+    window.location.href = '/history';
   }
 
   protected onReset () {

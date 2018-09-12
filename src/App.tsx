@@ -4,6 +4,7 @@ import { Route, Router, Switch } from 'react-router-dom';
 import './App.css';
 import ErrorOverlay from './components/ErrorOverlay';
 import AboutPage from './pages/AboutPage';
+import HistoryPage from './pages/HistoryPage';
 import PaintPage from './pages/paint/PaintPage';
 
 interface IAppState {
@@ -44,6 +45,7 @@ class App extends React.Component<any, IAppState> {
           <Switch>
             <Route exact={true} path="/" component={PaintPage}/>
             <Route exact={true} path="/about" component={AboutPage}/>
+            <Route exact={true} path="/history" component={HistoryPage}/>
             <Route component={ErrorNotFoundPage}/>
           </Switch>
           {errorPage}
