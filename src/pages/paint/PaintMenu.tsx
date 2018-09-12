@@ -96,28 +96,16 @@ function Colors (props: IColorsProps) {
     props.onChange(color);
   };
 
+  const buttons = props.colors.map((color) => (
+      <ColorButton
+      color={color}
+        onClick={onClick}
+        />
+  ));
+
   return (
     <div className="PaintMenu-colors">
-      <ColorButton
-        color="#f33"
-        onClick={onClick}
-        />
-      <ColorButton
-        color="#090"
-        onClick={onClick}
-        />
-      <ColorButton
-        color="#36f"
-        onClick={onClick}
-        />
-      <ColorButton
-        color="#fff"
-        onClick={onClick}
-        />
-      <ColorButton
-        color="#333"
-        onClick={onClick}
-        />
+      {buttons}
     </div>
   );
 }
