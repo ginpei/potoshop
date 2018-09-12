@@ -1,3 +1,8 @@
+import firebase from '../plugins/firebase';
+
+const db = firebase.firestore().collection('v1-images');
+const storageRef = firebase.storage().ref('v1-images');
+
 export function readBlob (el: HTMLCanvasElement) {
   return  new Promise<Blob>((resolve) => {
     el.toBlob(resolve as any);
@@ -6,21 +11,29 @@ export function readBlob (el: HTMLCanvasElement) {
 
 interface IUploadImageArgs {
   blob: Blob;
-  storageRef: firebase.storage.Reference;
   uid: string;
   onStateChange?: (snapshot: firebase.storage.UploadTaskSnapshot) => void;
 }
 export async function uploadImage (args: IUploadImageArgs) {
-  const { blob, uid, storageRef } = args;
+  const { blob, uid } = args;
 
-  const key = Date.now() + (Math.random() * 1000).toString().padStart(4, '0');
-  const path = `${uid}/${key}.png`;
-  const ref = storageRef.child(path);
-  const task = ref.put(blob);
+  // prepare record
+  const imageRef = await db.doc(uid).collection('images').add({
+    createdAt: Date.now(),
+  });
 
+  // store image
+  const path = `${uid}/${imageRef.id}.png`;
+  const task = storageRef.child(path).put(blob);
   if (args.onStateChange) {
     task.on('state_changed', args.onStateChange);
   }
+  const uploadedRef = (await task).ref;
 
-  return (await task).ref;
+  // remember image url
+  imageRef.set({
+    url: await uploadedRef.getDownloadURL(),
+  }, { merge: true });
+
+  return uploadedRef;
 }

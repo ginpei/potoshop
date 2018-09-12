@@ -161,39 +161,13 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
       throw new Error('Canvas is not ready');
     }
 
-    const w = window.open('about:blank');
-    const el = w && w.document.createElement('p');
-    if (w) {
-      const elHeading = w.document.createElement('p');
-      elHeading.textContent = 'Uploading...';
-      w.document.body.appendChild(elHeading);
-      w.document.body.appendChild(el!);
-
-      Object.assign(w.document.body.style, {
-        alignItems: 'center',
-        backgroundColor: 'black',
-        color: 'white',
-        display: 'flex',
-        justifyContent: 'center',
-        margin: '0',
-      });
-    }
-
-    const onStateChange = (s: firebase.storage.UploadTaskSnapshot) => {
-      const progress = s.bytesTransferred / s.totalBytes;
-      if (el) {
-        el.textContent = `${Math.round(progress * 100)}%`;
-      }
-    };
     const ref = await uploadImage({
       blob: await readBlob(this.elCanvas),
-      onStateChange,
-      storageRef: this.storageRef,
       uid: this.currentUser!.uid,
     });
 
     const url = await ref.getDownloadURL();
-    (w || window).location.href = url;
+    location.href = url;
   }
 
   protected onReset () {
