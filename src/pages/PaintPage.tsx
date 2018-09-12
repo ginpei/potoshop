@@ -8,10 +8,10 @@ import AppHeader from '../components/AppHeader';
 import LongTapper from '../components/LongTapper';
 import { defaultStrokeColors, defaultStrokeWidth, ISize } from '../misc';
 import firebase from '../plugin/firebase';
-import './HomePage.css';
+import './PaintPage.css';
 
-type IHomePagePros = any;
-interface IHomePageState {
+type IPaintPagePros = any;
+interface IPaintPageState {
   canvasSize: ISize;
   justAfterStarted: boolean;
   menuVisible: boolean;
@@ -20,12 +20,12 @@ interface IHomePageState {
   strokeWidth: number;
 }
 
-class HomePage extends React.Component<IHomePagePros, IHomePageState> {
+class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
   protected currentUser: firebase.User | null;
   protected elCanvas: HTMLCanvasElement | null;
   protected storageRef = firebase.storage().ref('giazo/v1');
 
-  constructor (props: IHomePagePros) {
+  constructor (props: IPaintPagePros) {
     super(props);
     this.state = {
       canvasSize: {
@@ -84,7 +84,7 @@ class HomePage extends React.Component<IHomePagePros, IHomePageState> {
     }
 
     return (
-      <div className="HomePage">
+      <div className="PaintPage">
         {canvas}
         <AppMenu
           visible={this.state.menuVisible}
@@ -209,4 +209,4 @@ class HomePage extends React.Component<IHomePagePros, IHomePageState> {
   }
 }
 
-export default HomePage;
+export default PaintPage;

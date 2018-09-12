@@ -4,7 +4,7 @@ import { Route, Router, Switch } from 'react-router-dom';
 import './App.css';
 import ErrorOverlay from './components/ErrorOverlay';
 import AboutPage from './pages/AboutPage';
-import HomePage from './pages/HomePage';
+import PaintPage from './pages/PaintPage';
 
 interface IAppState {
   errorMessage: string;
@@ -42,7 +42,7 @@ class App extends React.Component<any, IAppState> {
       <Router history={this.history}>
         <div className="App">
           <Switch>
-            <Route exact={true} path="/" component={HomePage}/>
+            <Route exact={true} path="/" component={PaintPage}/>
             <Route exact={true} path="/about" component={AboutPage}/>
             <Route component={ErrorNotFoundPage}/>
           </Switch>
