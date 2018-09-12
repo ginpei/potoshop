@@ -7,6 +7,7 @@ import LongTapper from '../../components/LongTapper';
 import { defaultStrokeColors, defaultStrokeWidth, ISize } from '../../misc';
 import firebase from '../../plugins/firebase';
 import { readBlob, uploadImage } from '../../services/image';
+import * as user from '../../services/user';
 import PaintCanvas from './PaintCanvas';
 import AppMenu from './PaintMenu';
 import './PaintPage.css';
@@ -118,6 +119,7 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
       }
     }
     this.currentUser = firebase.auth().currentUser;
+    user.saveLogin(this.currentUser!.uid);
   }
 
   protected onTutorialLongTap () {
