@@ -6,6 +6,7 @@ import AppHeader from '../../components/AppHeader';
 import LongTapper from '../../components/LongTapper';
 import { defaultStrokeColors, defaultStrokeWidth, ISize } from '../../misc';
 import firebase from '../../plugins/firebase';
+import { readBlob, uploadImage } from '../../services/image';
 import PaintCanvas from './PaintCanvas';
 import AppMenu from './PaintMenu';
 import './PaintPage.css';
@@ -176,22 +177,20 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
       });
     }
 
-    const blob = await new Promise<Blob>((resolve) => {
-      this.elCanvas!.toBlob(resolve as any);
-    });
-
-    const key = Date.now() + (Math.random() * 1000).toString().padStart(4, '0');
-    const path = `${this.currentUser!.uid}/${key}.png`;
-    const ref = this.storageRef.child(path);
-    const task = ref.put(blob);
-    task.on('state_changed', (s: firebase.storage.UploadTaskSnapshot) => {
+    const onStateChange = (s: firebase.storage.UploadTaskSnapshot) => {
       const progress = s.bytesTransferred / s.totalBytes;
       if (el) {
         el.textContent = `${Math.round(progress * 100)}%`;
       }
+    };
+    const ref = await uploadImage({
+      blob: await readBlob(this.elCanvas),
+      onStateChange,
+      storageRef: this.storageRef,
+      uid: this.currentUser!.uid,
     });
 
-    const url = await (await task).ref.getDownloadURL();
+    const url = await ref.getDownloadURL();
     (w || window).location.href = url;
   }
 
