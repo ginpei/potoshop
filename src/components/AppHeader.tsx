@@ -1,11 +1,18 @@
 import * as React from 'react';
+import { Link } from 'react-router-dom';
 import './AppHeader.css';
 
-class AppHeader extends React.Component {
+interface IAppHeaderProps {
+  fullscreen?: boolean;
+}
+
+class AppHeader extends React.Component<IAppHeaderProps> {
   public render () {
     return (
       <div className="AppHeader">
-        <a className="AppHeader-title" href="/">Giazo</a>
+        <div className={this.props.fullscreen === true ? 'AppHeader-container' : 'container'}>
+          <Link className="AppHeader-title" to="/">Giazo</Link>
+        </div>
       </div>
     );
   }

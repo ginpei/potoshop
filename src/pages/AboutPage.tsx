@@ -1,6 +1,6 @@
 // import * as firebase from 'firebase';
 import * as React from 'react';
-import { Link } from 'react-router-dom';
+import AppHeader from '../components/AppHeader';
 import './AboutPage.css';
 
 type IAboutPagePros = any;
@@ -10,11 +10,7 @@ class AboutPage extends React.Component<IAboutPagePros, IAboutPageState> {
   public render () {
     return (
       <div className="AboutPage">
-        <div className="AppHeader">
-          <div className="container">
-            <Link className="AppHeader-title" to="/">Giazo</Link>
-          </div>
-        </div>
+        <AppHeader/>
         <div className="container">
           <h1>Giazoについて</h1>
           <h2>サービス</h2>

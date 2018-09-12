@@ -66,7 +66,7 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
         onLongTap={this.onTutorialLongTap}
         >
         <div className="AppTutorialOverlay">
-          <AppHeader/>
+          <AppHeader fullscreen={true}/>
           <div className="AppTutorialOverlay-body">
             <h1>Giazo</h1>
             <p>

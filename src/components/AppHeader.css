@@ -3,6 +3,8 @@
   color: white;
   height: var(--app-header-height);
   line-height: var(--app-header-height);
+}
+.AppHeader-container {
   padding: 0 var(--app-space);
 }
   .AppHeader a {
