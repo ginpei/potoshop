@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { IPos } from './misc';
+import { IPos } from '../misc';
 import './PressIndicator.css';
 
 interface IPressIndicatorProps {

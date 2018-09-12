@@ -1,4 +1,4 @@
-.AppMenu {
+.PaintMenu {
   background-color: #0001;
   height: 100%;
   left: 0;
@@ -9,17 +9,17 @@
   transition: opacity 300ms;
   width: 100%;
 }
-.AppMenu.-visible {
+.PaintMenu.-visible {
   opacity: 1;
   pointer-events: auto;
 }
-.AppMenu-close {
+.PaintMenu-close {
   position: absolute;
   right: var(--app-space);
   top: calc(var(--app-header-height) + var(--app-space));
 }
 
-.AppMenu-penMenu {
+.PaintMenu-penMenu {
   bottom: calc(100px + var(--app-space));
   box-sizing: border-box;
   left: 0;
@@ -30,17 +30,17 @@
   transition: all 300ms;
   width: 100%;
 }
-.AppMenu.-visible .AppMenu-penMenu {
+.PaintMenu.-visible .PaintMenu-penMenu {
   opacity: 1;
   transform: translateY(0);
 }
-.AppMenu-colors {
+.PaintMenu-colors {
   display: flex;
   justify-content: space-evenly;
   margin-bottom: var(--app-space);
 }
 
-.AppMenu-menu {
+.PaintMenu-menu {
   bottom: 0;
   display: flex;
   align-items: stretch;
@@ -52,10 +52,10 @@
   transition: transform 300ms;
   width: 100%;
 }
-.AppMenu.-visible .AppMenu-menu {
+.PaintMenu.-visible .PaintMenu-menu {
   transform: translateY(0);
 }
-.AppMenu-menu > * {
+.PaintMenu-menu > * {
   width: 100%;
 }
 

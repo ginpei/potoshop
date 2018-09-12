@@ -1,7 +1,7 @@
-.AppCanvas {
+.PaintCanvas {
   transition: filter 300ms;
 }
-.AppCanvas-canvas {
+.PaintCanvas-canvas {
   box-shadow: 0 0 10px #0003 inset;
   display: block;
 }

@@ -4,7 +4,7 @@ import { Route, Router, Switch } from 'react-router-dom';
 import './App.css';
 import ErrorOverlay from './components/ErrorOverlay';
 import AboutPage from './pages/AboutPage';
-import PaintPage from './pages/PaintPage';
+import PaintPage from './pages/paint/PaintPage';
 
 interface IAppState {
   errorMessage: string;

@@ -1,10 +1,10 @@
 import { Color } from 'csstype';
 import * as React from 'react';
-import './AppCanvas.css';
-import LongTapper from './components/LongTapper';
-import { AnimationFrameId, IPos, ISize } from './misc';
+import LongTapper from '../../components/LongTapper';
+import { AnimationFrameId, IPos, ISize } from '../../misc';
+import './PaintCanvas.css';
 
-interface IAppCanvasProps {
+interface IPaintCanvasProps {
   size: ISize;
   inactive: boolean;
   strokeColor: Color;
@@ -12,7 +12,7 @@ interface IAppCanvasProps {
   onCanvasReceive: (el: HTMLCanvasElement | null) => void;
   onLongTap: () => void;
 }
-interface IAppCanvasState {
+interface IPaintCanvasState {
   lastX: number;
   lastY: number;
   lining: boolean;
@@ -20,7 +20,7 @@ interface IAppCanvasState {
   offsetY: number;
 }
 
-class AppCanvas extends React.Component<IAppCanvasProps, IAppCanvasState> {
+class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> {
   protected refCanvas = React.createRef<HTMLCanvasElement>();
   protected tmPressing: AnimationFrameId = 0;
   protected lastImage: ImageData = new ImageData(1, 1);
@@ -54,7 +54,7 @@ class AppCanvas extends React.Component<IAppCanvasProps, IAppCanvasState> {
     };
   }
 
-  constructor (props: IAppCanvasProps) {
+  constructor (props: IPaintCanvasProps) {
     super(props);
     this.state = {
       lastX: 0,
@@ -77,8 +77,8 @@ class AppCanvas extends React.Component<IAppCanvasProps, IAppCanvasState> {
       <LongTapper
         onLongTap={this.onLongTap}
         >
-        <div className="AppCanvas" style={this.styles}>
-          <canvas className="AppCanvas-canvas"
+        <div className="PaintCanvas" style={this.styles}>
+          <canvas className="PaintCanvas-canvas"
             width={this.props.size.width}
             height={this.props.size.height}
             ref={this.refCanvas}
@@ -256,4 +256,4 @@ class AppCanvas extends React.Component<IAppCanvasProps, IAppCanvasState> {
   }
 }
 
-export default AppCanvas;
+export default PaintCanvas;

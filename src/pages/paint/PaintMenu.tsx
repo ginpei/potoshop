@@ -1,10 +1,10 @@
 import { Color } from 'csstype';
 import * as React from 'react';
-import './AppMenu.css';
-import AppHeader from './components/AppHeader';
-import { strokeColors, strokeWidths } from './misc';
+import AppHeader from '../../components/AppHeader';
+import { strokeColors, strokeWidths } from '../../misc';
+import './PaintMenu.css';
 
-interface IAppMenuProps {
+interface IPaintMenuProps {
   visible: boolean;
   onOverlayClick: () => void;
   onStrokeWidthChange: (width: number) => void;
@@ -13,7 +13,7 @@ interface IAppMenuProps {
   onReset: () => void;
 }
 // tslint:disable-next-line:no-empty-interface
-interface IAppMenuState {
+interface IPaintMenuState {
 }
 
 interface IStrokeWidthButtonProps {
@@ -97,7 +97,7 @@ function Colors (props: IColorsProps) {
   };
 
   return (
-    <div className="AppMenu-colors">
+    <div className="PaintMenu-colors">
       <ColorButton
         color="#f33"
         onClick={onClick}
@@ -122,8 +122,8 @@ function Colors (props: IColorsProps) {
   );
 }
 
-class AppMenu extends React.Component<IAppMenuProps, IAppMenuState> {
-  constructor (props: IAppMenuProps) {
+class PaintMenu extends React.Component<IPaintMenuProps, IPaintMenuState> {
+  constructor (props: IPaintMenuProps) {
     super(props);
     this.onClick = this.onClick.bind(this);
     this.onStrokeWidthChange = this.onStrokeWidthChange.bind(this);
@@ -135,14 +135,14 @@ class AppMenu extends React.Component<IAppMenuProps, IAppMenuState> {
 
   public render () {
     return (
-      <div className={`AppMenu ${this.props.visible ? '-visible' : ''}`}
+      <div className={`PaintMenu ${this.props.visible ? '-visible' : ''}`}
         onClick={this.onClick}
         >
         <AppHeader/>
-        <div className="AppMenu-close">
+        <div className="PaintMenu-close">
           <i className="fa fa-times" aria-hidden="true" />
         </div>
-        <div className="AppMenu-menu">
+        <div className="PaintMenu-menu">
           <button
             onClick={this.onSaveClick}
             >Save &amp; Share</button>
@@ -153,7 +153,7 @@ class AppMenu extends React.Component<IAppMenuProps, IAppMenuState> {
             onClick={this.onAboutClick}
             >About</button>
         </div>
-        <div className="AppMenu-penMenu">
+        <div className="PaintMenu-penMenu">
           <StrokeWidths
             strokeWidths={strokeWidths}
             onChange={this.onStrokeWidthChange}
@@ -199,4 +199,4 @@ class AppMenu extends React.Component<IAppMenuProps, IAppMenuState> {
   }
 }
 
-export default AppMenu;
+export default PaintMenu;

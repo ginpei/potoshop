@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { AnimationFrameId, IPos, unixMs } from '../misc';
-import PressIndicator from '../PressIndicator';
 import './LongTapper.css';
+import PressIndicator from './PressIndicator';
 
 interface ILongTapperProps {
   children: React.ReactNode;

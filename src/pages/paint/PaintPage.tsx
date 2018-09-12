@@ -2,12 +2,12 @@
 import { Color } from 'csstype';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import AppCanvas from '../AppCanvas';
-import AppMenu from '../AppMenu';
-import AppHeader from '../components/AppHeader';
-import LongTapper from '../components/LongTapper';
-import { defaultStrokeColors, defaultStrokeWidth, ISize } from '../misc';
-import firebase from '../plugin/firebase';
+import AppHeader from '../../components/AppHeader';
+import LongTapper from '../../components/LongTapper';
+import { defaultStrokeColors, defaultStrokeWidth, ISize } from '../../misc';
+import firebase from '../../plugins/firebase';
+import PaintCanvas from './PaintCanvas';
+import AppMenu from './PaintMenu';
 import './PaintPage.css';
 
 type IPaintPagePros = any;
@@ -50,7 +50,7 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
 
   public render () {
     const canvas = this.state.resetting ? undefined : (
-      <AppCanvas
+      <PaintCanvas
         size={this.state.canvasSize}
         inactive={this.state.menuVisible}
         strokeColor={this.state.strokeColor}
