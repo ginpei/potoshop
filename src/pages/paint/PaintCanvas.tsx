@@ -24,6 +24,7 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
   protected refCanvas = React.createRef<HTMLCanvasElement>();
   protected tmPressing: AnimationFrameId = 0;
   protected lastPos: IPos = { x: 0, y: 0 };
+  protected lined = false;
   protected lastImage: ImageData = new ImageData(1, 1);
 
   protected vCtx: CanvasRenderingContext2D | null;
@@ -186,7 +187,7 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
   protected onLongTap () {
     if (this.state.lining) {
       this.restoreLastImage();
-      this.stopLining();
+      this.stopLining(false);
     }
 
     this.props.onLongTap();
@@ -207,6 +208,7 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
     ctx.lineCap = 'round';
     ctx.moveTo(x - offsetX, y - offsetY);
 
+    this.lined = false;
     this.lastPos = { x, y };
     this.setState({
       lastX: x,
@@ -234,6 +236,7 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
     );
     ctx.stroke();
 
+    this.lined = true;
     this.lastPos = { x, y };
     this.setState({
       lastX: x,
@@ -241,17 +244,19 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
     });
   }
 
-  protected stopLining () {
+  protected stopLining (lastStroke?: boolean) {
     const { ctx } = this;
     if (!ctx) {
       return;
     }
 
-    ctx.lineTo(
-      this.lastPos.x - this.state.offsetX,
-      this.lastPos.y - this.state.offsetY,
-    );
-    ctx.stroke();
+    if (lastStroke !== false && this.lined) {
+      ctx.lineTo(
+        this.lastPos.x - this.state.offsetX,
+        this.lastPos.y - this.state.offsetY,
+      );
+      ctx.stroke();
+    }
 
     // // {{{
     // // protected points: IPos[] = []; // expected this
