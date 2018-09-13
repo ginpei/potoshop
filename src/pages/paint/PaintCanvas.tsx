@@ -23,6 +23,7 @@ interface IPaintCanvasState {
 class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> {
   protected refCanvas = React.createRef<HTMLCanvasElement>();
   protected tmPressing: AnimationFrameId = 0;
+  protected lastPos: IPos = { x: 0, y: 0 };
   protected lastImage: ImageData = new ImageData(1, 1);
 
   protected vCtx: CanvasRenderingContext2D | null;
@@ -206,6 +207,7 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
     ctx.lineCap = 'round';
     ctx.moveTo(x - offsetX, y - offsetY);
 
+    this.lastPos = { x, y };
     this.setState({
       lastX: x,
       lastY: y,
@@ -222,9 +224,17 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
     }
 
     const { offsetX, offsetY } = this.state;
-    ctx.lineTo(x - offsetX, y - offsetY);
+    const lx = this.lastPos.x;
+    const ly = this.lastPos.y;
+    ctx.quadraticCurveTo(
+      lx - offsetX,
+      ly - offsetY,
+      (lx + x) / 2 - offsetX,
+      (ly + y) / 2 - offsetY,
+    );
     ctx.stroke();
 
+    this.lastPos = { x, y };
     this.setState({
       lastX: x,
       lastY: y,
@@ -232,6 +242,30 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
   }
 
   protected stopLining () {
+    const { ctx } = this;
+    if (!ctx) {
+      return;
+    }
+
+    ctx.lineTo(
+      this.lastPos.x - this.state.offsetX,
+      this.lastPos.y - this.state.offsetY,
+    );
+    ctx.stroke();
+
+    // // {{{
+    // // protected points: IPos[] = []; // expected this
+    // const { points } = this;
+    // ctx.strokeStyle = 'red';
+    // ctx.fillStyle = 'red';
+    // ctx.moveTo(points[0].x, points[0].y);
+    // points.forEach((p) => {
+    //   ctx.beginPath();
+    //   ctx.ellipse(p.x, p.y, 3, 3, 45 * Math.PI / 180, 0, 2 * Math.PI);
+    //   ctx.fill();
+    // });
+    // // }}}
+
     this.stashImage();
     this.setState({
       lining: false,
