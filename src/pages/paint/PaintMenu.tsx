@@ -98,7 +98,7 @@ function Colors (props: IColorsProps) {
 
   const buttons = props.colors.map((color) => (
       <ColorButton
-      color={color}
+        color={color}
         onClick={onClick}
         />
   ));
