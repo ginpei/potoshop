@@ -127,18 +127,10 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
     const { touches } = event;
     if (touches.length === 1) {
       event.preventDefault();
-      const t = touches[0];
-      const pos: IPos = {
-        x: t.clientX,
-        y: t.clientY,
-      };
+      const pos = this.getPos(event, 0);
       this.startLining(pos);
     } else if (touches.length === 2) {
-      const t = touches[1];
-      const pos: IPos = {
-        x: t.clientX,
-        y: t.clientY,
-      };
+      const pos = this.getPos(event, 1);
       this.startPinching(pos);
     }
   }
@@ -151,11 +143,7 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
         throw new Error(`Number of touches must be 1 but ${touches.length}`);
       }
 
-      const t = touches[0];
-      const pos: IPos = {
-        x: t.clientX,
-        y: t.clientY,
-      };
+      const pos = this.getPos(event, 0);
       this.drawLine(pos);
     } else if (this.state.pinching) {
       const { touches } = event;
@@ -164,11 +152,9 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
         throw new Error(`Number of touches must be 2 but ${touches.length}`);
       }
 
-      const t1 = touches[0];
-      const t2 = touches[1];
       const positions: IPos[] = [
-        { x: t1.clientX, y: t1.clientY },
-        { x: t2.clientX, y: t2.clientY },
+        this.getPos(event, 0),
+        this.getPos(event, 1),
       ];
       this.pinch(positions);
     }
@@ -184,19 +170,13 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
 
   protected onMouseDown (event: MouseEvent) {
     event.preventDefault();
-    const pos: IPos = {
-      x: event.clientX,
-      y: event.clientY,
-    };
+    const pos = this.getPos(event);
     this.startLining(pos);
   }
 
   protected onMouseMove (event: MouseEvent) {
     if (this.state.lining) {
-      const pos: IPos = {
-        x: event.clientX,
-        y: event.clientY,
-      };
+      const pos = this.getPos(event);
       this.drawLine(pos);
     }
   }
@@ -375,6 +355,27 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
     const [p1, p2] = positions;
     const distance = Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
     return distance;
+  }
+
+  protected getPos (event: MouseEvent): IPos;
+  protected getPos (event: TouchEvent, index: number): IPos;
+  protected getPos (event: any, index?: number): IPos {
+    if (event instanceof MouseEvent) {
+      const pos: IPos = {
+        x: event.clientX,
+        y: event.clientY,
+      };
+      return pos;
+    } else if (event instanceof TouchEvent && typeof index === 'number') {
+      const t = event.touches[index];
+      const pos: IPos = {
+        x: t.clientX,
+        y: t.clientY,
+      };
+      return pos;
+    }
+
+    throw new Error('Unsupported argument types');
   }
 }
 
