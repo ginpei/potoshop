@@ -4,7 +4,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import AppHeader from '../../components/AppHeader';
 import LongTapper from '../../components/LongTapper';
-import { defaultStrokeColors, defaultStrokeWidth, ISize } from '../../misc';
+import { appSpace, defaultStrokeColors, defaultStrokeWidth, ISize } from '../../misc';
 import firebase from '../../plugins/firebase';
 import { readBlob, uploadImage } from '../../services/image';
 import * as user from '../../services/user';
@@ -105,8 +105,8 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
     const el = document.documentElement;
     this.setState({
       canvasSize: {
-        height: el.clientHeight,
-        width: el.clientWidth,
+        height: el.clientHeight - appSpace * 2,
+        width: el.clientWidth - appSpace * 2,
       },
     });
 

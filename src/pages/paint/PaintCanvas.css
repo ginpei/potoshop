@@ -1,7 +1,9 @@
 .PaintCanvas {
+  background-color: #999;
+  padding: var(--app-space);
   transition: filter 300ms;
 }
 .PaintCanvas-canvas {
-  box-shadow: 0 0 10px #0003 inset;
+  box-shadow: 0 0 var(--app-space) #0009;
   display: block;
 }

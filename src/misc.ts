@@ -22,3 +22,4 @@ export interface ISize {
   height: number;
   width: number;
 }
+export const appSpace = 16; // index.css
