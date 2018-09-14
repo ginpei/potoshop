@@ -185,8 +185,10 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
     } else if (this.state.pinching) {
       const { touches } = event;
       if (touches.length !== 2) {
+        // this can occur in Firefox
+        // when you quickly move and suddenly up one of your fingers
         this.stopPinching();
-        throw new Error(`Number of touches must be 2 but ${touches.length}`);
+        return;
       }
 
       const positions: IPos[] = [
