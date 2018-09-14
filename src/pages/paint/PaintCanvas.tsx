@@ -166,6 +166,7 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
       const pos = this.getPos(event, 0);
       this.startLining(pos);
     } else if (touches.length === 2) {
+      event.preventDefault(); // to prevent from zooming in Firefox
       const pos = this.getPos(event, 1);
       this.startPinching(pos);
     }
