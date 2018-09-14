@@ -13,12 +13,16 @@ interface IPaintCanvasProps {
   onLongTap: () => void;
 }
 interface IPaintCanvasState {
+  dTranslation: IPos;
+  dZoomPx: number;
   lastX: number;
   lastY: number;
   lining: boolean;
   offsetX: number;
   offsetY: number;
   pinching: boolean;
+  translation: IPos;
+  zoomPx: number;
 }
 
 class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> {
@@ -52,6 +56,26 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
     };
   }
 
+  protected get canvasStyle (): React.CSSProperties {
+    const scale = this.pinchingScale;
+    const translation = this.pinchingTranslation;
+    return {
+      transform: `translate(${translation.x}px, ${translation.y}px) scale(${scale})`,
+    };
+  }
+
+  private get pinchingScale () {
+    const width = this.props.size.width + this.state.zoomPx + this.state.dZoomPx;
+    return width / this.props.size.width;
+  }
+
+  protected get pinchingTranslation (): IPos {
+    return {
+      x: this.state.translation.x + this.state.dTranslation.x,
+      y: this.state.translation.y + this.state.dTranslation.y,
+    };
+  }
+
   protected get pressIndicatorPos (): IPos {
     const s = this.state;
     return {
@@ -63,12 +87,16 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
   constructor (props: IPaintCanvasProps) {
     super(props);
     this.state = {
+      dTranslation: { x: 0, y: 0 },
+      dZoomPx: 0,
       lastX: 0,
       lastY: 0,
       lining: false,
       offsetX: 0,
       offsetY: 0,
       pinching: false,
+      translation: { x: 0, y: 0 },
+      zoomPx: 0,
     };
     this.onTouchStart = this.onTouchStart.bind(this);
     this.onTouchMove = this.onTouchMove.bind(this);
@@ -80,16 +108,24 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
   }
 
   public render () {
+    const elSize = this.state.pinching && (
+      <div className="PaintCanvas-size">
+        x{this.pinchingScale.toFixed(2)}
+      </div>
+    );
+
     return (
       <LongTapper
         onLongTap={this.onLongTap}
         >
         <div className="PaintCanvas" style={this.styles}>
           <canvas className="PaintCanvas-canvas"
+            style={this.canvasStyle}
             width={this.props.size.width}
             height={this.props.size.height}
             ref={this.refCanvas}
             />
+          {elSize}
         </div>
       </LongTapper>
     );
@@ -325,14 +361,19 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
     const distance = this.calculateDistance(positions);
     const dDistance = distance - this.pinchDistance;
 
-    // WIP
-    // tslint:disable-next-line:no-console
-    console.log(diff, dDistance);
+    this.setState({
+      dTranslation: diff,
+      dZoomPx: dDistance,
+    });
   }
 
   protected stopPinching () {
     this.setState({
+      dTranslation: { x: 0, y: 0 },
+      dZoomPx: 0,
       pinching: false,
+      translation: this.pinchingTranslation,
+      zoomPx: this.state.zoomPx + this.state.dZoomPx,
     });
   }
 
