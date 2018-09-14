@@ -118,7 +118,7 @@ class LongTapper extends React.Component<ILongTapperProps, ILongTapperState> {
 
     const { touches } = event;
     if (touches.length !== 1) {
-      throw new Error('Something went wrong');
+      this.stopPressing();
     }
 
     const t = touches[0];

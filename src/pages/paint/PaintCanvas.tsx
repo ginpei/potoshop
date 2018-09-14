@@ -18,6 +18,7 @@ interface IPaintCanvasState {
   lining: boolean;
   offsetX: number;
   offsetY: number;
+  pinching: boolean;
 }
 
 class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> {
@@ -26,6 +27,9 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
   protected lastPos: IPos = { x: 0, y: 0 };
   protected lined = false;
   protected lastImage: ImageData = new ImageData(1, 1);
+  protected pinchStartedAt: [IPos, IPos] = [{ x: 0, y: 0 }, { x: 0, y: 0 }];
+  protected pinchCenter: IPos = { x: 0, y: 0 };
+  protected pinchDistance = 0;
 
   protected vCtx: CanvasRenderingContext2D | null;
   protected get ctx (): CanvasRenderingContext2D | null {
@@ -64,6 +68,7 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
       lining: false,
       offsetX: 0,
       offsetY: 0,
+      pinching: false,
     };
     this.onTouchStart = this.onTouchStart.bind(this);
     this.onTouchMove = this.onTouchMove.bind(this);
@@ -128,6 +133,13 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
         y: t.clientY,
       };
       this.startLining(pos);
+    } else if (touches.length === 2) {
+      const t = touches[1];
+      const pos: IPos = {
+        x: t.clientX,
+        y: t.clientY,
+      };
+      this.startPinching(pos);
     }
   }
 
@@ -135,23 +147,39 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
     if (this.state.lining) {
       const { touches } = event;
       if (touches.length !== 1) {
-        throw new Error('Something went wrong');
+        this.stopLining();
+        throw new Error(`Number of touches must be 1 but ${touches.length}`);
       }
+
       const t = touches[0];
       const pos: IPos = {
         x: t.clientX,
         y: t.clientY,
       };
       this.drawLine(pos);
+    } else if (this.state.pinching) {
+      const { touches } = event;
+      if (touches.length !== 2) {
+        this.stopPinching();
+        throw new Error(`Number of touches must be 2 but ${touches.length}`);
+      }
+
+      const t1 = touches[0];
+      const t2 = touches[1];
+      const positions: IPos[] = [
+        { x: t1.clientX, y: t1.clientY },
+        { x: t2.clientX, y: t2.clientY },
+      ];
+      this.pinch(positions);
     }
   }
 
   protected onTouchEnd (event: TouchEvent) {
-    if (!this.state.lining) {
-      return;
+    if (this.state.lining) {
+      this.stopLining();
+    } else if (this.state.pinching) {
+      this.stopPinching();
     }
-
-    this.stopLining();
   }
 
   protected onMouseDown (event: MouseEvent) {
@@ -292,6 +320,61 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
     }
 
     this.ctx.putImageData(this.lastImage, 0, 0);
+  }
+
+  protected startPinching (pos: IPos) {
+    this.restoreLastImage();
+    this.stopLining(false);
+    this.pinchStartedAt = [this.lastPos, pos];
+    this.pinchCenter = {
+      x: (this.lastPos.x + pos.x) / 2,
+      y: (this.lastPos.y + pos.y) / 2,
+    };
+    this.pinchDistance = this.calculateDistance(this.pinchStartedAt);
+    this.setState({
+      pinching: true,
+    });
+  }
+
+  protected pinch (positions: IPos[]) {
+    const c2 = this.calculateCenter(positions);
+    const diff: IPos = {
+      x: c2.x - this.pinchCenter.x,
+      y: c2.y - this.pinchCenter.y,
+    };
+    const distance = this.calculateDistance(positions);
+    const dDistance = distance - this.pinchDistance;
+
+    // WIP
+    // tslint:disable-next-line:no-console
+    console.log(diff, dDistance);
+  }
+
+  protected stopPinching () {
+    this.setState({
+      pinching: false,
+    });
+  }
+
+  protected calculateCenter (positions: IPos[]) {
+    if (positions.length !== 2) {
+      throw new Error(`2 positions must be given but ${positions.length}`);
+    }
+    const [p1, p2] = positions;
+    const center: IPos = {
+      x: (p1.x + p2.x) / 2,
+      y: (p1.y + p2.y) / 2,
+    };
+    return center;
+  }
+
+  protected calculateDistance (positions: IPos[]) {
+    if (positions.length !== 2) {
+      throw new Error(`2 positions must be given but ${positions.length}`);
+    }
+    const [p1, p2] = positions;
+    const distance = Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
+    return distance;
   }
 }
 
