@@ -25,7 +25,7 @@ interface IPaintPageState {
 class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
   protected currentUser: firebase.User | null;
   protected elCanvas: HTMLCanvasElement | null;
-  protected storageRef = firebase.storage().ref('giazo/v1');
+  protected storageRef = firebase.storage().ref('v1-images');
 
   constructor (props: IPaintPagePros) {
     super(props);
@@ -69,7 +69,7 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
         <div className="AppTutorialOverlay">
           <AppHeader fullscreen={true}/>
           <div className="AppTutorialOverlay-body">
-            <h1>Giazo</h1>
+            <h1>Potoshop</h1>
             <p>
               Where you can draw and share.
               <br/>
