@@ -168,9 +168,14 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
       const pos = this.getPos(event, 0);
       this.startLining(pos);
     } else if (touches.length === 2) {
-      event.preventDefault(); // to prevent from zooming in Firefox
-      const pos = this.getPos(event, 1);
-      this.startPinching(pos);
+      if (location.search.slice(1).split('&').includes('pinch=1')) {
+        event.preventDefault(); // to prevent from zooming in Firefox
+        const pos = this.getPos(event, 1);
+        this.startPinching(pos);
+      } else {
+        this.restoreLastImage();
+        this.stopLining(false);
+      }
     }
   }
 
@@ -367,8 +372,8 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
       y: c2.y - this.pinchCenter.y - dDistance,
     };
     const dTranslation: IPos = {
-      x: diff.x,
-      y: diff.y,
+      x: diff.x * (c2.x / this.props.width),
+      y: diff.y * (c2.y / this.props.height),
     };
 
     this.setState({
