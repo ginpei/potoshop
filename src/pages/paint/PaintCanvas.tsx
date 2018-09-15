@@ -358,16 +358,21 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
   }
 
   protected pinch (positions: IPos[]) {
+    const curDistance = this.calculateDistance(positions);
+    const dDistance = curDistance - this.pinchDistance;
+
     const c2 = this.calculateCenter(positions);
     const diff: IPos = {
-      x: c2.x - this.pinchCenter.x,
-      y: c2.y - this.pinchCenter.y,
+      x: c2.x - this.pinchCenter.x - dDistance,
+      y: c2.y - this.pinchCenter.y - dDistance,
     };
-    const distance = this.calculateDistance(positions);
-    const dDistance = distance - this.pinchDistance;
+    const dTranslation: IPos = {
+      x: diff.x,
+      y: diff.y,
+    };
 
     this.setState({
-      dTranslation: diff,
+      dTranslation,
       dZoomPx: dDistance * 2,
     });
   }
