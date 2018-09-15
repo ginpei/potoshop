@@ -383,26 +383,24 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
   }
 
   protected get safeTranslation (): IPos {
+    const { height, width } = this.props.size;
     const scale = this.pinchingScale;
+    const diff: IPos = {
+      x: width - width * scale,
+      y: height - height * scale,
+    };
 
     if (scale < 1) {
-      return { x: 0, y: 0 };
+      return {
+        x: diff.x / 2,
+        y: diff.y / 2,
+      };
     }
-
-    const { height, width } = this.props.size;
-    const max: IPos = {
-      x: (width * scale - width) / 2,
-      y: (height * scale - height) / 2,
-    };
-    const min: IPos = {
-      x: -max.x,
-      y: -max.y,
-    };
 
     const t = this.pinchingTranslation;
     const safePos: IPos = {
-      x: between(min.x, t.x, max.x),
-      y: between(min.y, t.y, max.y),
+      x: between(diff.x, t.x, 0),
+      y: between(diff.y, t.y, 0),
     };
     return safePos;
   }
