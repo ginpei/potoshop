@@ -11,7 +11,7 @@ class AboutPage extends React.Component<IAboutPagePros, IAboutPageState> {
     return (
       <div className="AboutPage">
         <AppHeader/>
-        <div className="container">
+        <div className="container" lang="ja">
           <h1>Giazoについて</h1>
           <h2>サービス</h2>
           <ul>
