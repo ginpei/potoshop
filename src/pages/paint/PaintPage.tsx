@@ -53,10 +53,11 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
   public render () {
     const canvas = this.state.resetting ? undefined : (
       <PaintCanvas
-        size={this.state.canvasSize}
+        height={this.state.canvasSize.height}
         inactive={this.state.menuVisible}
         strokeColor={this.state.strokeColor}
         strokeWidth={this.state.strokeWidth}
+        width={this.state.canvasSize.width}
         onCanvasReceive={this.onCanvasReceive}
         onLongTap={this.onCanvasLongTap}
         />

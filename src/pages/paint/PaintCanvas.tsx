@@ -1,16 +1,17 @@
 import { Color } from 'csstype';
 import * as React from 'react';
 import LongTapper from '../../components/LongTapper';
-import { AnimationFrameId, between, IPos, ISize } from '../../misc';
+import { AnimationFrameId, between, IPos } from '../../misc';
 import './PaintCanvas.css';
 
 interface IPaintCanvasProps {
-  size: ISize;
+  height: number;
   inactive: boolean;
-  strokeColor: Color;
-  strokeWidth: number;
   onCanvasReceive: (el: HTMLCanvasElement | null) => void;
   onLongTap: () => void;
+  strokeColor: Color;
+  strokeWidth: number;
+  width: number;
 }
 interface IPaintCanvasState {
   dTranslation: IPos;
@@ -51,8 +52,9 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
 
   protected get styles (): React.CSSProperties {
     return {
-      ...this.props.size,
       filter: this.props.inactive ? 'blur(5px)' : '',
+      height: this.props.height,
+      width: this.props.width,
     };
   }
 
@@ -65,8 +67,8 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
   }
 
   private get pinchingScale () {
-    const width = this.props.size.width + this.state.zoomPx + this.state.dZoomPx;
-    return width / this.props.size.width;
+    const width = this.props.width + this.state.zoomPx + this.state.dZoomPx;
+    return width / this.props.width;
   }
 
   protected get pinchingTranslation (): IPos {
@@ -121,8 +123,8 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
         <div className="PaintCanvas" style={this.styles}>
           <canvas className="PaintCanvas-canvas"
             style={this.canvasStyle}
-            width={this.props.size.width}
-            height={this.props.size.height}
+            width={this.props.width}
+            height={this.props.height}
             ref={this.refCanvas}
             />
           {elSize}
@@ -142,7 +144,7 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
     document.addEventListener('mouseup', this.onMouseUp);
 
     this.ctx!.fillStyle = '#fff';
-    this.ctx!.fillRect(0, 0, this.props.size.width, this.props.size.height);
+    this.ctx!.fillRect(0, 0, this.props.width, this.props.height);
     this.props.onCanvasReceive(elCanvas);
   }
 
@@ -329,8 +331,8 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
       throw new Error('Canvas is not ready');
     }
 
-    const { size } = this.props;
-    this.lastImage = this.ctx.getImageData(0, 0, size.width, size.height);
+    const { height, width } = this.props;
+    this.lastImage = this.ctx.getImageData(0, 0, width, height);
   }
 
   protected restoreLastImage () {
@@ -383,7 +385,7 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
   }
 
   protected get safeTranslation (): IPos {
-    const { height, width } = this.props.size;
+    const { height, width } = this.props;
     const scale = this.pinchingScale;
     const diff: IPos = {
       x: width - width * scale,
