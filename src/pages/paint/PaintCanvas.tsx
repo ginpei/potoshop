@@ -374,13 +374,14 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
 
   protected stopPinching () {
     const zoomPx = (this.state.zoomPx + this.state.dZoomPx);
+    const lessThanOriginal = zoomPx < 0;
 
     this.setState({
       dTranslation: { x: 0, y: 0 },
       dZoomPx: 0,
       pinching: false,
-      translation: this.safeTranslation,
-      zoomPx,
+      translation: lessThanOriginal ? { x: 0, y: 0 } : this.safeTranslation,
+      zoomPx: lessThanOriginal ? 0 : zoomPx,
     });
   }
 
