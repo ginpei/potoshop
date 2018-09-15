@@ -118,6 +118,7 @@ class PaintMenu extends React.Component<IPaintMenuProps, IPaintMenuState> {
     this.onStrokeWidthChange = this.onStrokeWidthChange.bind(this);
     this.onColorChange = this.onColorChange.bind(this);
     this.onSaveClick = this.onSaveClick.bind(this);
+    this.onHistoryClick = this.onHistoryClick.bind(this);
     this.onResetClick = this.onResetClick.bind(this);
     this.onAboutClick = this.onAboutClick.bind(this);
   }
@@ -135,6 +136,9 @@ class PaintMenu extends React.Component<IPaintMenuProps, IPaintMenuState> {
           <button
             onClick={this.onSaveClick}
             >Save &amp; Share</button>
+          <button
+            onClick={this.onHistoryClick}
+            >History</button>
           <button
             onClick={this.onResetClick}
             >Reset</button>
@@ -174,6 +178,10 @@ class PaintMenu extends React.Component<IPaintMenuProps, IPaintMenuState> {
 
   protected onSaveClick (event: React.MouseEvent<HTMLButtonElement>) {
     this.props.onSave();
+  }
+
+  protected onHistoryClick (event: React.MouseEvent<HTMLButtonElement>) {
+    window.open('/history');
   }
 
   protected onResetClick (event: React.MouseEvent<HTMLButtonElement>) {
