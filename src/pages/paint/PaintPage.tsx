@@ -35,7 +35,7 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
         width: 0,
       },
       justAfterStarted: true,
-      menuVisible: false,
+      menuVisible: true,
       resetting: false,
       strokeColor: defaultStrokeColors,
       strokeWidth: defaultStrokeWidth,
