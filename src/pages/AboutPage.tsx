@@ -21,7 +21,7 @@ class AboutPage extends React.Component<IAboutPagePros, IAboutPageState> {
           <h2>プライバシーポリシー</h2>
           <ul>
             <li>利用者同定やその他の目的でCookieを利用します。</li>
-            <li>Cookieを含む各種の個人情報を本人の同意なく第三者へ提供することはしません。</li>
+            <li>各種の個人情報を本人の同意なく第三者へ提供することはしません。</li>
           </ul>
           <h2>作成された画像</h2>
           <ul>
