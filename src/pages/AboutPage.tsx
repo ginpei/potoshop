@@ -11,12 +11,11 @@ class AboutPage extends React.Component<IAboutPagePros, IAboutPageState> {
     return (
       <div className="AboutPage">
         <AppHeader/>
-        <div className="container" lang="ja">
-          <h1>Giazoについて</h1>
+<div className="container" lang="ja">
+          <h1>Potoshopについて</h1>
           <h2>サービス</h2>
           <ul>
             <li>画像ぱぱっと描いて共有できたら便利なのか？という実験的サービスです。</li>
-            <li>サービス名称は仮のものです。どうしよう。</li>
             <li>予告なく停止、変更、終了します。</li>
           </ul>
           <h2>プライバシーポリシー</h2>
@@ -33,7 +32,7 @@ class AboutPage extends React.Component<IAboutPagePros, IAboutPageState> {
           <h2>作者について</h2>
           <ul>
             <li><a href="https://github.com/ginpei">@ginpei</a></li>
-            <li><a href="https://github.com/ginpei/giazo">ginpei/giazo</a></li>
+            <li><a href="https://github.com/ginpei/potoshop">ginpei/potoshop</a></li>
           </ul>
         </div>
         <div className="AppFooter">
