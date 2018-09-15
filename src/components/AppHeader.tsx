@@ -11,7 +11,7 @@ class AppHeader extends React.Component<IAppHeaderProps> {
     return (
       <div className="AppHeader">
         <div className={this.props.fullscreen === true ? 'AppHeader-container' : 'container'}>
-          <Link className="AppHeader-title" to="/">Giazo</Link>
+          <Link className="AppHeader-title" to="/">Potoshop</Link>
         </div>
       </div>
     );
