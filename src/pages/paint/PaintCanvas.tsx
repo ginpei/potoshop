@@ -173,8 +173,7 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
         const pos = this.getPos(event, 1);
         this.startPinching(pos);
       } else {
-        this.restoreLastImage();
-        this.stopLining(false);
+        this.cancelLining();
       }
     }
   }
@@ -240,8 +239,7 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
    */
   protected onLongTap () {
     if (this.state.lining) {
-      this.restoreLastImage();
-      this.stopLining(false);
+      this.cancelLining();
     }
 
     this.props.onLongTap();
@@ -331,6 +329,11 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
     });
   }
 
+  protected cancelLining () {
+    this.restoreLastImage();
+    this.stopLining(false);
+  }
+
   protected stashImage () {
     if (!this.ctx) {
       throw new Error('Canvas is not ready');
@@ -349,8 +352,8 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
   }
 
   protected startPinching (pos: IPos) {
-    this.restoreLastImage();
-    this.stopLining(false);
+    this.cancelLining();
+
     this.pinchStartedAt = [this.lastPos, pos];
     this.pinchCenter = {
       x: (this.lastPos.x + pos.x) / 2,
