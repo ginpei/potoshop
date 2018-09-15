@@ -1,7 +1,7 @@
 import { Color } from 'csstype';
 import * as React from 'react';
 import LongTapper from '../../components/LongTapper';
-import { AnimationFrameId, IPos, ISize } from '../../misc';
+import { AnimationFrameId, between, IPos, ISize } from '../../misc';
 import './PaintCanvas.css';
 
 interface IPaintCanvasProps {
@@ -366,18 +366,45 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
 
     this.setState({
       dTranslation: diff,
-      dZoomPx: dDistance,
+      dZoomPx: dDistance * 2,
     });
   }
 
   protected stopPinching () {
+    const zoomPx = (this.state.zoomPx + this.state.dZoomPx);
+
     this.setState({
       dTranslation: { x: 0, y: 0 },
       dZoomPx: 0,
       pinching: false,
-      translation: this.pinchingTranslation,
-      zoomPx: this.state.zoomPx + this.state.dZoomPx,
+      translation: this.safeTranslation,
+      zoomPx,
     });
+  }
+
+  protected get safeTranslation (): IPos {
+    const scale = this.pinchingScale;
+
+    if (scale < 1) {
+      return { x: 0, y: 0 };
+    }
+
+    const { height, width } = this.props.size;
+    const max: IPos = {
+      x: (width * scale - width) / 2,
+      y: (height * scale - height) / 2,
+    };
+    const min: IPos = {
+      x: -max.x,
+      y: -max.y,
+    };
+
+    const t = this.pinchingTranslation;
+    const safePos: IPos = {
+      x: between(min.x, t.x, max.x),
+      y: between(min.y, t.y, max.y),
+    };
+    return safePos;
   }
 
   protected calculateCenter (positions: IPos[]) {

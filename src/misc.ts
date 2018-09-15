@@ -23,3 +23,10 @@ export interface ISize {
   width: number;
 }
 export const appSpace = 16; // index.css
+export function between (min: number, n: number, max: number) {
+  if (min > max) {
+    throw new Error(`Contradictory numbers: min ${min} must be`
+      + ` less than or equal to max ${max}`);
+  }
+  return Math.max(min, Math.min(n, max));
+}
