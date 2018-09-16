@@ -18,12 +18,12 @@ interface IPointerHandlerProps {
 }
 interface IPointerHandlerState {
   longPressProgress: number;
-  pointStartedAt: unixMs;
   pointStartedPos: IPos;
 }
 
 class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandlerState> {
   protected el = React.createRef<HTMLDivElement>();
+  protected pointStartedAt: unixMs = 0;
   protected tmLongPressing: AnimationFrameId = 0;
 
   protected get containing () {
@@ -40,7 +40,7 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
   }
 
   protected get pressing () {
-    return this.state.pointStartedAt !== 0;
+    return this.pointStartedAt !== 0;
   }
 
   protected get longPressing () {
@@ -51,7 +51,6 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
     super(props);
     this.state = {
       longPressProgress: 0,
-      pointStartedAt: 0,
       pointStartedPos: emptyPos,
     };
     this.onTouchStart = this.onTouchStart.bind(this);
@@ -145,8 +144,8 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
   }
 
   protected startPressing (pos: IPos) {
+    this.pointStartedAt = Date.now();
     this.setState({
-      pointStartedAt: Date.now(),
       pointStartedPos: pos,
     });
 
@@ -176,8 +175,8 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
         this.props.onPointEnd();
       }
 
+      this.pointStartedAt = 0;
       this.setState({
-        pointStartedAt: 0,
         pointStartedPos: emptyPos,
       });
     }
@@ -195,7 +194,7 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
 
   protected progressLongPressing () {
     const { duration } = this;
-    const elapsed = Date.now() - this.state.pointStartedAt;
+    const elapsed = Date.now() - this.pointStartedAt;
     const progress = elapsed / duration;
     this.setState({
       longPressProgress: Math.max(0, elapsed - duration / 2) / (duration / 2),
