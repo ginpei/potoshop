@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { AnimationFrameId, emptyPos, IPos, unixMs } from '../misc';
+import { AnimationFrameId, emptyPos, IPos, IPosPair, unixMs } from '../misc';
 import './PointerHandler.css';
 import PressIndicator from './PressIndicator';
 
@@ -11,6 +11,9 @@ interface IPointerHandlerProps {
   size?: number;
   width?: number;
   onLongPoint?: () => void;
+  onPinchEnd?: () => void;
+  onPinchMove?: (pair: IPosPair, originalPair: IPosPair) => void;
+  onPinchStart?: (pair: IPosPair) => void;
   onPointCancel?: () => void;
   onPointEnd?: () => void;
   onPointMove?: (pos: IPos, startedPos: IPos) => void;
@@ -25,6 +28,8 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
   protected el = React.createRef<HTMLDivElement>();
   protected pointStartedAt: unixMs = 0;
   protected tmLongPressing: AnimationFrameId = 0;
+  protected pinching = false;
+  protected pinchOriginalPos: IPosPair = [emptyPos, emptyPos];
 
   protected get containing () {
     const { containing } = this.props;
@@ -45,6 +50,19 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
 
   protected get longPressing () {
     return this.tmLongPressing !== 0;
+  }
+
+  protected get pinchOriginalCenter (): IPos {
+    const [p1, p2] = this.pinchOriginalPos;
+    return {
+      x: (p1.x + p2.x) / 2,
+      y: (p1.y + p2.y) / 2,
+    };
+  }
+
+  protected get pinchOriginalDistance () {
+    const [p1, p2] = this.pinchOriginalPos;
+    return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
   }
 
   constructor (props: IPointerHandlerProps) {
@@ -105,6 +123,10 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
       event.preventDefault();
       const pos = this.getPos(event, 0);
       this.startPressing(pos);
+    } else if (this.pressing && numTouches === 2) {
+      event.preventDefault();
+      const pos = this.getPos(event, 1);
+      this.startPinching([this.state.pointStartedPos, pos]);
     }
   }
 
@@ -113,12 +135,17 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
     if (this.pressing && numTouches === 1) {
       const pos = this.getPos(event, 0);
       this.movePressing(pos);
+    } else if (this.pinching && numTouches === 2) {
+      const posPair: IPosPair = [this.getPos(event, 0), this.getPos(event, 1)];
+      this.movePinching(posPair);
     }
   }
 
   protected onTouchEnd (event: TouchEvent) {
     if (this.pressing) {
       this.stopPressing();
+    } else if (this.pinching) {
+      this.stopPinching();
     }
   }
 
@@ -230,6 +257,39 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
      const distance = Math.max(Math.abs(p0.x - pos.x), Math.abs(p0.y - pos.y));
      return distance > this.moveThreshold;
    }
+
+  protected startPinching (posPair: IPosPair) {
+    this.cancelPressing();
+    this.stopLongPressing();
+
+    this.pinching = true;
+    this.pinchOriginalPos = posPair;
+
+     if (this.props.onPinchStart) {
+       this.props.onPinchStart(posPair);
+     }
+  }
+
+  protected movePinching (posPair: IPosPair) {
+    if (!this.pinching) {
+      return;
+    }
+
+    if (this.props.onPinchMove) {
+      this.props.onPinchMove(posPair, this.pinchOriginalPos);
+    }
+  }
+
+  protected stopPinching () {
+    if (!this.pinching) {
+      return;
+    }
+
+    this.pinching = false;
+    if (this.props.onPinchEnd) {
+      this.props.onPinchEnd();
+    }
+  }
 
   protected getPos (event: MouseEvent): IPos;
   protected getPos (event: TouchEvent, index: number): IPos;

@@ -18,6 +18,7 @@ export interface IPos {
   x: number;
   y: number;
 }
+export type IPosPair = [IPos, IPos];
 export const emptyPos: IPos = Object.freeze({ x: 0, y: 0 });
 export interface ISize {
   height: number;

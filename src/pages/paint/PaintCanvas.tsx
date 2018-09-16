@@ -1,7 +1,7 @@
 import { Color } from 'csstype';
 import * as React from 'react';
 import PointerHandler from '../../components/PointerHandler';
-import { AnimationFrameId, between, emptyPos, IPos, Ratio } from '../../misc';
+import { AnimationFrameId, between, emptyPos, IPos, IPosPair, Ratio } from '../../misc';
 import './PaintCanvas.css';
 
 interface IPaintCanvasProps {
@@ -127,6 +127,9 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
         onPointEnd={this.onPointEnd}
         onPointCancel={this.onPointCancel}
         onLongPoint={this.onLongPoint}
+        onPinchStart={this.onPinchStart}
+        onPinchMove={this.onPinchMove}
+        onPinchEnd={this.onPinchEnd}
         >
         <div className="PaintCanvas" style={this.styles}>
           <canvas className="PaintCanvas-canvas"
@@ -275,6 +278,21 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
     }
 
     this.props.onLongPoint();
+  }
+
+  protected onPinchStart ([p1, p2]: IPosPair) {
+    // tslint:disable-next-line:no-console
+    console.log('start', p1, p2);
+  }
+
+  protected onPinchMove ([p1, p2]: IPosPair) {
+    // tslint:disable-next-line:no-console
+    console.log('move', p1, p2);
+  }
+
+  protected onPinchEnd () {
+    // tslint:disable-next-line:no-console
+    console.log('stop');
   }
 
   protected startLining ({ x, y }: IPos) {
