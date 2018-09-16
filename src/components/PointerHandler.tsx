@@ -376,24 +376,12 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
     pos: IPos,
     style: string | CanvasGradient | CanvasPattern = 'red',
     ) {
-    const size = 10;
-
     const ctx = this.pressContext;
     if (!ctx) {
       throw new Error('Canvas is not ready');
     }
 
-    ctx.beginPath();
-    ctx.strokeStyle = style;
-    ctx.ellipse(
-      pos.x,
-      pos.y,
-      size / 2,
-      size / 2,
-      0,
-      0,
-      2 * Math.PI);
-    ctx.stroke();
+    this.putDebugPoint(ctx, pos, style);
   }
 
   protected clearDebugPress () {
