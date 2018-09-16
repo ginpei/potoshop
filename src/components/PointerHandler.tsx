@@ -11,16 +11,20 @@ interface IPointerHandlerProps {
   size?: number;
   width?: number;
   onLongPoint?: () => void;
+  onPointCancel?: () => void;
+  onPointEnd?: () => void;
+  onPointMove?: (pos: IPos, startedPos: IPos) => void;
+  onPointStart?: (pos: IPos) => void;
 }
 interface IPointerHandlerState {
-  pos: IPos;
-  progress: number;
-  startedAt: unixMs;
+  longPressProgress: number;
+  pointStartedAt: unixMs;
+  pointStartedPos: IPos;
 }
 
 class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandlerState> {
   protected el = React.createRef<HTMLDivElement>();
-  protected tmPressing: AnimationFrameId = 0;
+  protected tmLongPressing: AnimationFrameId = 0;
 
   protected get containing () {
     const { containing } = this.props;
@@ -36,22 +40,19 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
   }
 
   protected get pressing () {
-    return this.state.startedAt !== 0;
+    return this.state.pointStartedAt !== 0;
   }
 
-  protected get pressIndicatorPos (): IPos {
-    return {
-      x: this.state.pos.x,
-      y: this.state.pos.y,
-    };
+  protected get longPressing () {
+    return this.tmLongPressing !== 0;
   }
 
   constructor (props: IPointerHandlerProps) {
     super(props);
     this.state = {
-      pos: emptyPos,
-      progress: 0,
-      startedAt: 0,
+      longPressProgress: 0,
+      pointStartedAt: 0,
+      pointStartedPos: emptyPos,
     };
     this.onTouchStart = this.onTouchStart.bind(this);
     this.onTouchMove = this.onTouchMove.bind(this);
@@ -68,8 +69,8 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
         >
         {this.props.children}
         <PressIndicator
-          pos={this.pressIndicatorPos}
-          progress={this.state.progress}
+          pos={this.state.pointStartedPos}
+          progress={this.state.longPressProgress}
           size={this.props.size}
           width={this.props.width}
           />
@@ -100,35 +101,25 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
   }
 
   protected onTouchStart (event: TouchEvent) {
-    const { touches } = event;
-    if (touches.length === 1) {
+    const numTouches = event.touches.length;
+    if (numTouches === 1) {
       const pos = this.getPos(event, 0);
       this.startPressing(pos);
     }
   }
 
   protected onTouchMove (event: TouchEvent) {
-    if (!this.pressing) {
-      return;
-    }
-
-    const { touches } = event;
-    if (touches.length !== 1) {
-      this.stopPressing();
-    }
-
-    const pos = this.getPos(event, 0);
-    if (this.isPressMoved(pos)) {
-      this.stopPressing();
+    const numTouches = event.touches.length;
+    if (this.pressing && numTouches === 1) {
+      const pos = this.getPos(event, 0);
+      this.movePressing(pos);
     }
   }
 
   protected onTouchEnd (event: TouchEvent) {
-    if (!this.pressing) {
-      return;
+    if (this.pressing) {
+      this.stopPressing();
     }
-
-    this.stopPressing();
   }
 
   protected onMouseDown (event: MouseEvent) {
@@ -138,73 +129,107 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
   }
 
   protected onMouseMove (event: MouseEvent) {
-    if (!this.pressing) {
-      return;
-    }
-
-    const pos = this.getPos(event);
-    if (this.isPressMoved(pos)) {
-      this.stopPressing();
+    if (this.pressing) {
+      const pos = this.getPos(event);
+      this.movePressing(pos);
     }
   }
 
   protected onMouseUp (event: MouseEvent) {
-    if (!this.pressing) {
-      return;
+    if (this.pressing) {
+      this.stopPressing();
     }
-
-    this.stopPressing();
+    if (this.longPressing) {
+      this.stopLongPressing();
+    }
   }
 
   protected startPressing (pos: IPos) {
     this.setState({
-      pos,
-      startedAt: Date.now(),
+      pointStartedAt: Date.now(),
+      pointStartedPos: pos,
     });
 
+    if (this.props.onPointStart) {
+      this.props.onPointStart(pos);
+    }
+
     if (this.props.onLongPoint) {
-      this.progressPressing();
+      this.progressLongPressing();
     }
   }
 
-  protected progressPressing () {
+  protected movePressing (pos: IPos) {
+    if (this.pressing && this.props.onPointMove) {
+      const originalPos = this.state.pointStartedPos;
+      this.props.onPointMove(pos, originalPos);
+    }
+
+    if (this.props.onLongPoint && this.longPressing && this.isPressMoved(pos)) {
+      this.stopLongPressing();
+    }
+  }
+
+  protected stopPressing () {
+    if (this.pressing) {
+      if (this.props.onPointEnd) {
+        this.props.onPointEnd();
+      }
+
+      this.setState({
+        pointStartedAt: 0,
+        pointStartedPos: emptyPos,
+      });
+    }
+  }
+
+  protected cancelPressing () {
+    if (this.pressing) {
+      if (this.props.onPointCancel) {
+        this.props.onPointCancel();
+      }
+
+      this.stopPressing();
+    }
+  }
+
+  protected progressLongPressing () {
     const { duration } = this;
-    const elapsed = Date.now() - this.state.startedAt;
+    const elapsed = Date.now() - this.state.pointStartedAt;
     const progress = elapsed / duration;
     this.setState({
-      progress: Math.max(0, elapsed - duration / 2) / (duration / 2),
+      longPressProgress: Math.max(0, elapsed - duration / 2) / (duration / 2),
     });
+
     if (progress < 1) {
-      this.tmPressing = requestAnimationFrame(() => this.progressPressing());
+      this.tmLongPressing = requestAnimationFrame(() => this.progressLongPressing());
     }
     else {
-      this.stopPressing();
+      this.cancelPressing();
 
       if (this.props.onLongPoint) {
         this.props.onLongPoint();
       }
     }
   }
+   protected stopLongPressing () {
+     if (!this.tmLongPressing) {
+       return;
+     }
 
-  protected stopPressing () {
-    if (!this.tmPressing) {
-      return;
-    }
+     cancelAnimationFrame(this.tmLongPressing);
+     this.tmLongPressing = 0;
 
-    cancelAnimationFrame(this.tmPressing);
-    this.tmPressing = 0;
+     this.setState({
+       longPressProgress: 0,
+     });
+   }
 
-    this.setState({
-      progress: 0,
-      startedAt: 0,
-    });
-  }
-
-  protected isPressMoved (pos: IPos) {
-    const p0 = this.state.pos;
-    const distance = Math.max(Math.abs(p0.x - pos.x), Math.abs(p0.y - pos.y));
-    return distance > this.moveThreshold;
-  }
+   protected isPressMoved (pos: IPos) {
+     const p0 = this.state.pointStartedPos;
+     const distance = Math.max(Math.abs(p0.x - pos.x), Math.abs(p0.y - pos.y));
+     return distance > this.moveThreshold;
+   }
 
   protected getPos (event: MouseEvent): IPos;
   protected getPos (event: TouchEvent, index: number): IPos;

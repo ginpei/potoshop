@@ -100,12 +100,16 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
       translation: emptyPos,
       zoomPx: 0,
     };
-    this.onTouchStart = this.onTouchStart.bind(this);
-    this.onTouchMove = this.onTouchMove.bind(this);
-    this.onTouchEnd = this.onTouchEnd.bind(this);
-    this.onMouseDown = this.onMouseDown.bind(this);
-    this.onMouseMove = this.onMouseMove.bind(this);
-    this.onMouseUp = this.onMouseUp.bind(this);
+    // this.onTouchStart = this.onTouchStart.bind(this);
+    // this.onTouchMove = this.onTouchMove.bind(this);
+    // this.onTouchEnd = this.onTouchEnd.bind(this);
+    // this.onMouseDown = this.onMouseDown.bind(this);
+    // this.onMouseMove = this.onMouseMove.bind(this);
+    // this.onMouseUp = this.onMouseUp.bind(this);
+    this.onPointStart = this.onPointStart.bind(this);
+    this.onPointMove = this.onPointMove.bind(this);
+    this.onPointEnd = this.onPointEnd.bind(this);
+    this.onPointCancel = this.onPointCancel.bind(this);
     this.onLongPoint = this.onLongPoint.bind(this);
   }
 
@@ -118,6 +122,10 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
 
     return (
       <PointerHandler
+        onPointStart={this.onPointStart}
+        onPointMove={this.onPointMove}
+        onPointEnd={this.onPointEnd}
+        onPointCancel={this.onPointCancel}
         onLongPoint={this.onLongPoint}
         >
         <div className="PaintCanvas" style={this.styles}>
@@ -135,13 +143,13 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
 
   public componentDidMount () {
     const elCanvas = this.refCanvas.current!;
-    elCanvas.addEventListener('touchstart', this.onTouchStart, { passive: false });
-    document.addEventListener('touchmove', this.onTouchMove);
-    document.addEventListener('touchend', this.onTouchEnd);
-    document.addEventListener('touchcancel', this.onTouchEnd);
-    elCanvas.addEventListener('mousedown', this.onMouseDown);
-    document.addEventListener('mousemove', this.onMouseMove);
-    document.addEventListener('mouseup', this.onMouseUp);
+    // elCanvas.addEventListener('touchstart', this.onTouchStart, { passive: false });
+    // document.addEventListener('touchmove', this.onTouchMove);
+    // document.addEventListener('touchend', this.onTouchEnd);
+    // document.addEventListener('touchcancel', this.onTouchEnd);
+    // elCanvas.addEventListener('mousedown', this.onMouseDown);
+    // document.addEventListener('mousemove', this.onMouseMove);
+    // document.addEventListener('mouseup', this.onMouseUp);
 
     this.ctx!.fillStyle = '#fff';
     this.ctx!.fillRect(0, 0, this.props.width, this.props.height);
@@ -149,18 +157,19 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
   }
 
   public componentWillUnmount () {
-    const elCanvas = this.refCanvas.current!;
-    elCanvas.removeEventListener('touchstart', this.onTouchStart);
-    document.removeEventListener('touchmove', this.onTouchMove);
-    document.removeEventListener('touchend', this.onTouchEnd);
-    document.removeEventListener('touchcancel', this.onTouchEnd);
-    elCanvas.removeEventListener('mousedown', this.onMouseDown);
-    document.removeEventListener('mousemove', this.onMouseMove);
-    document.removeEventListener('mouseup', this.onMouseUp);
+    // const elCanvas = this.refCanvas.current!;
+    // elCanvas.removeEventListener('touchstart', this.onTouchStart);
+    // document.removeEventListener('touchmove', this.onTouchMove);
+    // document.removeEventListener('touchend', this.onTouchEnd);
+    // document.removeEventListener('touchcancel', this.onTouchEnd);
+    // elCanvas.removeEventListener('mousedown', this.onMouseDown);
+    // document.removeEventListener('mousemove', this.onMouseMove);
+    // document.removeEventListener('mouseup', this.onMouseUp);
 
     this.props.onCanvasReceive(null);
   }
 
+  /*
   protected onTouchStart (event: TouchEvent) {
     const { touches } = event;
     if (touches.length === 1) {
@@ -232,6 +241,29 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
     }
 
     this.stopLining();
+  }
+  */
+
+  protected onPointStart (pos: IPos) {
+      this.startLining(pos);
+  }
+
+  protected onPointMove (pos: IPos) {
+    if (this.state.lining) {
+      this.drawLine(pos);
+    }
+  }
+
+  protected onPointEnd () {
+    if (this.state.lining) {
+      this.stopLining();
+    }
+  }
+
+  protected onPointCancel () {
+    if (this.state.lining) {
+      this.cancelLining();
+    }
   }
 
   /**
