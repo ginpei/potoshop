@@ -32,7 +32,7 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
   protected lastPos: IPos = emptyPos;
   protected lined = false;
   protected lastImage: ImageData = new ImageData(1, 1);
-  protected pinchStartedAt: IPosPair = [emptyPos, emptyPos];
+  protected pinchStartedPos: IPosPair = [emptyPos, emptyPos];
   protected pinchCenter: IPos = emptyPos;
   protected pinchDistance = 0;
 
@@ -404,12 +404,12 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
   protected startPinching (pos: IPos) {
     this.cancelLining();
 
-    this.pinchStartedAt = [this.lastPos, pos];
+    this.pinchStartedPos = [this.lastPos, pos];
     this.pinchCenter = {
       x: (this.lastPos.x + pos.x) / 2,
       y: (this.lastPos.y + pos.y) / 2,
     };
-    this.pinchDistance = this.calculateDistance(this.pinchStartedAt);
+    this.pinchDistance = this.calculateDistance(this.pinchStartedPos);
     this.setState({
       pinching: true,
     });
