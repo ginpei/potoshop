@@ -122,6 +122,7 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
 
     return (
       <PointerHandler
+        // debug={true}
         onPointStart={this.onPointStart}
         onPointMove={this.onPointMove}
         onPointEnd={this.onPointEnd}

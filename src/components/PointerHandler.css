@@ -7,3 +7,9 @@
   position: relative;
   width: 100%;
 }
+.PointerHandler-debugCanvas {
+  left: 0;
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+}

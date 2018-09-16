@@ -6,6 +6,7 @@ import PressIndicator from './PressIndicator';
 interface IPointerHandlerProps {
   children: React.ReactNode;
   containing?: boolean;
+  debug?: boolean;
   duration?: number;
   moveThreshold?: number;
   size?: number;
@@ -20,16 +21,20 @@ interface IPointerHandlerProps {
   onPointStart?: (pos: IPos) => void;
 }
 interface IPointerHandlerState {
+  height: number;
   longPressProgress: number;
   pointStartedPos: IPos;
+  width: number;
 }
 
 class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandlerState> {
   protected el = React.createRef<HTMLDivElement>();
+  protected refCanvas = React.createRef<HTMLCanvasElement>();
   protected pointStartedAt: unixMs = 0;
   protected tmLongPressing: AnimationFrameId = 0;
   protected pinching = false;
   protected pinchOriginalPos: IPosPair = [emptyPos, emptyPos];
+  protected vCtx: CanvasRenderingContext2D | null = null; // use `ctx` instead
 
   protected get containing () {
     const { containing } = this.props;
@@ -52,6 +57,14 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
     return this.tmLongPressing !== 0;
   }
 
+  protected get ctx (): CanvasRenderingContext2D | null {
+    if (!this.vCtx) {
+      const el = this.refCanvas.current;
+      this.vCtx = el && el.getContext('2d');
+    }
+    return this.vCtx;
+  }
+
   protected get pinchOriginalCenter (): IPos {
     const [p1, p2] = this.pinchOriginalPos;
     return {
@@ -68,8 +81,10 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
   constructor (props: IPointerHandlerProps) {
     super(props);
     this.state = {
+      height: 0,
       longPressProgress: 0,
       pointStartedPos: emptyPos,
+      width: 0,
     };
     this.onTouchStart = this.onTouchStart.bind(this);
     this.onTouchMove = this.onTouchMove.bind(this);
@@ -80,11 +95,20 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
   }
 
   public render () {
+    const debugOverlap = true && (
+      <canvas className="PointerHandler-debugCanvas"
+        width={this.state.width}
+        height={this.state.height}
+        ref={this.refCanvas}
+        />
+    );
+
     return (
       <div className={`PointerHandler ${this.containing ? '-containing' : ''}`}
         ref={this.el}
         >
         {this.props.children}
+        {debugOverlap}
         <PressIndicator
           pos={this.state.pointStartedPos}
           progress={this.state.longPressProgress}
@@ -104,6 +128,11 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
     el.addEventListener('mousedown', this.onMouseDown);
     document.addEventListener('mousemove', this.onMouseMove);
     document.addEventListener('mouseup', this.onMouseUp);
+
+    this.setState({
+      height: el.clientHeight,
+      width: el.clientWidth,
+    });
   }
 
   public componentWillUnmount () {
@@ -181,6 +210,11 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
       pointStartedPos: pos,
     });
 
+    if (this.props.debug) {
+      this.clearDebugPoints();
+      this.putDebugPoint(pos);
+    }
+
     if (this.props.onPointStart) {
       this.props.onPointStart(pos);
     }
@@ -191,6 +225,10 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
   }
 
   protected movePressing (pos: IPos) {
+    if (this.props.debug && this.pressing) {
+      this.putDebugPoint(pos);
+    }
+
     if (this.pressing && this.props.onPointMove) {
       const originalPos = this.state.pointStartedPos;
       this.props.onPointMove(pos, originalPos);
@@ -211,6 +249,10 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
       this.setState({
         pointStartedPos: emptyPos,
       });
+    }
+
+    if (this.props.debug) {
+      setTimeout(() => this.clearDebugPoints(), 500);
     }
   }
 
@@ -298,6 +340,39 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
     if (this.props.onPinchEnd) {
       this.props.onPinchEnd();
     }
+  }
+
+  protected putDebugPoint (
+    pos: IPos,
+    style: string | CanvasGradient | CanvasPattern = 'red',
+    ) {
+    const size = 10;
+
+    const { ctx } = this;
+    if (!ctx) {
+      throw new Error('Canvas is not ready');
+    }
+
+    ctx.beginPath();
+    ctx.strokeStyle = style;
+    ctx.ellipse(
+      pos.x,
+      pos.y,
+      size / 2,
+      size / 2,
+      0,
+      0,
+      2 * Math.PI);
+    ctx.stroke();
+  }
+
+  protected clearDebugPoints () {
+    const { ctx } = this;
+    if (!ctx) {
+      throw new Error('Canvas is not ready');
+    }
+
+    ctx.clearRect(0, 0, this.state.width, this.state.height);
   }
 
   protected getPos (event: MouseEvent): IPos;
