@@ -372,16 +372,13 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
     }
   }
 
-  protected putDebugPress (
-    pos: IPos,
-    style: string | CanvasGradient | CanvasPattern = 'red',
-    ) {
+  protected putDebugPress (pos: IPos) {
     const ctx = this.pressContext;
     if (!ctx) {
       throw new Error('Canvas is not ready');
     }
 
-    this.putDebugPoint(ctx, pos, style);
+    this.putDebugPoint(ctx, pos, 'red');
   }
 
   protected clearDebugPress () {
@@ -393,10 +390,7 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
     this.clearDebugCanvas(ctx);
   }
 
-  protected putDebugPinch (
-    posPair: IPosPair,
-    style: string | CanvasGradient | CanvasPattern = 'red',
-    ) {
+  protected putDebugPinch (posPair: IPosPair) {
     const ctx = this.pinchContext;
     if (!ctx) {
       throw new Error('Canvas is not ready');
@@ -429,7 +423,7 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
   protected putDebugPoint (
     ctx: CanvasRenderingContext2D,
     pos: IPos,
-    style: string | CanvasGradient | CanvasPattern = 'red',
+    style: string | CanvasGradient | CanvasPattern,
     ) {
     const size = 10;
 
@@ -449,7 +443,7 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
   protected putDebugCross (
     ctx: CanvasRenderingContext2D,
     pos: IPos,
-    style: string | CanvasGradient | CanvasPattern = 'red',
+    style: string | CanvasGradient | CanvasPattern,
     ) {
     const size = 10;
 
