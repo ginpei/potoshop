@@ -102,11 +102,7 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
   protected onTouchStart (event: TouchEvent) {
     const { touches } = event;
     if (touches.length === 1) {
-      const t = touches[0];
-      const pos: IPos = {
-        x: t.clientX,
-        y: t.clientY,
-      };
+      const pos = this.getPos(event, 0);
       this.startPressing(pos);
     }
   }
@@ -121,11 +117,7 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
       this.stopPressing();
     }
 
-    const t = touches[0];
-    const pos: IPos = {
-      x: t.clientX,
-      y: t.clientY,
-    };
+    const pos = this.getPos(event, 0);
     if (this.isPressMoved(pos)) {
       this.stopPressing();
     }
@@ -141,10 +133,7 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
 
   protected onMouseDown (event: MouseEvent) {
     event.preventDefault();
-    const pos: IPos = {
-      x: event.clientX,
-      y: event.clientY,
-    };
+    const pos = this.getPos(event);
     this.startPressing(pos);
   }
 
@@ -153,10 +142,7 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
       return;
     }
 
-    const pos: IPos = {
-      x: event.clientX,
-      y: event.clientY,
-    };
+    const pos = this.getPos(event);
     if (this.isPressMoved(pos)) {
       this.stopPressing();
     }
@@ -218,6 +204,27 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
     const p0 = this.state.pos;
     const distance = Math.max(Math.abs(p0.x - pos.x), Math.abs(p0.y - pos.y));
     return distance > this.moveThreshold;
+  }
+
+  protected getPos (event: MouseEvent): IPos;
+  protected getPos (event: TouchEvent, index: number): IPos;
+  protected getPos (event: any, index?: number): IPos {
+    if (event instanceof MouseEvent) {
+      const pos: IPos = {
+        x: event.clientX,
+        y: event.clientY,
+      };
+      return pos;
+    } else if (event instanceof TouchEvent && typeof index === 'number') {
+      const t = event.touches[index];
+      const pos: IPos = {
+        x: t.clientX,
+        y: t.clientY,
+      };
+      return pos;
+    }
+
+    throw new Error('Unsupported argument types');
   }
 }
 
