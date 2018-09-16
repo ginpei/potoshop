@@ -244,28 +244,28 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
     }
   }
 
-   /**
-    * This has to be called before `stopPressing`,
-    * otherwise long-tap occurs because `pointStartedAt` is ages ago.
-    */
-   protected stopLongPressing () {
-     if (!this.tmLongPressing) {
-       return;
-     }
+  /**
+   * This has to be called before `stopPressing`,
+   * otherwise long-tap occurs because `pointStartedAt` is ages ago.
+   */
+  protected stopLongPressing () {
+    if (!this.tmLongPressing) {
+      return;
+    }
 
-     cancelAnimationFrame(this.tmLongPressing);
-     this.tmLongPressing = 0;
+    cancelAnimationFrame(this.tmLongPressing);
+    this.tmLongPressing = 0;
 
-     this.setState({
-       longPressProgress: 0,
-     });
-   }
+    this.setState({
+      longPressProgress: 0,
+    });
+  }
 
-   protected isPressMoved (pos: IPos) {
-     const p0 = this.state.pointStartedPos;
-     const distance = Math.max(Math.abs(p0.x - pos.x), Math.abs(p0.y - pos.y));
-     return distance > this.moveThreshold;
-   }
+  protected isPressMoved (pos: IPos) {
+    const p0 = this.state.pointStartedPos;
+    const distance = Math.max(Math.abs(p0.x - pos.x), Math.abs(p0.y - pos.y));
+    return distance > this.moveThreshold;
+  }
 
   protected startPinching (posPair: IPosPair) {
     this.stopLongPressing();
@@ -274,9 +274,9 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
     this.pinching = true;
     this.pinchOriginalPos = posPair;
 
-     if (this.props.onPinchStart) {
-       this.props.onPinchStart(posPair);
-     }
+    if (this.props.onPinchStart) {
+      this.props.onPinchStart(posPair);
+    }
   }
 
   protected movePinching (posPair: IPosPair) {
