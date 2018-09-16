@@ -3,7 +3,7 @@ import { Color } from 'csstype';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import AppHeader from '../../components/AppHeader';
-import LongTapper from '../../components/LongTapper';
+import PointerHandler from '../../components/PointerHandler';
 import { appSpace, defaultStrokeColors, defaultStrokeWidth, ISize } from '../../misc';
 import firebase from '../../plugins/firebase';
 import { readBlob, uploadImage } from '../../services/image';
@@ -40,7 +40,7 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
       strokeColor: defaultStrokeColors,
       strokeWidth: defaultStrokeWidth,
     };
-    this.onTutorialLongTap = this.onTutorialLongTap.bind(this);
+    this.onTutorialLongPoint = this.onTutorialLongPoint.bind(this);
     this.onCanvasReceive = this.onCanvasReceive.bind(this);
     this.onCanvasLongTap = this.onCanvasLongTap.bind(this);
     this.onMenuOverlayClick = this.onMenuOverlayClick.bind(this);
@@ -59,12 +59,12 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
         strokeWidth={this.state.strokeWidth}
         width={this.state.canvasSize.width}
         onCanvasReceive={this.onCanvasReceive}
-        onLongTap={this.onCanvasLongTap}
+        onLongPoint={this.onCanvasLongTap}
         />
       );
     const tutorialOverlay = !this.state.justAfterStarted ? undefined : (
-      <LongTapper
-        onLongTap={this.onTutorialLongTap}
+      <PointerHandler
+        onLongPoint={this.onTutorialLongPoint}
         >
         <div className="AppTutorialOverlay">
           <AppHeader fullscreen={true}/>
@@ -79,7 +79,7 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
             <p className="AppTutorialOverlay-emphasized">Try long tap to start.</p>
           </div>
         </div>
-      </LongTapper>
+      </PointerHandler>
     );
 
     if (this.state.justAfterStarted) {
@@ -123,7 +123,7 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
     user.saveLogin(this.currentUser!.uid);
   }
 
-  protected onTutorialLongTap () {
+  protected onTutorialLongPoint () {
     this.setState({
       justAfterStarted: false,
     });

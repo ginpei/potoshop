@@ -1,6 +1,6 @@
 import { Color } from 'csstype';
 import * as React from 'react';
-import LongTapper from '../../components/LongTapper';
+import PointerHandler from '../../components/PointerHandler';
 import { AnimationFrameId, between, emptyPos, IPos, Ratio } from '../../misc';
 import './PaintCanvas.css';
 
@@ -8,7 +8,7 @@ interface IPaintCanvasProps {
   height: number;
   inactive: boolean;
   onCanvasReceive: (el: HTMLCanvasElement | null) => void;
-  onLongTap: () => void;
+  onLongPoint: () => void;
   strokeColor: Color;
   strokeWidth: number;
   width: number;
@@ -106,7 +106,7 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
     this.onMouseDown = this.onMouseDown.bind(this);
     this.onMouseMove = this.onMouseMove.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
-    this.onLongTap = this.onLongTap.bind(this);
+    this.onLongPoint = this.onLongPoint.bind(this);
   }
 
   public render () {
@@ -117,8 +117,8 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
     );
 
     return (
-      <LongTapper
-        onLongTap={this.onLongTap}
+      <PointerHandler
+        onLongPoint={this.onLongPoint}
         >
         <div className="PaintCanvas" style={this.styles}>
           <canvas className="PaintCanvas-canvas"
@@ -129,7 +129,7 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
             />
           {elSize}
         </div>
-      </LongTapper>
+      </PointerHandler>
     );
   }
 
@@ -237,12 +237,12 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
   /**
    * @see #progressPressing
    */
-  protected onLongTap () {
+  protected onLongPoint () {
     if (this.state.lining) {
       this.cancelLining();
     }
 
-    this.props.onLongTap();
+    this.props.onLongPoint();
   }
 
   protected startLining ({ x, y }: IPos) {

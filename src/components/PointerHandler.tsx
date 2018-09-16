@@ -1,24 +1,24 @@
 import * as React from 'react';
 import { AnimationFrameId, emptyPos, IPos, unixMs } from '../misc';
-import './LongTapper.css';
+import './PointerHandler.css';
 import PressIndicator from './PressIndicator';
 
-interface ILongTapperProps {
+interface IPointerHandlerProps {
   children: React.ReactNode;
   containing?: boolean;
   duration?: number;
   moveThreshold?: number;
   size?: number;
   width?: number;
-  onLongTap: () => void;
+  onLongPoint?: () => void;
 }
-interface ILongTapperState {
+interface IPointerHandlerState {
   pos: IPos;
   progress: number;
   startedAt: unixMs;
 }
 
-class LongTapper extends React.Component<ILongTapperProps, ILongTapperState> {
+class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandlerState> {
   protected el = React.createRef<HTMLDivElement>();
   protected tmPressing: AnimationFrameId = 0;
 
@@ -46,7 +46,7 @@ class LongTapper extends React.Component<ILongTapperProps, ILongTapperState> {
     };
   }
 
-  constructor (props: ILongTapperProps) {
+  constructor (props: IPointerHandlerProps) {
     super(props);
     this.state = {
       pos: emptyPos,
@@ -63,7 +63,7 @@ class LongTapper extends React.Component<ILongTapperProps, ILongTapperState> {
 
   public render () {
     return (
-      <div className={`LongTapper ${this.containing ? '-containing' : ''}`}
+      <div className={`PointerHandler ${this.containing ? '-containing' : ''}`}
         ref={this.el}
         >
         {this.props.children}
@@ -176,7 +176,9 @@ class LongTapper extends React.Component<ILongTapperProps, ILongTapperState> {
       startedAt: Date.now(),
     });
 
-    this.progressPressing();
+    if (this.props.onLongPoint) {
+      this.progressPressing();
+    }
   }
 
   protected progressPressing () {
@@ -192,7 +194,9 @@ class LongTapper extends React.Component<ILongTapperProps, ILongTapperState> {
     else {
       this.stopPressing();
 
-      this.props.onLongTap();
+      if (this.props.onLongPoint) {
+        this.props.onLongPoint();
+      }
     }
   }
 
@@ -217,4 +221,4 @@ class LongTapper extends React.Component<ILongTapperProps, ILongTapperState> {
   }
 }
 
-export default LongTapper;
+export default PointerHandler;

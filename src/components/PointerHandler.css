@@ -1,7 +1,7 @@
-.LongTapper {
+.PointerHandler {
   user-select: none;
 }
-.LongTapper.-containing {
+.PointerHandler.-containing {
   height: 100%;
   overflow: hidden;
   position: relative;
