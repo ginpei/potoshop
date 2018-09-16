@@ -414,11 +414,19 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
       throw new Error('Canvas is not ready');
     }
 
+    const [p1, p2] = posPair;
+    const center = {
+      x: (p1.x + p2.x) / 2,
+      y: (p1.y + p2.y) / 2,
+    };
+
     this.clearDebugCanvas(ctx);
     this.putDebugPoint(ctx, this.pinchOriginalPos[0], 'red');
     this.putDebugPoint(ctx, this.pinchOriginalPos[1], 'red');
+    this.putDebugCross(ctx, this.pinchOriginalCenter, 'red');
     this.putDebugPoint(ctx, posPair[0], 'blue');
     this.putDebugPoint(ctx, posPair[1], 'blue');
+    this.putDebugCross(ctx, center, 'blue');
   }
 
   protected clearDebugPinch () {
@@ -447,6 +455,22 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
       0,
       0,
       2 * Math.PI);
+    ctx.stroke();
+  }
+
+  protected putDebugCross (
+    ctx: CanvasRenderingContext2D,
+    pos: IPos,
+    style: string | CanvasGradient | CanvasPattern = 'red',
+    ) {
+    const size = 10;
+
+    ctx.beginPath();
+    ctx.strokeStyle = style;
+    ctx.moveTo(pos.x - size / 2, pos.y - size / 2);
+    ctx.lineTo(pos.x + size / 2, pos.y + size / 2);
+    ctx.moveTo(pos.x - size / 2, pos.y + size / 2);
+    ctx.lineTo(pos.x + size / 2, pos.y - size / 2);
     ctx.stroke();
   }
 
