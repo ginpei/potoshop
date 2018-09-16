@@ -1,7 +1,7 @@
 import { Color } from 'csstype';
 import * as React from 'react';
 import LongTapper from '../../components/LongTapper';
-import { AnimationFrameId, between, IPos } from '../../misc';
+import { AnimationFrameId, between, emptyPos, IPos } from '../../misc';
 import './PaintCanvas.css';
 
 interface IPaintCanvasProps {
@@ -29,11 +29,11 @@ interface IPaintCanvasState {
 class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> {
   protected refCanvas = React.createRef<HTMLCanvasElement>();
   protected tmPressing: AnimationFrameId = 0;
-  protected lastPos: IPos = { x: 0, y: 0 };
+  protected lastPos: IPos = emptyPos;
   protected lined = false;
   protected lastImage: ImageData = new ImageData(1, 1);
-  protected pinchStartedAt: [IPos, IPos] = [{ x: 0, y: 0 }, { x: 0, y: 0 }];
-  protected pinchCenter: IPos = { x: 0, y: 0 };
+  protected pinchStartedAt: [IPos, IPos] = [emptyPos, emptyPos];
+  protected pinchCenter: IPos = emptyPos;
   protected pinchDistance = 0;
 
   protected vCtx: CanvasRenderingContext2D | null;
@@ -89,7 +89,7 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
   constructor (props: IPaintCanvasProps) {
     super(props);
     this.state = {
-      dTranslation: { x: 0, y: 0 },
+      dTranslation: emptyPos,
       dZoomPx: 0,
       lastX: 0,
       lastY: 0,
@@ -97,7 +97,7 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
       offsetX: 0,
       offsetY: 0,
       pinching: false,
-      translation: { x: 0, y: 0 },
+      translation: emptyPos,
       zoomPx: 0,
     };
     this.onTouchStart = this.onTouchStart.bind(this);
@@ -390,10 +390,10 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
     const lessThanOriginal = zoomPx < 0;
 
     this.setState({
-      dTranslation: { x: 0, y: 0 },
+      dTranslation: emptyPos,
       dZoomPx: 0,
       pinching: false,
-      translation: lessThanOriginal ? { x: 0, y: 0 } : this.safeTranslation,
+      translation: lessThanOriginal ? emptyPos : this.safeTranslation,
       zoomPx: lessThanOriginal ? 0 : zoomPx,
     });
   }

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { AnimationFrameId, IPos, unixMs } from '../misc';
+import { AnimationFrameId, emptyPos, IPos, unixMs } from '../misc';
 import './LongTapper.css';
 import PressIndicator from './PressIndicator';
 
@@ -49,7 +49,7 @@ class LongTapper extends React.Component<ILongTapperProps, ILongTapperState> {
   constructor (props: ILongTapperProps) {
     super(props);
     this.state = {
-      pos: { x: 0, y: 0 },
+      pos: emptyPos,
       progress: 0,
       startedAt: 0,
     };
