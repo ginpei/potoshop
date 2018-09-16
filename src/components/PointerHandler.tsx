@@ -102,6 +102,7 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
   protected onTouchStart (event: TouchEvent) {
     const numTouches = event.touches.length;
     if (numTouches === 1) {
+      event.preventDefault();
       const pos = this.getPos(event, 0);
       this.startPressing(pos);
     }
