@@ -142,9 +142,13 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
   }
 
   protected onTouchEnd (event: TouchEvent) {
+    if (this.longPressing) {
+      this.stopLongPressing();
+    }
     if (this.pressing) {
       this.stopPressing();
-    } else if (this.pinching) {
+    }
+    if (this.pinching) {
       this.stopPinching();
     }
   }
@@ -163,11 +167,11 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
   }
 
   protected onMouseUp (event: MouseEvent) {
-    if (this.pressing) {
-      this.stopPressing();
-    }
     if (this.longPressing) {
       this.stopLongPressing();
+    }
+    if (this.pressing) {
+      this.stopPressing();
     }
   }
 
@@ -239,6 +243,11 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
       }
     }
   }
+
+   /**
+    * This has to be called before `stopPressing`,
+    * otherwise long-tap occurs because `pointStartedAt` is ages ago.
+    */
    protected stopLongPressing () {
      if (!this.tmLongPressing) {
        return;
@@ -259,8 +268,8 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
    }
 
   protected startPinching (posPair: IPosPair) {
-    this.cancelPressing();
     this.stopLongPressing();
+    this.cancelPressing();
 
     this.pinching = true;
     this.pinchOriginalPos = posPair;
