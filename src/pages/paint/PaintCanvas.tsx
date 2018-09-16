@@ -32,7 +32,7 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
   protected lastPos: IPos = emptyPos;
   protected lined = false;
   protected lastImage: ImageData = new ImageData(1, 1);
-  protected pinchStartedAt: [IPos, IPos] = [emptyPos, emptyPos];
+  protected pinchStartedAt: IPosPair = [emptyPos, emptyPos];
   protected pinchCenter: IPos = emptyPos;
   protected pinchDistance = 0;
 
