@@ -1,7 +1,7 @@
 import { Color } from 'csstype';
 import * as React from 'react';
 import LongTapper from '../../components/LongTapper';
-import { AnimationFrameId, between, emptyPos, IPos } from '../../misc';
+import { AnimationFrameId, between, emptyPos, IPos, Ratio } from '../../misc';
 import './PaintCanvas.css';
 
 interface IPaintCanvasProps {
@@ -66,7 +66,7 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
     };
   }
 
-  private get pinchingScale () {
+  private get pinchingScale (): Ratio {
     const width = this.props.width + this.state.zoomPx + this.state.dZoomPx;
     return width / this.props.width;
   }
