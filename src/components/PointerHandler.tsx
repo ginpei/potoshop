@@ -95,7 +95,7 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
   }
 
   public render () {
-    const debugOverlap = true && (
+    const debugOverlap = this.props.debug && (
       <canvas className="PointerHandler-debugCanvas"
         width={this.state.width}
         height={this.state.height}
