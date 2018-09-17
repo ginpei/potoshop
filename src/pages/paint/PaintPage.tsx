@@ -40,6 +40,7 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
       strokeColor: defaultStrokeColors,
       strokeWidth: defaultStrokeWidth,
     };
+    this.onDocumentTouchStart = this.onDocumentTouchStart.bind(this);
     this.onTutorialLongPoint = this.onTutorialLongPoint.bind(this);
     this.onCanvasReceive = this.onCanvasReceive.bind(this);
     this.onCanvasLongTap = this.onCanvasLongTap.bind(this);
@@ -121,6 +122,19 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
     }
     this.currentUser = firebase.auth().currentUser;
     user.saveLogin(this.currentUser!.uid);
+
+    document.addEventListener('touchstart', this.onDocumentTouchStart, { passive: false });
+  }
+
+  public componentWillUnmount () {
+    document.removeEventListener('touchstart', this.onDocumentTouchStart);
+  }
+
+  protected onDocumentTouchStart (event: TouchEvent) {
+    // prevent from zooming
+    if (event.touches.length >= 2) {
+      event.preventDefault();
+    }
   }
 
   protected onTutorialLongPoint () {
