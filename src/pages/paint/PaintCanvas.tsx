@@ -14,16 +14,16 @@ interface IPaintCanvasProps {
   width: number;
 }
 interface IPaintCanvasState {
+  dScale: number;
   dTranslation: IPos;
-  dZoomPx: number;
   lastX: number;
   lastY: number;
   lining: boolean;
   offsetX: number;
   offsetY: number;
   pinching: boolean;
+  scale: number;
   translation: IPos;
-  zoomPx: number;
 }
 
 class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> {
@@ -61,14 +61,17 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
   protected get canvasStyle (): React.CSSProperties {
     const scale = this.pinchingScale;
     const translation = this.pinchingTranslation;
+    const transform = [
+      `translate(${translation.x}px, ${translation.y}px)`,
+      `scale(${scale})`,
+    ].join(' ');
     return {
-      transform: `translate(${translation.x}px, ${translation.y}px) scale(${scale})`,
+      transform,
     };
   }
 
   private get pinchingScale (): Ratio {
-    const width = this.props.width + this.state.zoomPx + this.state.dZoomPx;
-    return width / this.props.width;
+    return this.state.scale * this.state.dScale;
   }
 
   protected get pinchingTranslation (): IPos {
@@ -89,16 +92,16 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
   constructor (props: IPaintCanvasProps) {
     super(props);
     this.state = {
+      dScale: 1,
       dTranslation: emptyPos,
-      dZoomPx: 0,
       lastX: 0,
       lastY: 0,
       lining: false,
       offsetX: 0,
       offsetY: 0,
       pinching: false,
+      scale: 1,
       translation: emptyPos,
-      zoomPx: 0,
     };
     // this.onTouchStart = this.onTouchStart.bind(this);
     // this.onTouchMove = this.onTouchMove.bind(this);
@@ -111,6 +114,9 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
     this.onPointEnd = this.onPointEnd.bind(this);
     this.onPointCancel = this.onPointCancel.bind(this);
     this.onLongPoint = this.onLongPoint.bind(this);
+    this.onPinchStart = this.onPinchStart.bind(this);
+    this.onPinchMove = this.onPinchMove.bind(this);
+    this.onPinchEnd = this.onPinchEnd.bind(this);
   }
 
   public render () {
@@ -281,19 +287,16 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
     this.props.onLongPoint();
   }
 
-  protected onPinchStart ([p1, p2]: IPosPair) {
-    // tslint:disable-next-line:no-console
-    console.log('start', p1, p2);
+  protected onPinchStart (posPair: IPosPair) {
+    this.startPinching(posPair);
   }
 
-  protected onPinchMove ([p1, p2]: IPosPair) {
-    // tslint:disable-next-line:no-console
-    console.log('move', p1, p2);
+  protected onPinchMove (posPair: IPosPair) {
+    this.pinch(posPair);
   }
 
   protected onPinchEnd () {
-    // tslint:disable-next-line:no-console
-    console.log('stop');
+    this.stopPinching();
   }
 
   protected startLining ({ x, y }: IPos) {
@@ -402,50 +405,38 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
     this.ctx.putImageData(this.lastImage, 0, 0);
   }
 
-  protected startPinching (pos: IPos) {
+  protected startPinching (posPair: IPosPair) {
     this.cancelLining();
 
-    this.pinchStartedPos = [this.lastPos, pos];
-    this.pinchCenter = {
-      x: (this.lastPos.x + pos.x) / 2,
-      y: (this.lastPos.y + pos.y) / 2,
-    };
-    this.pinchDistance = this.calculateDistance(this.pinchStartedPos);
+    this.pinchStartedPos = posPair;
+    this.pinchCenter = this.calculateCenter(posPair);
+    this.pinchDistance = this.calculateDistance(posPair);
+
     this.setState({
       pinching: true,
     });
   }
 
-  protected pinch (positions: IPos[]) {
-    const curDistance = this.calculateDistance(positions);
-    const dDistance = curDistance - this.pinchDistance;
+  protected pinch (posPair: IPosPair) {
+    const dScale = this.calculateDistance(posPair) / this.pinchDistance;
 
-    const c2 = this.calculateCenter(positions);
-    const diff: IPos = {
-      x: c2.x - this.pinchCenter.x - dDistance,
-      y: c2.y - this.pinchCenter.y - dDistance,
+    const c0 = this.pinchCenter;
+    const c1 = this.calculateCenter(posPair);
+    const f0 = this.state.translation;
+    const dTranslation = {
+      x: (f0.x - c0.x) * dScale + c1.x - f0.x,
+      y: (f0.y - c0.y) * dScale + c1.y - f0.y,
     };
-    const dTranslation: IPos = {
-      x: diff.x * (c2.x / this.props.width),
-      y: diff.y * (c2.y / this.props.height),
-    };
-
-    this.setState({
-      dTranslation,
-      dZoomPx: dDistance * 2,
-    });
+    this.setState({ dScale, dTranslation });
   }
 
   protected stopPinching () {
-    const zoomPx = (this.state.zoomPx + this.state.dZoomPx);
-    const lessThanOriginal = zoomPx < 0;
-
     this.setState({
+      dScale: 1,
       dTranslation: emptyPos,
-      dZoomPx: 0,
       pinching: false,
-      translation: lessThanOriginal ? emptyPos : this.safeTranslation,
-      zoomPx: lessThanOriginal ? 0 : zoomPx,
+      scale: Math.max(1, this.pinchingScale),
+      translation: this.pinchingScale < 1 ? emptyPos : this.safeTranslation,
     });
   }
 
@@ -476,6 +467,7 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
     if (positions.length !== 2) {
       throw new Error(`2 positions must be given but ${positions.length}`);
     }
+
     const [p1, p2] = positions;
     const center: IPos = {
       x: (p1.x + p2.x) / 2,
