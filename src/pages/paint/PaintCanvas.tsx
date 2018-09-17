@@ -103,12 +103,6 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
       scale: 1,
       translation: emptyPos,
     };
-    // this.onTouchStart = this.onTouchStart.bind(this);
-    // this.onTouchMove = this.onTouchMove.bind(this);
-    // this.onTouchEnd = this.onTouchEnd.bind(this);
-    // this.onMouseDown = this.onMouseDown.bind(this);
-    // this.onMouseMove = this.onMouseMove.bind(this);
-    // this.onMouseUp = this.onMouseUp.bind(this);
     this.onPointStart = this.onPointStart.bind(this);
     this.onPointMove = this.onPointMove.bind(this);
     this.onPointEnd = this.onPointEnd.bind(this);
@@ -153,106 +147,14 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
 
   public componentDidMount () {
     const elCanvas = this.refCanvas.current!;
-    // elCanvas.addEventListener('touchstart', this.onTouchStart, { passive: false });
-    // document.addEventListener('touchmove', this.onTouchMove);
-    // document.addEventListener('touchend', this.onTouchEnd);
-    // document.addEventListener('touchcancel', this.onTouchEnd);
-    // elCanvas.addEventListener('mousedown', this.onMouseDown);
-    // document.addEventListener('mousemove', this.onMouseMove);
-    // document.addEventListener('mouseup', this.onMouseUp);
-
     this.ctx!.fillStyle = '#fff';
     this.ctx!.fillRect(0, 0, this.props.width, this.props.height);
     this.props.onCanvasReceive(elCanvas);
   }
 
   public componentWillUnmount () {
-    // const elCanvas = this.refCanvas.current!;
-    // elCanvas.removeEventListener('touchstart', this.onTouchStart);
-    // document.removeEventListener('touchmove', this.onTouchMove);
-    // document.removeEventListener('touchend', this.onTouchEnd);
-    // document.removeEventListener('touchcancel', this.onTouchEnd);
-    // elCanvas.removeEventListener('mousedown', this.onMouseDown);
-    // document.removeEventListener('mousemove', this.onMouseMove);
-    // document.removeEventListener('mouseup', this.onMouseUp);
-
     this.props.onCanvasReceive(null);
   }
-
-  /*
-  protected onTouchStart (event: TouchEvent) {
-    const { touches } = event;
-    if (touches.length === 1) {
-      event.preventDefault();
-      const pos = this.getPos(event, 0);
-      this.startLining(pos);
-    } else if (touches.length === 2) {
-      if (location.search.slice(1).split('&').includes('pinch=1')) {
-        event.preventDefault(); // to prevent from zooming in Firefox
-        const pos = this.getPos(event, 1);
-        this.startPinching(pos);
-      } else {
-        this.cancelLining();
-      }
-    }
-  }
-
-  protected onTouchMove (event: TouchEvent) {
-    if (this.state.lining) {
-      const { touches } = event;
-      if (touches.length !== 1) {
-        this.stopLining();
-        throw new Error(`Number of touches must be 1 but ${touches.length}`);
-      }
-
-      const pos = this.getPos(event, 0);
-      this.drawLine(pos);
-    } else if (this.state.pinching) {
-      const { touches } = event;
-      if (touches.length !== 2) {
-        // this can occur in Firefox
-        // when you quickly move and suddenly up one of your fingers
-        this.stopPinching();
-        return;
-      }
-
-      const positions: IPos[] = [
-        this.getPos(event, 0),
-        this.getPos(event, 1),
-      ];
-      this.pinch(positions);
-    }
-  }
-
-  protected onTouchEnd (event: TouchEvent) {
-    if (this.state.lining) {
-      this.stopLining();
-    } else if (this.state.pinching) {
-      this.stopPinching();
-    }
-  }
-
-  protected onMouseDown (event: MouseEvent) {
-    event.preventDefault();
-    const pos = this.getPos(event);
-    this.startLining(pos);
-  }
-
-  protected onMouseMove (event: MouseEvent) {
-    if (this.state.lining) {
-      const pos = this.getPos(event);
-      this.drawLine(pos);
-    }
-  }
-
-  protected onMouseUp (event: MouseEvent) {
-    if (!this.state.lining) {
-      return;
-    }
-
-    this.stopLining();
-  }
-  */
 
   protected onPointStart (pos: IPos) {
       this.startLining(pos);
@@ -363,19 +265,6 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
       );
       ctx.stroke();
     }
-
-    // // {{{
-    // // protected points: IPos[] = []; // expected this
-    // const { points } = this;
-    // ctx.strokeStyle = 'red';
-    // ctx.fillStyle = 'red';
-    // ctx.moveTo(points[0].x, points[0].y);
-    // points.forEach((p) => {
-    //   ctx.beginPath();
-    //   ctx.ellipse(p.x, p.y, 3, 3, 45 * Math.PI / 180, 0, 2 * Math.PI);
-    //   ctx.fill();
-    // });
-    // // }}}
 
     this.stashImage();
     this.setState({
