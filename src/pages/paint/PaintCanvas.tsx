@@ -128,6 +128,11 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
       </div>
     );
 
+    const canvasClassName = [
+      'PaintCanvas-canvas',
+      this.state.lining || this.state.pinching && '-active',
+    ].join(' ');
+
     return (
       <PointerHandler
         // debug={true}
@@ -141,7 +146,7 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
         onPinchEnd={this.onPinchEnd}
         >
         <div className="PaintCanvas" style={this.styles}>
-          <canvas className="PaintCanvas-canvas"
+          <canvas className={canvasClassName}
             style={this.canvasStyle}
             width={this.props.width}
             height={this.props.height}
