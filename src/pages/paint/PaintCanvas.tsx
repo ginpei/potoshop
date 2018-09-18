@@ -13,15 +13,10 @@ interface IPaintCanvasProps {
   strokeWidth: number;
   width: number;
 }
-// TODO remove unnecessary state
 interface IPaintCanvasState {
   dScale: number;
   dTranslation: IPos;
-  lastX: number;
-  lastY: number;
   lining: boolean;
-  offsetX: number;
-  offsetY: number;
   pinching: boolean;
   scale: number;
   translation: IPos;
@@ -83,26 +78,12 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
     };
   }
 
-  // TODO remove
-  protected get pressIndicatorPos (): IPos {
-    return this.lastPos;
-    // const s = this.state;
-    // return {
-    //   x: s.lastX,
-    //   y: s.lastY,
-    // };
-  }
-
   constructor (props: IPaintCanvasProps) {
     super(props);
     this.state = {
       dScale: 1,
       dTranslation: emptyPos,
-      lastX: 0,
-      lastY: 0,
       lining: false,
-      offsetX: 0,
-      offsetY: 0,
       pinching: false,
       scale: 1,
       translation: emptyPos,
@@ -228,11 +209,7 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
     this.lined = false;
     this.lastPos = canvasPos;
     this.setState({
-      lastX: canvasPos.x,
-      lastY: canvasPos.y,
       lining: true,
-      offsetX: elCanvas.offsetLeft,
-      offsetY: elCanvas.offsetTop,
     });
   }
 
