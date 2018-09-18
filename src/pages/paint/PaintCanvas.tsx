@@ -78,6 +78,29 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
     };
   }
 
+  protected get safeTranslation (): IPos {
+    const { height, width } = this.props;
+    const scale = this.pinchingScale;
+    const diff: IPos = {
+      x: width - width * scale,
+      y: height - height * scale,
+    };
+
+    if (scale < 1) {
+      return {
+        x: diff.x / 2,
+        y: diff.y / 2,
+      };
+    }
+
+    const t = this.pinchingTranslation;
+    const safePos: IPos = {
+      x: between(diff.x, t.x, 0),
+      y: between(diff.y, t.y, 0),
+    };
+    return safePos;
+  }
+
   constructor (props: IPaintCanvasProps) {
     super(props);
     this.state = {
@@ -322,29 +345,6 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
       scale: Math.max(1, this.pinchingScale),
       translation: this.pinchingScale < 1 ? emptyPos : this.safeTranslation,
     });
-  }
-
-  protected get safeTranslation (): IPos {
-    const { height, width } = this.props;
-    const scale = this.pinchingScale;
-    const diff: IPos = {
-      x: width - width * scale,
-      y: height - height * scale,
-    };
-
-    if (scale < 1) {
-      return {
-        x: diff.x / 2,
-        y: diff.y / 2,
-      };
-    }
-
-    const t = this.pinchingTranslation;
-    const safePos: IPos = {
-      x: between(diff.x, t.x, 0),
-      y: between(diff.y, t.y, 0),
-    };
-    return safePos;
   }
 
   protected calculateCenter (positions: IPos[]) {
