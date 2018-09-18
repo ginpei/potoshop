@@ -1,9 +1,0 @@
-.LongTapper {
-  user-select: none;
-}
-.LongTapper.-containing {
-  height: 100%;
-  overflow: hidden;
-  position: relative;
-  width: 100%;
-}

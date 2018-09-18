@@ -7,7 +7,7 @@ export const strokeColors = [
 ];
 export const defaultStrokeColors = strokeColors[4];
 export const strokeWidths = [
-  2,
+  1,
   5,
   10,
 ];
@@ -18,6 +18,8 @@ export interface IPos {
   x: number;
   y: number;
 }
+export type IPosPair = [IPos, IPos];
+export const emptyPos: IPos = Object.freeze({ x: 0, y: 0 });
 export interface ISize {
   height: number;
   width: number;
@@ -30,3 +32,4 @@ export function between (min: number, n: number, max: number) {
   }
   return Math.max(min, Math.min(n, max));
 }
+export type Ratio = number; // 0 as 0%, 1 as 100%

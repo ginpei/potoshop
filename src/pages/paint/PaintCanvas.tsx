@@ -1,40 +1,37 @@
 import { Color } from 'csstype';
 import * as React from 'react';
-import LongTapper from '../../components/LongTapper';
-import { AnimationFrameId, between, IPos } from '../../misc';
+import PointerHandler from '../../components/PointerHandler';
+import { AnimationFrameId, between, emptyPos, IPos, IPosPair, Ratio } from '../../misc';
 import './PaintCanvas.css';
 
 interface IPaintCanvasProps {
   height: number;
   inactive: boolean;
   onCanvasReceive: (el: HTMLCanvasElement | null) => void;
-  onLongTap: () => void;
+  onLongPoint: () => void;
   strokeColor: Color;
   strokeWidth: number;
   width: number;
 }
 interface IPaintCanvasState {
+  dScale: number;
   dTranslation: IPos;
-  dZoomPx: number;
-  lastX: number;
-  lastY: number;
   lining: boolean;
-  offsetX: number;
-  offsetY: number;
   pinching: boolean;
+  scale: number;
   translation: IPos;
-  zoomPx: number;
 }
 
 class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> {
   protected refCanvas = React.createRef<HTMLCanvasElement>();
   protected tmPressing: AnimationFrameId = 0;
-  protected lastPos: IPos = { x: 0, y: 0 };
+  protected lastPos: IPos = emptyPos;
   protected lined = false;
   protected lastImage: ImageData = new ImageData(1, 1);
-  protected pinchStartedAt: [IPos, IPos] = [{ x: 0, y: 0 }, { x: 0, y: 0 }];
-  protected pinchCenter: IPos = { x: 0, y: 0 };
+  protected pinchStartedPos: IPosPair = [emptyPos, emptyPos];
+  protected pinchCenter: IPos = emptyPos;
   protected pinchDistance = 0;
+  protected canvasOffset: IPos = emptyPos;
 
   protected vCtx: CanvasRenderingContext2D | null;
   protected get ctx (): CanvasRenderingContext2D | null {
@@ -61,14 +58,17 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
   protected get canvasStyle (): React.CSSProperties {
     const scale = this.pinchingScale;
     const translation = this.pinchingTranslation;
+    const transform = [
+      `translate(${translation.x}px, ${translation.y}px)`,
+      `scale(${scale})`,
+    ].join(' ');
     return {
-      transform: `translate(${translation.x}px, ${translation.y}px) scale(${scale})`,
+      transform,
     };
   }
 
-  private get pinchingScale () {
-    const width = this.props.width + this.state.zoomPx + this.state.dZoomPx;
-    return width / this.props.width;
+  private get pinchingScale (): Ratio {
+    return this.state.scale * this.state.dScale;
   }
 
   protected get pinchingTranslation (): IPos {
@@ -76,326 +76,6 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
       x: this.state.translation.x + this.state.dTranslation.x,
       y: this.state.translation.y + this.state.dTranslation.y,
     };
-  }
-
-  protected get pressIndicatorPos (): IPos {
-    const s = this.state;
-    return {
-      x: s.lastX,
-      y: s.lastY,
-    };
-  }
-
-  constructor (props: IPaintCanvasProps) {
-    super(props);
-    this.state = {
-      dTranslation: { x: 0, y: 0 },
-      dZoomPx: 0,
-      lastX: 0,
-      lastY: 0,
-      lining: false,
-      offsetX: 0,
-      offsetY: 0,
-      pinching: false,
-      translation: { x: 0, y: 0 },
-      zoomPx: 0,
-    };
-    this.onTouchStart = this.onTouchStart.bind(this);
-    this.onTouchMove = this.onTouchMove.bind(this);
-    this.onTouchEnd = this.onTouchEnd.bind(this);
-    this.onMouseDown = this.onMouseDown.bind(this);
-    this.onMouseMove = this.onMouseMove.bind(this);
-    this.onMouseUp = this.onMouseUp.bind(this);
-    this.onLongTap = this.onLongTap.bind(this);
-  }
-
-  public render () {
-    const elSize = this.state.pinching && (
-      <div className="PaintCanvas-size">
-        x{this.pinchingScale.toFixed(2)}
-      </div>
-    );
-
-    return (
-      <LongTapper
-        onLongTap={this.onLongTap}
-        >
-        <div className="PaintCanvas" style={this.styles}>
-          <canvas className="PaintCanvas-canvas"
-            style={this.canvasStyle}
-            width={this.props.width}
-            height={this.props.height}
-            ref={this.refCanvas}
-            />
-          {elSize}
-        </div>
-      </LongTapper>
-    );
-  }
-
-  public componentDidMount () {
-    const elCanvas = this.refCanvas.current!;
-    elCanvas.addEventListener('touchstart', this.onTouchStart, { passive: false });
-    document.addEventListener('touchmove', this.onTouchMove);
-    document.addEventListener('touchend', this.onTouchEnd);
-    document.addEventListener('touchcancel', this.onTouchEnd);
-    elCanvas.addEventListener('mousedown', this.onMouseDown);
-    document.addEventListener('mousemove', this.onMouseMove);
-    document.addEventListener('mouseup', this.onMouseUp);
-
-    this.ctx!.fillStyle = '#fff';
-    this.ctx!.fillRect(0, 0, this.props.width, this.props.height);
-    this.props.onCanvasReceive(elCanvas);
-  }
-
-  public componentWillUnmount () {
-    const elCanvas = this.refCanvas.current!;
-    elCanvas.removeEventListener('touchstart', this.onTouchStart);
-    document.removeEventListener('touchmove', this.onTouchMove);
-    document.removeEventListener('touchend', this.onTouchEnd);
-    document.removeEventListener('touchcancel', this.onTouchEnd);
-    elCanvas.removeEventListener('mousedown', this.onMouseDown);
-    document.removeEventListener('mousemove', this.onMouseMove);
-    document.removeEventListener('mouseup', this.onMouseUp);
-
-    this.props.onCanvasReceive(null);
-  }
-
-  protected onTouchStart (event: TouchEvent) {
-    const { touches } = event;
-    if (touches.length === 1) {
-      event.preventDefault();
-      const pos = this.getPos(event, 0);
-      this.startLining(pos);
-    } else if (touches.length === 2) {
-      if (location.search.slice(1).split('&').includes('pinch=1')) {
-        event.preventDefault(); // to prevent from zooming in Firefox
-        const pos = this.getPos(event, 1);
-        this.startPinching(pos);
-      } else {
-        this.cancelLining();
-      }
-    }
-  }
-
-  protected onTouchMove (event: TouchEvent) {
-    if (this.state.lining) {
-      const { touches } = event;
-      if (touches.length !== 1) {
-        this.stopLining();
-        throw new Error(`Number of touches must be 1 but ${touches.length}`);
-      }
-
-      const pos = this.getPos(event, 0);
-      this.drawLine(pos);
-    } else if (this.state.pinching) {
-      const { touches } = event;
-      if (touches.length !== 2) {
-        // this can occur in Firefox
-        // when you quickly move and suddenly up one of your fingers
-        this.stopPinching();
-        return;
-      }
-
-      const positions: IPos[] = [
-        this.getPos(event, 0),
-        this.getPos(event, 1),
-      ];
-      this.pinch(positions);
-    }
-  }
-
-  protected onTouchEnd (event: TouchEvent) {
-    if (this.state.lining) {
-      this.stopLining();
-    } else if (this.state.pinching) {
-      this.stopPinching();
-    }
-  }
-
-  protected onMouseDown (event: MouseEvent) {
-    event.preventDefault();
-    const pos = this.getPos(event);
-    this.startLining(pos);
-  }
-
-  protected onMouseMove (event: MouseEvent) {
-    if (this.state.lining) {
-      const pos = this.getPos(event);
-      this.drawLine(pos);
-    }
-  }
-
-  protected onMouseUp (event: MouseEvent) {
-    if (!this.state.lining) {
-      return;
-    }
-
-    this.stopLining();
-  }
-
-  /**
-   * @see #progressPressing
-   */
-  protected onLongTap () {
-    if (this.state.lining) {
-      this.cancelLining();
-    }
-
-    this.props.onLongTap();
-  }
-
-  protected startLining ({ x, y }: IPos) {
-    const elCanvas = this.refCanvas.current;
-    const { ctx } = this;
-    if (!elCanvas || !ctx) {
-      return;
-    }
-
-    const offsetX = elCanvas.offsetLeft;
-    const offsetY = elCanvas.offsetTop;
-    ctx.beginPath();
-    ctx.strokeStyle = this.props.strokeColor;
-    ctx.lineWidth = this.props.strokeWidth;
-    ctx.lineCap = 'round';
-    ctx.moveTo(x - offsetX, y - offsetY);
-
-    this.lined = false;
-    this.lastPos = { x, y };
-    this.setState({
-      lastX: x,
-      lastY: y,
-      lining: true,
-      offsetX,
-      offsetY,
-    });
-  }
-
-  protected drawLine ({ x, y }: IPos) {
-    const { ctx } = this;
-    if (!ctx) {
-      return;
-    }
-
-    const { offsetX, offsetY } = this.state;
-    const lx = this.lastPos.x;
-    const ly = this.lastPos.y;
-    ctx.quadraticCurveTo(
-      lx - offsetX,
-      ly - offsetY,
-      (lx + x) / 2 - offsetX,
-      (ly + y) / 2 - offsetY,
-    );
-    ctx.stroke();
-
-    this.lined = true;
-    this.lastPos = { x, y };
-    this.setState({
-      lastX: x,
-      lastY: y,
-    });
-  }
-
-  protected stopLining (lastStroke?: boolean) {
-    const { ctx } = this;
-    if (!ctx) {
-      return;
-    }
-
-    if (lastStroke !== false && this.lined) {
-      ctx.lineTo(
-        this.lastPos.x - this.state.offsetX,
-        this.lastPos.y - this.state.offsetY,
-      );
-      ctx.stroke();
-    }
-
-    // // {{{
-    // // protected points: IPos[] = []; // expected this
-    // const { points } = this;
-    // ctx.strokeStyle = 'red';
-    // ctx.fillStyle = 'red';
-    // ctx.moveTo(points[0].x, points[0].y);
-    // points.forEach((p) => {
-    //   ctx.beginPath();
-    //   ctx.ellipse(p.x, p.y, 3, 3, 45 * Math.PI / 180, 0, 2 * Math.PI);
-    //   ctx.fill();
-    // });
-    // // }}}
-
-    this.stashImage();
-    this.setState({
-      lining: false,
-    });
-  }
-
-  protected cancelLining () {
-    this.restoreLastImage();
-    this.stopLining(false);
-  }
-
-  protected stashImage () {
-    if (!this.ctx) {
-      throw new Error('Canvas is not ready');
-    }
-
-    const { height, width } = this.props;
-    this.lastImage = this.ctx.getImageData(0, 0, width, height);
-  }
-
-  protected restoreLastImage () {
-    if (!this.ctx) {
-      throw new Error('Canvas is not ready');
-    }
-
-    this.ctx.putImageData(this.lastImage, 0, 0);
-  }
-
-  protected startPinching (pos: IPos) {
-    this.cancelLining();
-
-    this.pinchStartedAt = [this.lastPos, pos];
-    this.pinchCenter = {
-      x: (this.lastPos.x + pos.x) / 2,
-      y: (this.lastPos.y + pos.y) / 2,
-    };
-    this.pinchDistance = this.calculateDistance(this.pinchStartedAt);
-    this.setState({
-      pinching: true,
-    });
-  }
-
-  protected pinch (positions: IPos[]) {
-    const curDistance = this.calculateDistance(positions);
-    const dDistance = curDistance - this.pinchDistance;
-
-    const c2 = this.calculateCenter(positions);
-    const diff: IPos = {
-      x: c2.x - this.pinchCenter.x - dDistance,
-      y: c2.y - this.pinchCenter.y - dDistance,
-    };
-    const dTranslation: IPos = {
-      x: diff.x * (c2.x / this.props.width),
-      y: diff.y * (c2.y / this.props.height),
-    };
-
-    this.setState({
-      dTranslation,
-      dZoomPx: dDistance * 2,
-    });
-  }
-
-  protected stopPinching () {
-    const zoomPx = (this.state.zoomPx + this.state.dZoomPx);
-    const lessThanOriginal = zoomPx < 0;
-
-    this.setState({
-      dTranslation: { x: 0, y: 0 },
-      dZoomPx: 0,
-      pinching: false,
-      translation: lessThanOriginal ? { x: 0, y: 0 } : this.safeTranslation,
-      zoomPx: lessThanOriginal ? 0 : zoomPx,
-    });
   }
 
   protected get safeTranslation (): IPos {
@@ -421,10 +101,263 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
     return safePos;
   }
 
+  constructor (props: IPaintCanvasProps) {
+    super(props);
+    this.state = {
+      dScale: 1,
+      dTranslation: emptyPos,
+      lining: false,
+      pinching: false,
+      scale: 1,
+      translation: emptyPos,
+    };
+    this.onPointStart = this.onPointStart.bind(this);
+    this.onPointMove = this.onPointMove.bind(this);
+    this.onPointEnd = this.onPointEnd.bind(this);
+    this.onPointCancel = this.onPointCancel.bind(this);
+    this.onLongPoint = this.onLongPoint.bind(this);
+    this.onPinchStart = this.onPinchStart.bind(this);
+    this.onPinchMove = this.onPinchMove.bind(this);
+    this.onPinchEnd = this.onPinchEnd.bind(this);
+  }
+
+  public render () {
+    const elSize = this.state.pinching && (
+      <div className="PaintCanvas-size">
+        x{this.pinchingScale.toFixed(2)}
+      </div>
+    );
+
+    const debug = window.location.search.slice(1).split('&').includes('point=1');
+    const canvasClassName = [
+      'PaintCanvas-canvas',
+      this.state.lining || this.state.pinching && '-active',
+    ].join(' ');
+
+    return (
+      <PointerHandler
+        debug={debug}
+        onPointStart={this.onPointStart}
+        onPointMove={this.onPointMove}
+        onPointEnd={this.onPointEnd}
+        onPointCancel={this.onPointCancel}
+        onLongPoint={this.onLongPoint}
+        onPinchStart={this.onPinchStart}
+        onPinchMove={this.onPinchMove}
+        onPinchEnd={this.onPinchEnd}
+        >
+        <div className="PaintCanvas" style={this.styles}>
+          <canvas className={canvasClassName}
+            style={this.canvasStyle}
+            width={this.props.width}
+            height={this.props.height}
+            ref={this.refCanvas}
+            />
+          {elSize}
+        </div>
+      </PointerHandler>
+    );
+  }
+
+  public componentDidMount () {
+    const elCanvas = this.refCanvas.current!;
+    this.ctx!.fillStyle = '#fff';
+    this.ctx!.fillRect(0, 0, this.props.width, this.props.height);
+    this.props.onCanvasReceive(elCanvas);
+  }
+
+  public componentWillUnmount () {
+    this.props.onCanvasReceive(null);
+  }
+
+  protected onPointStart (pos: IPos) {
+      this.startLining(pos);
+  }
+
+  protected onPointMove (pos: IPos) {
+    if (this.state.lining) {
+      this.drawLine(pos);
+    }
+  }
+
+  protected onPointEnd () {
+    if (this.state.lining) {
+      this.stopLining();
+    }
+  }
+
+  protected onPointCancel () {
+    if (this.state.lining) {
+      this.cancelLining();
+    }
+  }
+
+  /**
+   * @see #progressPressing
+   */
+  protected onLongPoint () {
+    if (this.state.lining) {
+      this.cancelLining();
+    }
+
+    this.props.onLongPoint();
+  }
+
+  protected onPinchStart (posPair: IPosPair) {
+    this.startPinching(posPair);
+  }
+
+  protected onPinchMove (posPair: IPosPair) {
+    this.pinch(posPair);
+  }
+
+  protected onPinchEnd () {
+    this.stopPinching();
+  }
+
+  protected startLining (pos: IPos) {
+    const elCanvas = this.refCanvas.current;
+    const { ctx } = this;
+    if (!elCanvas || !ctx) {
+      return;
+    }
+
+    this.canvasOffset = {
+      x: elCanvas.offsetLeft,
+      y: elCanvas.offsetTop,
+    };
+
+    const canvasPos = this.convertToCanvasPos(pos);
+
+    ctx.beginPath();
+    ctx.strokeStyle = this.props.strokeColor;
+    ctx.lineWidth = this.props.strokeWidth;
+    ctx.lineCap = 'round';
+    ctx.moveTo(canvasPos.x, canvasPos.y);
+
+    this.lined = false;
+    this.lastPos = canvasPos;
+    this.setState({
+      lining: true,
+    });
+  }
+
+  protected drawLine (pos: IPos) {
+    const { ctx } = this;
+    if (!ctx) {
+      return;
+    }
+
+    const canvasPos = this.convertToCanvasPos(pos);
+    const lx = this.lastPos.x;
+    const ly = this.lastPos.y;
+    ctx.quadraticCurveTo(
+      lx,
+      ly,
+      (lx + canvasPos.x) / 2,
+      (ly + canvasPos.y) / 2,
+    );
+    ctx.stroke();
+
+    this.lined = true;
+    this.lastPos = canvasPos;
+  }
+
+  protected stopLining (lastStroke?: boolean) {
+    const { ctx } = this;
+    if (!ctx) {
+      return;
+    }
+
+    if (lastStroke !== false && this.lined) {
+      ctx.lineTo(
+        this.lastPos.x,
+        this.lastPos.y,
+      );
+      ctx.stroke();
+    }
+
+    this.stashImage();
+    this.setState({
+      lining: false,
+    });
+  }
+
+  protected cancelLining () {
+    this.restoreLastImage();
+    this.stopLining(false);
+  }
+
+  /**
+   * Make sure `canvasOffset` is up to date before call.
+   */
+  protected convertToCanvasPos (screenPos: IPos) {
+    const { canvasOffset } = this;
+    const { scale, translation } = this.state;
+    const canvasPos = {
+      x: (-translation.x - canvasOffset.x + screenPos.x) / scale,
+      y: (-translation.y - canvasOffset.y + screenPos.y) / scale,
+    };
+    return canvasPos;
+  }
+
+  protected stashImage () {
+    if (!this.ctx) {
+      throw new Error('Canvas is not ready');
+    }
+
+    const { height, width } = this.props;
+    this.lastImage = this.ctx.getImageData(0, 0, width, height);
+  }
+
+  protected restoreLastImage () {
+    if (!this.ctx) {
+      throw new Error('Canvas is not ready');
+    }
+
+    this.ctx.putImageData(this.lastImage, 0, 0);
+  }
+
+  protected startPinching (posPair: IPosPair) {
+    this.cancelLining();
+
+    this.pinchStartedPos = posPair;
+    this.pinchCenter = this.calculateCenter(posPair);
+    this.pinchDistance = this.calculateDistance(posPair);
+
+    this.setState({
+      pinching: true,
+    });
+  }
+
+  protected pinch (posPair: IPosPair) {
+    const dScale = this.calculateDistance(posPair) / this.pinchDistance;
+
+    const c0 = this.pinchCenter;
+    const c1 = this.calculateCenter(posPair);
+    const f0 = this.state.translation;
+    const dTranslation = {
+      x: (f0.x - c0.x) * dScale + c1.x - f0.x,
+      y: (f0.y - c0.y) * dScale + c1.y - f0.y,
+    };
+    this.setState({ dScale, dTranslation });
+  }
+
+  protected stopPinching () {
+    this.setState({
+      dScale: 1,
+      dTranslation: emptyPos,
+      pinching: false,
+      scale: Math.max(1, this.pinchingScale),
+      translation: this.pinchingScale < 1 ? emptyPos : this.safeTranslation,
+    });
+  }
+
   protected calculateCenter (positions: IPos[]) {
     if (positions.length !== 2) {
       throw new Error(`2 positions must be given but ${positions.length}`);
     }
+
     const [p1, p2] = positions;
     const center: IPos = {
       x: (p1.x + p2.x) / 2,
