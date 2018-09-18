@@ -128,6 +128,7 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
       </div>
     );
 
+    const debug = window.location.search.slice(1).split('&').includes('point=1');
     const canvasClassName = [
       'PaintCanvas-canvas',
       this.state.lining || this.state.pinching && '-active',
@@ -135,7 +136,7 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
 
     return (
       <PointerHandler
-        // debug={true}
+        debug={debug}
         onPointStart={this.onPointStart}
         onPointMove={this.onPointMove}
         onPointEnd={this.onPointEnd}
