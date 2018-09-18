@@ -124,11 +124,21 @@ class PaintMenu extends React.Component<IPaintMenuProps, IPaintMenuState> {
   }
 
   public render () {
+    const body = this.renderBody();
+
     return (
       <div className={`PaintMenu ${this.props.visible ? '-visible' : ''}`}
         onClick={this.onClick}
         >
         <AppHeader fullscreen={true}/>
+        {body}
+      </div>
+    );
+  }
+
+  protected renderBody () {
+    return (
+      <div className="PaintMenu-body">
         <div className="PaintMenu-close">
           <i className="fa fa-times" aria-hidden="true" />
         </div>
