@@ -13,6 +13,7 @@ interface IPaintCanvasProps {
   strokeWidth: number;
   width: number;
 }
+// TODO remove unnecessary state
 interface IPaintCanvasState {
   dScale: number;
   dTranslation: IPos;
@@ -35,6 +36,7 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
   protected pinchStartedPos: IPosPair = [emptyPos, emptyPos];
   protected pinchCenter: IPos = emptyPos;
   protected pinchDistance = 0;
+  protected canvasOffset: IPos = emptyPos;
 
   protected vCtx: CanvasRenderingContext2D | null;
   protected get ctx (): CanvasRenderingContext2D | null {
@@ -81,12 +83,14 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
     };
   }
 
+  // TODO remove
   protected get pressIndicatorPos (): IPos {
-    const s = this.state;
-    return {
-      x: s.lastX,
-      y: s.lastY,
-    };
+    return this.lastPos;
+    // const s = this.state;
+    // return {
+    //   x: s.lastX,
+    //   y: s.lastY,
+    // };
   }
 
   constructor (props: IPaintCanvasProps) {
@@ -201,55 +205,56 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
     this.stopPinching();
   }
 
-  protected startLining ({ x, y }: IPos) {
+  protected startLining (pos: IPos) {
     const elCanvas = this.refCanvas.current;
     const { ctx } = this;
     if (!elCanvas || !ctx) {
       return;
     }
 
-    const offsetX = elCanvas.offsetLeft;
-    const offsetY = elCanvas.offsetTop;
+    this.canvasOffset = {
+      x: elCanvas.offsetLeft,
+      y: elCanvas.offsetTop,
+    };
+
+    const canvasPos = this.convertToCanvasPos(pos);
+
     ctx.beginPath();
     ctx.strokeStyle = this.props.strokeColor;
     ctx.lineWidth = this.props.strokeWidth;
     ctx.lineCap = 'round';
-    ctx.moveTo(x - offsetX, y - offsetY);
+    ctx.moveTo(canvasPos.x, canvasPos.y);
 
     this.lined = false;
-    this.lastPos = { x, y };
+    this.lastPos = canvasPos;
     this.setState({
-      lastX: x,
-      lastY: y,
+      lastX: canvasPos.x,
+      lastY: canvasPos.y,
       lining: true,
-      offsetX,
-      offsetY,
+      offsetX: elCanvas.offsetLeft,
+      offsetY: elCanvas.offsetTop,
     });
   }
 
-  protected drawLine ({ x, y }: IPos) {
+  protected drawLine (pos: IPos) {
     const { ctx } = this;
     if (!ctx) {
       return;
     }
 
-    const { offsetX, offsetY } = this.state;
+    const canvasPos = this.convertToCanvasPos(pos);
     const lx = this.lastPos.x;
     const ly = this.lastPos.y;
     ctx.quadraticCurveTo(
-      lx - offsetX,
-      ly - offsetY,
-      (lx + x) / 2 - offsetX,
-      (ly + y) / 2 - offsetY,
+      lx,
+      ly,
+      (lx + canvasPos.x) / 2,
+      (ly + canvasPos.y) / 2,
     );
     ctx.stroke();
 
     this.lined = true;
-    this.lastPos = { x, y };
-    this.setState({
-      lastX: x,
-      lastY: y,
-    });
+    this.lastPos = canvasPos;
   }
 
   protected stopLining (lastStroke?: boolean) {
@@ -260,8 +265,8 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
 
     if (lastStroke !== false && this.lined) {
       ctx.lineTo(
-        this.lastPos.x - this.state.offsetX,
-        this.lastPos.y - this.state.offsetY,
+        this.lastPos.x,
+        this.lastPos.y,
       );
       ctx.stroke();
     }
@@ -275,6 +280,19 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
   protected cancelLining () {
     this.restoreLastImage();
     this.stopLining(false);
+  }
+
+  /**
+   * Make sure `canvasOffset` is up to date before call.
+   */
+  protected convertToCanvasPos (screenPos: IPos) {
+    const { canvasOffset } = this;
+    const { scale, translation } = this.state;
+    const canvasPos = {
+      x: (-translation.x - canvasOffset.x + screenPos.x) / scale,
+      y: (-translation.y - canvasOffset.y + screenPos.y) / scale,
+    };
+    return canvasPos;
   }
 
   protected stashImage () {
