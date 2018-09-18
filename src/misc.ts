@@ -7,7 +7,7 @@ export const strokeColors = [
 ];
 export const defaultStrokeColors = strokeColors[4];
 export const strokeWidths = [
-  2,
+  1,
   5,
   10,
 ];
