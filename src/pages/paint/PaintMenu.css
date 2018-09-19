@@ -19,27 +19,12 @@
   top: calc(var(--app-header-height) + var(--app-space));
 }
 
-.PaintMenu-penMenu {
-  bottom: calc(100px + var(--app-space));
-  box-sizing: border-box;
-  left: 0;
-  opacity: 0;
-  padding: 0 var(--app-space);
-  position: absolute;
-  transform: translateY(30vh);
-  transition: all 300ms;
-  width: 100%;
-}
-.PaintMenu.-visible .PaintMenu-penMenu {
-  opacity: 1;
-  transform: translateY(0);
-}
-.PaintMenu-colors {
-  display: flex;
-  justify-content: space-evenly;
-  margin-bottom: var(--app-space);
-}
-
+/*
+ .PaintMenu-content
+   + PaintMenu-body
+   + PaintMenu-footer
+       + PaintMenu-footerButton (*)
+*/
 .PaintMenu-content {
   display: flex;
   flex-direction: row;
@@ -64,6 +49,28 @@
 }
 .PaintMenu-footerButton {
   flex-grow: 1;
+}
+
+.PaintMenu-penMenu {
+  bottom: calc(100px + var(--app-space));
+  box-sizing: border-box;
+  left: 0;
+  opacity: 0;
+  padding: 0 var(--app-space);
+  position: absolute;
+  transform: translateY(30vh);
+  transition: all 300ms;
+  width: 100%;
+}
+.PaintMenu.-visible .PaintMenu-penMenu {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.PaintMenu-colors {
+  display: flex;
+  justify-content: space-evenly;
+  margin-bottom: var(--app-space);
 }
 
 .StrokeWidths {
