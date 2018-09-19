@@ -1,8 +1,8 @@
-import { createBrowserHistory } from 'history';
 import * as React from 'react';
 import { Route, Router, Switch } from 'react-router-dom';
 import './App.css';
 import ErrorOverlay from './components/ErrorOverlay';
+import { appHistory } from './misc';
 import AboutPage from './pages/AboutPage';
 import HistoryPage from './pages/HistoryPage';
 import PaintPage from './pages/paint/PaintPage';
@@ -20,7 +20,7 @@ const ErrorNotFoundPage = () => {
 };
 
 class App extends React.Component<any, IAppState> {
-  protected history = createBrowserHistory();
+  protected history = appHistory;
 
   constructor (props: any) {
     super(props);
