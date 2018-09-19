@@ -3,7 +3,7 @@ import * as React from 'react';
 import AppHeader from '../../components/AppHeader';
 import { strokeColors, strokeWidths } from '../../misc';
 import './PaintMenu.css';
-import { Colors, PaintMenuBody, PaintMenuContent, PaintMenuFooter, PaintMenuFooterButton, StrokeWidths } from './paintMenuMisc';
+import { Colors, PaintMenuBody, PaintMenuContent, PaintMenuFooter, PaintMenuFooterButton, StrokeWidths } from './paintMenuComponents';
 
 interface IPaintMenuProps {
   visible: boolean;
