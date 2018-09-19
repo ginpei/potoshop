@@ -3,7 +3,7 @@ import * as React from 'react';
 import AppHeader from '../../components/AppHeader';
 import { strokeColors, strokeWidths } from '../../misc';
 import './PaintMenu.css';
-import { PaintMenuBody, PaintMenuContent, PaintMenuFooter, PaintMenuFooterButton } from './paintMenuMisc';
+import { Colors, PaintMenuBody, PaintMenuContent, PaintMenuFooter, PaintMenuFooterButton, StrokeWidths } from './paintMenuMisc';
 
 interface IPaintMenuProps {
   visible: boolean;
@@ -15,101 +15,6 @@ interface IPaintMenuProps {
 }
 // tslint:disable-next-line:no-empty-interface
 interface IPaintMenuState {
-}
-
-interface IStrokeWidthButtonProps {
-  width: number;
-  onClick: (width: number) => void;
-}
-
-function StrokeWidth (props: IStrokeWidthButtonProps) {
-  const path = `
-    M 40 10
-    L 10 40
-  `;
-  const onClick = () => props.onClick(props.width);
-  return (
-    <span className="StrokeWidth">
-      <button className="StrokeWidth-button"
-        onClick={onClick}
-        >
-          <svg width="50" height="50">
-            <path
-              stroke="#333"
-              strokeWidth={props.width}
-              d={path}
-              />
-          </svg>
-        </button>
-    </span>
-  );
-}
-
-interface IStrokeWidthsButtonProps {
-  strokeWidths: number[];
-  onChange: (width: number) => void;
-}
-function StrokeWidths (props: IStrokeWidthsButtonProps) {
-  const onClick = (width: number) => {
-    props.onChange(width);
-  };
-
-  const buttons = props.strokeWidths.map((width: number) => {
-    return (
-      <StrokeWidth
-        key={width}
-        width={width}
-        onClick={onClick}
-        />
-    );
-  });
-
-  return (
-    <div className="StrokeWidths">
-      {buttons}
-    </div>
-  );
-}
-
-interface IColorButtonProps {
-  color: Color;
-  onClick: (color: Color) => void;
-}
-
-function ColorButton (props: IColorButtonProps) {
-  const onClick = () => props.onClick(props.color);
-  return (
-    <span className="ColorButton">
-      <button className="ColorButton-button"
-        style={{ backgroundColor: props.color }}
-        onClick={onClick}
-        >{props.color}</button>
-    </span>
-  );
-}
-
-interface IColorsProps {
-  colors: string[];
-  onChange: (color: Color) => void;
-}
-function Colors (props: IColorsProps) {
-  const onClick = (color: Color) => {
-    props.onChange(color);
-  };
-
-  const buttons = props.colors.map((color) => (
-      <ColorButton
-        key={color}
-        color={color}
-        onClick={onClick}
-        />
-  ));
-
-  return (
-    <div className="PaintMenu-colors">
-      {buttons}
-    </div>
-  );
 }
 
 class PaintMenu extends React.Component<IPaintMenuProps, IPaintMenuState> {
