@@ -40,7 +40,14 @@
   margin-bottom: var(--app-space);
 }
 
-.PaintMenu-menu {
+.PaintMenu-content {
+  display: flex;
+  flex-direction: row;
+}
+.PaintMenu-body {
+  flex-grow: 1;
+}
+.PaintMenu-footer {
   bottom: 0;
   display: flex;
   align-items: stretch;
@@ -52,11 +59,11 @@
   transition: transform 300ms;
   width: 100%;
 }
-.PaintMenu.-visible .PaintMenu-menu {
+.PaintMenu.-visible .PaintMenu-footer {
   transform: translateY(0);
 }
-.PaintMenu-menu > * {
-  width: 100%;
+.PaintMenu-footerButton {
+  flex-grow: 1;
 }
 
 .StrokeWidths {

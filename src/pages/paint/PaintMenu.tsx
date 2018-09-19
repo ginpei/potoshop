@@ -3,6 +3,7 @@ import * as React from 'react';
 import AppHeader from '../../components/AppHeader';
 import { strokeColors, strokeWidths } from '../../misc';
 import './PaintMenu.css';
+import { PaintMenuBody, PaintMenuContent, PaintMenuFooter, PaintMenuFooterButton } from './paintMenuMisc';
 
 interface IPaintMenuProps {
   visible: boolean;
@@ -124,38 +125,23 @@ class PaintMenu extends React.Component<IPaintMenuProps, IPaintMenuState> {
   }
 
   public render () {
-    const body = this.renderBody();
-
     return (
       <div className={`PaintMenu ${this.props.visible ? '-visible' : ''}`}
         onClick={this.onClick}
         >
         <AppHeader fullscreen={true}/>
-        {body}
+        {this.renderMainContent()}
       </div>
     );
   }
 
-  protected renderBody () {
+  protected renderMainContent () {
     return (
-      <div className="PaintMenu-body">
-        <div className="PaintMenu-close">
-          <i className="fa fa-times" aria-hidden="true" />
-        </div>
-        <div className="PaintMenu-menu">
-          <button
-            onClick={this.onSaveClick}
-            >Save &amp; Share</button>
-          <button
-            onClick={this.onHistoryClick}
-            >History</button>
-          <button
-            onClick={this.onResetClick}
-            >Reset</button>
-          <button
-            onClick={this.onAboutClick}
-            >About</button>
-        </div>
+      <PaintMenuContent>
+        <PaintMenuBody>
+          <div className="PaintMenu-close">
+            <i className="fa fa-times" aria-hidden="true" />
+          </div>
         <div className="PaintMenu-penMenu">
           <StrokeWidths
             strokeWidths={strokeWidths}
@@ -166,7 +152,22 @@ class PaintMenu extends React.Component<IPaintMenuProps, IPaintMenuState> {
             onChange={this.onColorChange}
             />
         </div>
-      </div>
+        </PaintMenuBody>
+        <PaintMenuFooter>
+          <PaintMenuFooterButton
+            onClick={this.onSaveClick}
+            >Save &amp; Share</PaintMenuFooterButton>
+          <PaintMenuFooterButton
+            onClick={this.onHistoryClick}
+            >History</PaintMenuFooterButton>
+          <PaintMenuFooterButton
+            onClick={this.onResetClick}
+            >Reset</PaintMenuFooterButton>
+          <PaintMenuFooterButton
+            onClick={this.onAboutClick}
+            >About</PaintMenuFooterButton>
+        </PaintMenuFooter>
+      </PaintMenuContent>
     );
   }
 
