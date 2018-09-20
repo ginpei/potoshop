@@ -50,8 +50,6 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
   protected get styles (): React.CSSProperties {
     return {
       filter: this.props.inactive ? 'blur(5px)' : '',
-      height: this.props.height,
-      width: this.props.width,
     };
   }
 
