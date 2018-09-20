@@ -4,7 +4,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import AppHeader from '../../components/AppHeader';
 import PointerHandler from '../../components/PointerHandler';
-import { appSpace, defaultStrokeColors, defaultStrokeWidth, ISize } from '../../misc';
+import { appHistory, appSpace, defaultStrokeColors, defaultStrokeWidth, ISize } from '../../misc';
 import firebase from '../../plugins/firebase';
 import { readBlob, uploadImage } from '../../services/image';
 import * as user from '../../services/user';
@@ -17,7 +17,6 @@ interface IPaintPageState {
   canvasSize: ISize;
   justAfterStarted: boolean;
   menuVisible: boolean;
-  resetting: boolean;
   strokeColor: Color;
   strokeWidth: number;
 }
@@ -36,7 +35,6 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
       },
       justAfterStarted: true,
       menuVisible: true,
-      resetting: false,
       strokeColor: defaultStrokeColors,
       strokeWidth: defaultStrokeWidth,
     };
@@ -52,17 +50,6 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
   }
 
   public render () {
-    const canvas = this.state.resetting ? undefined : (
-      <PaintCanvas
-        height={this.state.canvasSize.height}
-        inactive={this.state.menuVisible}
-        strokeColor={this.state.strokeColor}
-        strokeWidth={this.state.strokeWidth}
-        width={this.state.canvasSize.width}
-        onCanvasReceive={this.onCanvasReceive}
-        onLongPoint={this.onCanvasLongTap}
-        />
-      );
     const tutorialOverlay = !this.state.justAfterStarted ? undefined : (
       <PointerHandler
         onLongPoint={this.onTutorialLongPoint}
@@ -89,7 +76,15 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
 
     return (
       <div className="PaintPage">
-        {canvas}
+        <PaintCanvas
+          height={this.state.canvasSize.height}
+          inactive={this.state.menuVisible}
+          strokeColor={this.state.strokeColor}
+          strokeWidth={this.state.strokeWidth}
+          width={this.state.canvasSize.width}
+          onCanvasReceive={this.onCanvasReceive}
+          onLongPoint={this.onCanvasLongTap}
+          />
         <AppMenu
           visible={this.state.menuVisible}
           onOverlayClick={this.onMenuOverlayClick}
@@ -184,16 +179,7 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
   }
 
   protected onReset () {
-    this.setState({
-      resetting: true,
-    });
-
-    setTimeout(() => {
-      this.setState({
-        menuVisible: false,
-        resetting: false,
-      });
-    }, 1);
+    appHistory.push('/new');
   }
 }
 

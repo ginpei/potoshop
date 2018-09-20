@@ -1,3 +1,4 @@
 .AppFooter {
   border-top: 1px solid #ccc;
+  margin-top: var(--app-space);
 }
