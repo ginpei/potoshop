@@ -15,10 +15,12 @@ import './PaintPage.css';
 type IPaintPagePros = any;
 interface IPaintPageState {
   canvasSize: ISize;
+  height: number;
   justAfterStarted: boolean;
   menuVisible: boolean;
   strokeColor: Color;
   strokeWidth: number;
+  width: number;
 }
 
 class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
@@ -33,10 +35,12 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
         height: 0,
         width: 0,
       },
+      height: 0,
       justAfterStarted: true,
       menuVisible: true,
       strokeColor: defaultStrokeColors,
       strokeWidth: defaultStrokeWidth,
+      width: 0,
     };
     this.onDocumentTouchStart = this.onDocumentTouchStart.bind(this);
     this.onTutorialLongPoint = this.onTutorialLongPoint.bind(this);
@@ -77,11 +81,13 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
     return (
       <div className="PaintPage">
         <PaintCanvas
-          height={this.state.canvasSize.height}
+          canvasHeight={this.state.canvasSize.height}
+          canvasWidth={this.state.canvasSize.width}
+          height={this.state.height}
           inactive={this.state.menuVisible}
           strokeColor={this.state.strokeColor}
           strokeWidth={this.state.strokeWidth}
-          width={this.state.canvasSize.width}
+          width={this.state.width}
           onCanvasReceive={this.onCanvasReceive}
           onLongPoint={this.onCanvasLongTap}
           />
@@ -177,29 +183,33 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
   }
 
   protected setUpNew () {
+    const el = document.documentElement;
+    const state: any = {
+      height: el.clientHeight,
+      width: el.clientWidth,
+    };
+
     const newType = getUrlParamOf('newType');
     if (newType) {
       if (newType === 'size') {
-        this.setState({
-          canvasSize: {
-            height: Number(getUrlParamOf('height')) || 1,
-            width: Number(getUrlParamOf('width')) || 1,
-          },
-        });
+        state.canvasSize = {
+          height: Number(getUrlParamOf('height')) || 1,
+          width: Number(getUrlParamOf('width')) || 1,
+        };
         return;
       } else {
         console.warn('Invalid parameters');
       }
     }
 
-    // screen size as default
-    const el = document.documentElement;
-    this.setState({
-      canvasSize: {
-        height: el.clientHeight - appSpace * 2,
-        width: el.clientWidth - appSpace * 2,
-      },
-    });
+    if (!state.canvasSize) {
+      state.canvasSize = {
+        height: state.height - appSpace * 2,
+        width: state.width - appSpace * 2,
+      };
+    }
+
+    this.setState(state);
   }
 }
 

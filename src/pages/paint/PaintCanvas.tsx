@@ -5,6 +5,8 @@ import { AnimationFrameId, between, emptyPos, IPos, IPosPair, Ratio } from '../.
 import './PaintCanvas.css';
 
 interface IPaintCanvasProps {
+  canvasHeight: number;
+  canvasWidth: number;
   height: number;
   inactive: boolean;
   onCanvasReceive: (el: HTMLCanvasElement | null) => void;
@@ -50,6 +52,8 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
   protected get styles (): React.CSSProperties {
     return {
       filter: this.props.inactive ? 'blur(5px)' : '',
+      height: this.props.height,
+      width: this.props.width,
     };
   }
 
@@ -77,11 +81,11 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
   }
 
   protected get safeTranslation (): IPos {
-    const { height, width } = this.props;
+    const { canvasHeight, canvasWidth } = this.props;
     const scale = this.pinchingScale;
     const diff: IPos = {
-      x: width - width * scale,
-      y: height - height * scale,
+      x: canvasWidth - canvasWidth * scale,
+      y: canvasHeight - canvasHeight * scale,
     };
 
     if (scale < 1) {
@@ -147,8 +151,8 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
         <div className="PaintCanvas" style={this.styles}>
           <canvas className={canvasClassName}
             style={this.canvasStyle}
-            width={this.props.width}
-            height={this.props.height}
+            width={this.props.canvasWidth}
+            height={this.props.canvasHeight}
             ref={this.refCanvas}
             />
           {elSize}
@@ -160,7 +164,7 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
   public componentDidMount () {
     const elCanvas = this.refCanvas.current!;
     this.ctx!.fillStyle = '#fff';
-    this.ctx!.fillRect(0, 0, this.props.width, this.props.height);
+    this.ctx!.fillRect(0, 0, this.props.canvasWidth, this.props.canvasHeight);
     this.props.onCanvasReceive(elCanvas);
   }
 
@@ -304,8 +308,8 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
       throw new Error('Canvas is not ready');
     }
 
-    const { height, width } = this.props;
-    this.lastImage = this.ctx.getImageData(0, 0, width, height);
+    const { canvasHeight, canvasWidth } = this.props;
+    this.lastImage = this.ctx.getImageData(0, 0, canvasWidth, canvasHeight);
   }
 
   protected restoreLastImage () {
