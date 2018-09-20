@@ -1,5 +1,6 @@
 // import * as firebase from 'firebase';
 import * as React from 'react';
+import AppFooter from '../components/AppFooter';
 import AppHeader from '../components/AppHeader';
 import './AboutPage.css';
 
@@ -35,11 +36,7 @@ class AboutPage extends React.Component<IAboutPagePros, IAboutPageState> {
             <li><a href="https://github.com/ginpei/potoshop">ginpei/potoshop</a></li>
           </ul>
         </div>
-        <div className="AppFooter">
-          <div className="container">
-            <p>By Ginpei.</p>
-          </div>
-        </div>
+        <AppFooter/>
       </div>
     );
   }
