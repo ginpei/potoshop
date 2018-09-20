@@ -4,7 +4,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import AppHeader from '../../components/AppHeader';
 import PointerHandler from '../../components/PointerHandler';
-import { appHistory, appSpace, defaultStrokeColors, defaultStrokeWidth, ISize } from '../../misc';
+import { appHistory, appSpace, defaultStrokeColors, defaultStrokeWidth, getUrlParamOf, ISize } from '../../misc';
 import firebase from '../../plugins/firebase';
 import { readBlob, uploadImage } from '../../services/image';
 import * as user from '../../services/user';
@@ -99,13 +99,7 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
   }
 
   public async componentWillMount () {
-    const el = document.documentElement;
-    this.setState({
-      canvasSize: {
-        height: el.clientHeight - appSpace * 2,
-        width: el.clientWidth - appSpace * 2,
-      },
-    });
+    this.setUpNew();
 
     if (!firebase.auth().currentUser) {
       try {
@@ -180,6 +174,32 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
 
   protected onReset () {
     appHistory.push('/new');
+  }
+
+  protected setUpNew () {
+    const newType = getUrlParamOf('newType');
+    if (newType) {
+      if (newType === 'size') {
+        this.setState({
+          canvasSize: {
+            height: Number(getUrlParamOf('height')) || 1,
+            width: Number(getUrlParamOf('width')) || 1,
+          },
+        });
+        return;
+      } else {
+        console.warn('Invalid parameters');
+      }
+    }
+
+    // screen size as default
+    const el = document.documentElement;
+    this.setState({
+      canvasSize: {
+        height: el.clientHeight - appSpace * 2,
+        width: el.clientWidth - appSpace * 2,
+      },
+    });
   }
 }
 

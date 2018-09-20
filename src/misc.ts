@@ -1,5 +1,32 @@
 import createBrowserHistory from 'history/createBrowserHistory';
 
+const lastUrl = '';
+let urlParams: Array<{ name: string, value: string }> = [];
+export function getUrlParamOf (name: string) {
+  if (location.href !== lastUrl) {
+    urlParams = location.search.slice(1).split('&')
+      .map((sPair) => {
+        const pair = sPair.split('=');
+        return {
+          name: pair[0],
+          value: pair[1],
+        };
+      });
+  }
+
+  const values = urlParams
+    .filter((q) => q.name === name)
+    .map((q) => q.value);
+
+  if (values.length === 0) {
+    return null;
+  } else if (values.length === 1) {
+    return values[0];
+  } else {
+    return values;
+  }
+}
+
 export const appHistory = createBrowserHistory();
 export const strokeColors = [
   '#f33',
