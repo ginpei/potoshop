@@ -2,7 +2,7 @@ import createBrowserHistory from 'history/createBrowserHistory';
 
 const lastUrl = '';
 let urlParams: Array<{ name: string, value: string }> = [];
-export function getUrlParamOf (name: string) {
+export function getUrlParamsOf (name: string) {
   if (location.href !== lastUrl) {
     urlParams = location.search.slice(1).split('&')
       .map((sPair) => {
@@ -18,6 +18,9 @@ export function getUrlParamOf (name: string) {
     .filter((q) => q.name === name)
     .map((q) => q.value);
   return values;
+}
+export function getUrlParamOf (name: string) {
+  return getUrlParamsOf(name)[0];
 }
 
 export const appHistory = createBrowserHistory();
