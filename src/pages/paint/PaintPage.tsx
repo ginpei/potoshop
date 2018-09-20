@@ -177,13 +177,13 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
   }
 
   protected setUpNew () {
-    const newType = getUrlParamOf('newType');
+    const newType = getUrlParamOf('newType')[0];
     if (newType) {
       if (newType === 'size') {
         this.setState({
           canvasSize: {
-            height: Number(getUrlParamOf('height')) || 1,
-            width: Number(getUrlParamOf('width')) || 1,
+            height: Number(getUrlParamOf('height')[0]) || 1,
+            width: Number(getUrlParamOf('width')[0]) || 1,
           },
         });
         return;

@@ -17,14 +17,7 @@ export function getUrlParamOf (name: string) {
   const values = urlParams
     .filter((q) => q.name === name)
     .map((q) => q.value);
-
-  if (values.length === 0) {
-    return null;
-  } else if (values.length === 1) {
-    return values[0];
-  } else {
-    return values;
-  }
+  return values;
 }
 
 export const appHistory = createBrowserHistory();
