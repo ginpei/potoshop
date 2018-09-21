@@ -1,3 +1,29 @@
+import createBrowserHistory from 'history/createBrowserHistory';
+
+const lastUrl = '';
+let urlParams: Array<{ name: string, value: string }> = [];
+export function getUrlParamsOf (name: string) {
+  if (location.href !== lastUrl) {
+    urlParams = location.search.slice(1).split('&')
+      .map((sPair) => {
+        const pair = sPair.split('=');
+        return {
+          name: pair[0],
+          value: pair[1],
+        };
+      });
+  }
+
+  const values = urlParams
+    .filter((q) => q.name === name)
+    .map((q) => q.value);
+  return values;
+}
+export function getUrlParamOf (name: string) {
+  return getUrlParamsOf(name)[0];
+}
+
+export const appHistory = createBrowserHistory();
 export const strokeColors = [
   '#f33',
   '#090',

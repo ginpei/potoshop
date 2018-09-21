@@ -1,11 +1,13 @@
 import { Color } from 'csstype';
 import * as React from 'react';
 import PointerHandler from '../../components/PointerHandler';
-import { AnimationFrameId, between, emptyPos, IPos, IPosPair, Ratio } from '../../misc';
+import { AnimationFrameId, appSpace, between, emptyPos, IPos, IPosPair, Ratio } from '../../misc';
 import './PaintCanvas.css';
 
 interface IPaintCanvasProps {
   height: number;
+  imageHeight: number;
+  imageWidth: number;
   inactive: boolean;
   onCanvasReceive: (el: HTMLCanvasElement | null) => void;
   onLongPoint: () => void;
@@ -71,34 +73,19 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
     return this.state.scale * this.state.dScale;
   }
 
+  private get safeMinScale (): Ratio {
+    return Math.min(
+      1,
+      (this.props.width - appSpace * 2) / this.props.imageWidth,
+      (this.props.height - appSpace * 2) / this.props.imageHeight,
+    );
+  }
+
   protected get pinchingTranslation (): IPos {
     return {
       x: this.state.translation.x + this.state.dTranslation.x,
       y: this.state.translation.y + this.state.dTranslation.y,
     };
-  }
-
-  protected get safeTranslation (): IPos {
-    const { height, width } = this.props;
-    const scale = this.pinchingScale;
-    const diff: IPos = {
-      x: width - width * scale,
-      y: height - height * scale,
-    };
-
-    if (scale < 1) {
-      return {
-        x: diff.x / 2,
-        y: diff.y / 2,
-      };
-    }
-
-    const t = this.pinchingTranslation;
-    const safePos: IPos = {
-      x: between(diff.x, t.x, 0),
-      y: between(diff.y, t.y, 0),
-    };
-    return safePos;
   }
 
   constructor (props: IPaintCanvasProps) {
@@ -122,11 +109,10 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
   }
 
   public render () {
-    const elSize = this.state.pinching && (
-      <div className="PaintCanvas-size">
-        x{this.pinchingScale.toFixed(2)}
-      </div>
-    );
+    const sizeClassName = [
+      'PaintCanvas-size',
+      this.state.pinching ? '-active' : undefined,
+    ].join(' ');
 
     const debug = window.location.search.slice(1).split('&').includes('point=1');
     const canvasClassName = [
@@ -149,20 +135,31 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
         <div className="PaintCanvas" style={this.styles}>
           <canvas className={canvasClassName}
             style={this.canvasStyle}
-            width={this.props.width}
-            height={this.props.height}
+            width={this.props.imageWidth}
+            height={this.props.imageHeight}
             ref={this.refCanvas}
             />
-          {elSize}
+          <div className={sizeClassName}>
+            x{this.pinchingScale.toFixed(2)}
+          </div>
         </div>
       </PointerHandler>
     );
   }
 
+  public componentWillMount () {
+    const scale = Math.max(this.safeMinScale, 0);
+    const translation = this.getSafeTranslation(scale);
+    this.setState({
+      scale,
+      translation,
+    });
+  }
+
   public componentDidMount () {
     const elCanvas = this.refCanvas.current!;
     this.ctx!.fillStyle = '#fff';
-    this.ctx!.fillRect(0, 0, this.props.width, this.props.height);
+    this.ctx!.fillRect(0, 0, this.props.imageWidth, this.props.imageHeight);
     this.props.onCanvasReceive(elCanvas);
   }
 
@@ -306,8 +303,8 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
       throw new Error('Canvas is not ready');
     }
 
-    const { height, width } = this.props;
-    this.lastImage = this.ctx.getImageData(0, 0, width, height);
+    const { imageHeight, imageWidth } = this.props;
+    this.lastImage = this.ctx.getImageData(0, 0, imageWidth, imageHeight);
   }
 
   protected restoreLastImage () {
@@ -344,13 +341,43 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
   }
 
   protected stopPinching () {
+    const scale = Math.max(this.safeMinScale, this.pinchingScale);
+    const translation = this.getSafeTranslation(scale);
+
     this.setState({
       dScale: 1,
       dTranslation: emptyPos,
       pinching: false,
-      scale: Math.max(1, this.pinchingScale),
-      translation: this.pinchingScale < 1 ? emptyPos : this.safeTranslation,
+      scale,
+      translation,
     });
+  }
+
+  protected getSafeTranslation (scale: Ratio): IPos {
+    const p = this.props;
+    const safePos = {
+      x: 0,
+      y: 0,
+    };
+    const t = this.pinchingTranslation;
+
+    if (p.imageWidth * scale < p.width - appSpace * 2) {
+      safePos.x = (p.width - p.imageWidth * scale) / 2;
+    } else {
+      const max = appSpace;
+      const min = -p.imageWidth * scale + (p.width - appSpace);
+      safePos.x = between(min, t.x, max);
+    }
+
+    if (p.imageHeight * scale < p.height - appSpace * 2) {
+      safePos.y = (p.height - p.imageHeight * scale) / 2;
+    } else {
+      const max = appSpace;
+      const min = -p.imageHeight * scale + (p.height - appSpace);
+      safePos.y = between(min, t.y, max);
+    }
+
+    return safePos;
   }
 
   protected calculateCenter (positions: IPos[]) {

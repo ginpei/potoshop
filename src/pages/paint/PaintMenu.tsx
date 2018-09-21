@@ -3,6 +3,7 @@ import * as React from 'react';
 import AppHeader from '../../components/AppHeader';
 import { strokeColors, strokeWidths } from '../../misc';
 import './PaintMenu.css';
+import { Colors, PaintMenuBody, PaintMenuContent, PaintMenuFooter, PaintMenuFooterButton, StrokeWidths } from './paintMenuComponents';
 
 interface IPaintMenuProps {
   visible: boolean;
@@ -14,101 +15,6 @@ interface IPaintMenuProps {
 }
 // tslint:disable-next-line:no-empty-interface
 interface IPaintMenuState {
-}
-
-interface IStrokeWidthButtonProps {
-  width: number;
-  onClick: (width: number) => void;
-}
-
-function StrokeWidth (props: IStrokeWidthButtonProps) {
-  const path = `
-    M 40 10
-    L 10 40
-  `;
-  const onClick = () => props.onClick(props.width);
-  return (
-    <span className="StrokeWidth">
-      <button className="StrokeWidth-button"
-        onClick={onClick}
-        >
-          <svg width="50" height="50">
-            <path
-              stroke="#333"
-              strokeWidth={props.width}
-              d={path}
-              />
-          </svg>
-        </button>
-    </span>
-  );
-}
-
-interface IStrokeWidthsButtonProps {
-  strokeWidths: number[];
-  onChange: (width: number) => void;
-}
-function StrokeWidths (props: IStrokeWidthsButtonProps) {
-  const onClick = (width: number) => {
-    props.onChange(width);
-  };
-
-  const buttons = props.strokeWidths.map((width: number) => {
-    return (
-      <StrokeWidth
-        key={width}
-        width={width}
-        onClick={onClick}
-        />
-    );
-  });
-
-  return (
-    <div className="StrokeWidths">
-      {buttons}
-    </div>
-  );
-}
-
-interface IColorButtonProps {
-  color: Color;
-  onClick: (color: Color) => void;
-}
-
-function ColorButton (props: IColorButtonProps) {
-  const onClick = () => props.onClick(props.color);
-  return (
-    <span className="ColorButton">
-      <button className="ColorButton-button"
-        style={{ backgroundColor: props.color }}
-        onClick={onClick}
-        >{props.color}</button>
-    </span>
-  );
-}
-
-interface IColorsProps {
-  colors: string[];
-  onChange: (color: Color) => void;
-}
-function Colors (props: IColorsProps) {
-  const onClick = (color: Color) => {
-    props.onChange(color);
-  };
-
-  const buttons = props.colors.map((color) => (
-      <ColorButton
-        key={color}
-        color={color}
-        onClick={onClick}
-        />
-  ));
-
-  return (
-    <div className="PaintMenu-colors">
-      {buttons}
-    </div>
-  );
 }
 
 class PaintMenu extends React.Component<IPaintMenuProps, IPaintMenuState> {
@@ -129,23 +35,18 @@ class PaintMenu extends React.Component<IPaintMenuProps, IPaintMenuState> {
         onClick={this.onClick}
         >
         <AppHeader fullscreen={true}/>
-        <div className="PaintMenu-close">
-          <i className="fa fa-times" aria-hidden="true" />
-        </div>
-        <div className="PaintMenu-menu">
-          <button
-            onClick={this.onSaveClick}
-            >Save &amp; Share</button>
-          <button
-            onClick={this.onHistoryClick}
-            >History</button>
-          <button
-            onClick={this.onResetClick}
-            >Reset</button>
-          <button
-            onClick={this.onAboutClick}
-            >About</button>
-        </div>
+        {this.renderMainContent()}
+      </div>
+    );
+  }
+
+  protected renderMainContent () {
+    return (
+      <PaintMenuContent>
+        <PaintMenuBody>
+          <div className="PaintMenu-close">
+            <i className="fa fa-times" aria-hidden="true" />
+          </div>
         <div className="PaintMenu-penMenu">
           <StrokeWidths
             strokeWidths={strokeWidths}
@@ -156,7 +57,22 @@ class PaintMenu extends React.Component<IPaintMenuProps, IPaintMenuState> {
             onChange={this.onColorChange}
             />
         </div>
-      </div>
+        </PaintMenuBody>
+        <PaintMenuFooter>
+          <PaintMenuFooterButton
+            onClick={this.onSaveClick}
+            >Save &amp; Share</PaintMenuFooterButton>
+          <PaintMenuFooterButton
+            onClick={this.onHistoryClick}
+            >History</PaintMenuFooterButton>
+          <PaintMenuFooterButton
+            onClick={this.onResetClick}
+            >Reset</PaintMenuFooterButton>
+          <PaintMenuFooterButton
+            onClick={this.onAboutClick}
+            >About</PaintMenuFooterButton>
+        </PaintMenuFooter>
+      </PaintMenuContent>
     );
   }
 

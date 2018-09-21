@@ -4,7 +4,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import AppHeader from '../../components/AppHeader';
 import PointerHandler from '../../components/PointerHandler';
-import { appSpace, defaultStrokeColors, defaultStrokeWidth, ISize } from '../../misc';
+import { appHistory, appSpace, defaultStrokeColors, defaultStrokeWidth, getUrlParamOf, ISize } from '../../misc';
 import firebase from '../../plugins/firebase';
 import { readBlob, uploadImage } from '../../services/image';
 import * as user from '../../services/user';
@@ -14,12 +14,13 @@ import './PaintPage.css';
 
 type IPaintPagePros = any;
 interface IPaintPageState {
-  canvasSize: ISize;
+  height: number;
+  imageSize: ISize;
   justAfterStarted: boolean;
   menuVisible: boolean;
-  resetting: boolean;
   strokeColor: Color;
   strokeWidth: number;
+  width: number;
 }
 
 class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
@@ -30,15 +31,16 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
   constructor (props: IPaintPagePros) {
     super(props);
     this.state = {
-      canvasSize: {
+      height: 0,
+      imageSize: {
         height: 0,
         width: 0,
       },
       justAfterStarted: true,
       menuVisible: true,
-      resetting: false,
       strokeColor: defaultStrokeColors,
       strokeWidth: defaultStrokeWidth,
+      width: 0,
     };
     this.onDocumentTouchStart = this.onDocumentTouchStart.bind(this);
     this.onTutorialLongPoint = this.onTutorialLongPoint.bind(this);
@@ -52,17 +54,6 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
   }
 
   public render () {
-    const canvas = this.state.resetting ? undefined : (
-      <PaintCanvas
-        height={this.state.canvasSize.height}
-        inactive={this.state.menuVisible}
-        strokeColor={this.state.strokeColor}
-        strokeWidth={this.state.strokeWidth}
-        width={this.state.canvasSize.width}
-        onCanvasReceive={this.onCanvasReceive}
-        onLongPoint={this.onCanvasLongTap}
-        />
-      );
     const tutorialOverlay = !this.state.justAfterStarted ? undefined : (
       <PointerHandler
         onLongPoint={this.onTutorialLongPoint}
@@ -89,7 +80,17 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
 
     return (
       <div className="PaintPage">
-        {canvas}
+        <PaintCanvas
+          height={this.state.height}
+          imageHeight={this.state.imageSize.height}
+          imageWidth={this.state.imageSize.width}
+          inactive={this.state.menuVisible}
+          strokeColor={this.state.strokeColor}
+          strokeWidth={this.state.strokeWidth}
+          width={this.state.width}
+          onCanvasReceive={this.onCanvasReceive}
+          onLongPoint={this.onCanvasLongTap}
+          />
         <AppMenu
           visible={this.state.menuVisible}
           onOverlayClick={this.onMenuOverlayClick}
@@ -104,13 +105,7 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
   }
 
   public async componentWillMount () {
-    const el = document.documentElement;
-    this.setState({
-      canvasSize: {
-        height: el.clientHeight - appSpace * 2,
-        width: el.clientWidth - appSpace * 2,
-      },
-    });
+    this.setUpNew();
 
     if (!firebase.auth().currentUser) {
       try {
@@ -184,16 +179,36 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
   }
 
   protected onReset () {
-    this.setState({
-      resetting: true,
-    });
+    appHistory.push('/new');
+  }
 
-    setTimeout(() => {
-      this.setState({
-        menuVisible: false,
-        resetting: false,
-      });
-    }, 1);
+  protected setUpNew () {
+    const el = document.documentElement;
+    const state: any = {
+      height: el.clientHeight,
+      width: el.clientWidth,
+    };
+
+    const newType = getUrlParamOf('newType');
+    if (newType) {
+      if (newType === 'size') {
+        state.imageSize = {
+          height: Number(getUrlParamOf('height')) || 1,
+          width: Number(getUrlParamOf('width')) || 1,
+        };
+      } else {
+        console.warn('Invalid parameters');
+      }
+    }
+
+    if (!state.imageSize) {
+      state.imageSize = {
+        height: state.height - appSpace * 2,
+        width: state.width - appSpace * 2,
+      };
+    }
+
+    this.setState(state);
   }
 }
 

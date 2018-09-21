@@ -19,6 +19,38 @@
   top: calc(var(--app-header-height) + var(--app-space));
 }
 
+/*
+ .PaintMenu-content
+   + PaintMenu-body
+   + PaintMenu-footer
+       + PaintMenu-footerButton (*)
+*/
+.PaintMenu-content {
+  display: flex;
+  flex-direction: row;
+}
+.PaintMenu-body {
+  flex-grow: 1;
+}
+.PaintMenu-footer {
+  bottom: 0;
+  display: flex;
+  align-items: stretch;
+  height: 100px;
+  left: 0;
+  opacity: 0.8;
+  position: absolute;
+  transform: translateY(10vh);
+  transition: transform 300ms;
+  width: 100%;
+}
+.PaintMenu.-visible .PaintMenu-footer {
+  transform: translateY(0);
+}
+.PaintMenu-footerButton {
+  flex-grow: 1;
+}
+
 .PaintMenu-penMenu {
   bottom: calc(100px + var(--app-space));
   box-sizing: border-box;
@@ -34,29 +66,11 @@
   opacity: 1;
   transform: translateY(0);
 }
+
 .PaintMenu-colors {
   display: flex;
   justify-content: space-evenly;
   margin-bottom: var(--app-space);
-}
-
-.PaintMenu-menu {
-  bottom: 0;
-  display: flex;
-  align-items: stretch;
-  height: 100px;
-  left: 0;
-  opacity: 0.8;
-  position: absolute;
-  transform: translateY(10vh);
-  transition: transform 300ms;
-  width: 100%;
-}
-.PaintMenu.-visible .PaintMenu-menu {
-  transform: translateY(0);
-}
-.PaintMenu-menu > * {
-  width: 100%;
 }
 
 .StrokeWidths {
