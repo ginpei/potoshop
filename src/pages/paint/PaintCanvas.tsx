@@ -109,11 +109,10 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
   }
 
   public render () {
-    const elSize = this.state.pinching && (
-      <div className="PaintCanvas-size">
-        x{this.pinchingScale.toFixed(2)}
-      </div>
-    );
+    const sizeClassName = [
+      'PaintCanvas-size',
+      this.state.pinching ? '-active' : undefined,
+    ].join(' ');
 
     const debug = window.location.search.slice(1).split('&').includes('point=1');
     const canvasClassName = [
@@ -140,7 +139,9 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
             height={this.props.imageHeight}
             ref={this.refCanvas}
             />
-          {elSize}
+          <div className={sizeClassName}>
+            x{this.pinchingScale.toFixed(2)}
+          </div>
         </div>
       </PointerHandler>
     );

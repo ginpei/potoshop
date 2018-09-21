@@ -14,8 +14,14 @@
 .PaintCanvas-size {
   background-color: #9999;
   left: 0;
+  opacity: 0;
   padding: var(--app-space);
   position: fixed;
   text-shadow: 1px 1px 0 #fff;
+  transition: opacity 1000ms step-end;
   top: 0;
+}
+.PaintCanvas-size.-active {
+  opacity: 1;
+  transition: opacity 0ms;
 }
