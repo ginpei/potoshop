@@ -196,7 +196,6 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
           height: Number(getUrlParamOf('height')) || 1,
           width: Number(getUrlParamOf('width')) || 1,
         };
-        return;
       } else {
         console.warn('Invalid parameters');
       }
