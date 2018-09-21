@@ -1,7 +1,7 @@
 import { Color } from 'csstype';
 import * as React from 'react';
 import PointerHandler from '../../components/PointerHandler';
-import { AnimationFrameId, between, emptyPos, IPos, IPosPair, Ratio } from '../../misc';
+import { AnimationFrameId, appSpace, between, emptyPos, IPos, IPosPair, Ratio } from '../../misc';
 import './PaintCanvas.css';
 
 interface IPaintCanvasProps {
@@ -71,6 +71,14 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
 
   private get pinchingScale (): Ratio {
     return this.state.scale * this.state.dScale;
+  }
+
+  private get safeMinScale (): Ratio {
+    return Math.min(
+      1,
+      (this.props.width - appSpace * 2) / this.props.imageWidth,
+      (this.props.height - appSpace * 2) / this.props.imageHeight,
+    );
   }
 
   protected get pinchingTranslation (): IPos {
@@ -350,7 +358,7 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
       dScale: 1,
       dTranslation: emptyPos,
       pinching: false,
-      scale: Math.max(1, this.pinchingScale),
+      scale: Math.max(this.safeMinScale, this.pinchingScale),
       translation: this.pinchingScale < 1 ? emptyPos : this.safeTranslation,
     });
   }
