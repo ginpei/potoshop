@@ -1,6 +1,5 @@
 .PaintCanvas {
   background-color: #999;
-  padding: var(--app-space);
   transition: filter 300ms;
 }
 .PaintCanvas-canvas {

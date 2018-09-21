@@ -88,29 +88,6 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
     };
   }
 
-  protected get safeTranslation (): IPos {
-    const { imageHeight, imageWidth } = this.props;
-    const scale = this.pinchingScale;
-    const diff: IPos = {
-      x: imageWidth - imageWidth * scale,
-      y: imageHeight - imageHeight * scale,
-    };
-
-    if (scale < 1) {
-      return {
-        x: diff.x / 2,
-        y: diff.y / 2,
-      };
-    }
-
-    const t = this.pinchingTranslation;
-    const safePos: IPos = {
-      x: between(diff.x, t.x, 0),
-      y: between(diff.y, t.y, 0),
-    };
-    return safePos;
-  }
-
   constructor (props: IPaintCanvasProps) {
     super(props);
     this.state = {
@@ -354,13 +331,47 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
   }
 
   protected stopPinching () {
+    this.setProperSize();
+  }
+
+  protected setProperSize () {
+    const scale = Math.max(this.safeMinScale, this.pinchingScale);
+    const translation = this.getSafeTranslation(scale);
+
     this.setState({
       dScale: 1,
       dTranslation: emptyPos,
       pinching: false,
-      scale: Math.max(this.safeMinScale, this.pinchingScale),
-      translation: this.pinchingScale < 1 ? emptyPos : this.safeTranslation,
+      scale,
+      translation,
     });
+  }
+
+  protected getSafeTranslation (scale: Ratio): IPos {
+    const p = this.props;
+    const safePos = {
+      x: 0,
+      y: 0,
+    };
+    const t = this.pinchingTranslation;
+
+    if (p.imageWidth * scale < p.width - appSpace * 2) {
+      safePos.x = (p.width - p.imageWidth * scale) / 2;
+    } else {
+      const max = appSpace;
+      const min = -p.imageWidth * scale + (p.width - appSpace);
+      safePos.x = between(min, t.x, max);
+    }
+
+    if (p.imageHeight * scale < p.height - appSpace * 2) {
+      safePos.y = (p.height - p.imageHeight * scale) / 2;
+    } else {
+      const max = appSpace;
+      const min = -p.imageHeight * scale + (p.height - appSpace);
+      safePos.y = between(min, t.y, max);
+    }
+
+    return safePos;
   }
 
   protected calculateCenter (positions: IPos[]) {
