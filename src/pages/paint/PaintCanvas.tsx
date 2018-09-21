@@ -5,9 +5,9 @@ import { AnimationFrameId, between, emptyPos, IPos, IPosPair, Ratio } from '../.
 import './PaintCanvas.css';
 
 interface IPaintCanvasProps {
-  canvasHeight: number;
-  canvasWidth: number;
   height: number;
+  imageHeight: number;
+  imageWidth: number;
   inactive: boolean;
   onCanvasReceive: (el: HTMLCanvasElement | null) => void;
   onLongPoint: () => void;
@@ -81,11 +81,11 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
   }
 
   protected get safeTranslation (): IPos {
-    const { canvasHeight, canvasWidth } = this.props;
+    const { imageHeight, imageWidth } = this.props;
     const scale = this.pinchingScale;
     const diff: IPos = {
-      x: canvasWidth - canvasWidth * scale,
-      y: canvasHeight - canvasHeight * scale,
+      x: imageWidth - imageWidth * scale,
+      y: imageHeight - imageHeight * scale,
     };
 
     if (scale < 1) {
@@ -151,8 +151,8 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
         <div className="PaintCanvas" style={this.styles}>
           <canvas className={canvasClassName}
             style={this.canvasStyle}
-            width={this.props.canvasWidth}
-            height={this.props.canvasHeight}
+            width={this.props.imageWidth}
+            height={this.props.imageHeight}
             ref={this.refCanvas}
             />
           {elSize}
@@ -164,7 +164,7 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
   public componentDidMount () {
     const elCanvas = this.refCanvas.current!;
     this.ctx!.fillStyle = '#fff';
-    this.ctx!.fillRect(0, 0, this.props.canvasWidth, this.props.canvasHeight);
+    this.ctx!.fillRect(0, 0, this.props.imageWidth, this.props.imageHeight);
     this.props.onCanvasReceive(elCanvas);
   }
 
@@ -308,8 +308,8 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
       throw new Error('Canvas is not ready');
     }
 
-    const { canvasHeight, canvasWidth } = this.props;
-    this.lastImage = this.ctx.getImageData(0, 0, canvasWidth, canvasHeight);
+    const { imageHeight, imageWidth } = this.props;
+    this.lastImage = this.ctx.getImageData(0, 0, imageWidth, imageHeight);
   }
 
   protected restoreLastImage () {

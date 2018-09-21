@@ -14,8 +14,8 @@ import './PaintPage.css';
 
 type IPaintPagePros = any;
 interface IPaintPageState {
-  canvasSize: ISize;
   height: number;
+  imageSize: ISize;
   justAfterStarted: boolean;
   menuVisible: boolean;
   strokeColor: Color;
@@ -31,11 +31,11 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
   constructor (props: IPaintPagePros) {
     super(props);
     this.state = {
-      canvasSize: {
+      height: 0,
+      imageSize: {
         height: 0,
         width: 0,
       },
-      height: 0,
       justAfterStarted: true,
       menuVisible: true,
       strokeColor: defaultStrokeColors,
@@ -81,9 +81,9 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
     return (
       <div className="PaintPage">
         <PaintCanvas
-          canvasHeight={this.state.canvasSize.height}
-          canvasWidth={this.state.canvasSize.width}
           height={this.state.height}
+          imageHeight={this.state.imageSize.height}
+          imageWidth={this.state.imageSize.width}
           inactive={this.state.menuVisible}
           strokeColor={this.state.strokeColor}
           strokeWidth={this.state.strokeWidth}
@@ -192,7 +192,7 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
     const newType = getUrlParamOf('newType');
     if (newType) {
       if (newType === 'size') {
-        state.canvasSize = {
+        state.imageSize = {
           height: Number(getUrlParamOf('height')) || 1,
           width: Number(getUrlParamOf('width')) || 1,
         };
@@ -202,8 +202,8 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
       }
     }
 
-    if (!state.canvasSize) {
-      state.canvasSize = {
+    if (!state.imageSize) {
+      state.imageSize = {
         height: state.height - appSpace * 2,
         width: state.width - appSpace * 2,
       };
