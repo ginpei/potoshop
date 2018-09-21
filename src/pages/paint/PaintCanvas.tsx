@@ -146,6 +146,15 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
     );
   }
 
+  public componentWillMount () {
+    const scale = Math.max(this.safeMinScale, 0);
+    const translation = this.getSafeTranslation(scale);
+    this.setState({
+      scale,
+      translation,
+    });
+  }
+
   public componentDidMount () {
     const elCanvas = this.refCanvas.current!;
     this.ctx!.fillStyle = '#fff';
@@ -331,10 +340,6 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
   }
 
   protected stopPinching () {
-    this.setProperSize();
-  }
-
-  protected setProperSize () {
     const scale = Math.max(this.safeMinScale, this.pinchingScale);
     const translation = this.getSafeTranslation(scale);
 
