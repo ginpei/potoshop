@@ -8,6 +8,7 @@ import './HistoryPage.css';
 type IHistoryPagePros = any;
 interface IHistoryPageState {
   imageRecords: IImageRecord[];
+  loadingImages: boolean;
 }
 
 class HistoryPage extends React.Component<IHistoryPagePros, IHistoryPageState> {
@@ -18,22 +19,13 @@ class HistoryPage extends React.Component<IHistoryPagePros, IHistoryPageState> {
     super(props);
     this.state = {
       imageRecords: [],
+      loadingImages: true,
     };
     this.onAuthStateChanged = this.onAuthStateChanged.bind(this);
   }
 
   public render () {
     const records = this.state.imageRecords;
-    const elRecords = records.length < 1 ? undefined : records.map((record) => {
-        return (
-          <a key={record.id} href={record.url}>
-            <figure className="HistoryPage-record">
-              <img className="HistoryPage-image" alt="" src={record.url}/>
-              <figcaption>{new Date(record.createdAt).toLocaleString()}</figcaption>
-            </figure>
-          </a>
-        );
-      });
 
     return (
       <div className="HistoryPage">
@@ -41,7 +33,19 @@ class HistoryPage extends React.Component<IHistoryPagePros, IHistoryPageState> {
         <div className="container">
           <h1>History</h1>
           <div className="HistoryPage-recordList">
-            {elRecords}
+            {this.state.loadingImages ? 'Loading...' :
+              records.length < 1 ? 'No images' :
+              records.map((record) => (
+                <div className="HistoryPage-recordItem" key={record.id}>
+                  <a href={record.url}>
+                    <figure className="HistoryPage-record">
+                      <img className="HistoryPage-image" alt="" src={record.url}/>
+                      <figcaption>{new Date(record.createdAt).toLocaleString()}</figcaption>
+                    </figure>
+                  </a>
+                </div>
+              ))
+            }
           </div>
         </div>
       </div>
@@ -65,9 +69,13 @@ class HistoryPage extends React.Component<IHistoryPagePros, IHistoryPageState> {
 
   protected async fetchList (): Promise<IImageRecord[]> {
     if (this.currentUser) {
-      return await image.fetchList(this.currentUser.uid);
+      this.setState({ loadingImages: true });
+      const images = await image.fetchList(this.currentUser.uid);
+      this.setState({ loadingImages: false });
+      return images;
     }
 
+    this.setState({ loadingImages: false });
     return [];
   }
 }
