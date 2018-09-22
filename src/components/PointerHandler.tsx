@@ -167,6 +167,10 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
   protected onTouchStart (event: TouchEvent) {
     const numTouches = event.touches.length;
     if (numTouches === 1) {
+      if (this.isClickableElement(event.target)) {
+        return;
+      }
+
       event.preventDefault();
       const pos = this.getPos(event, 0);
       this.startPressing(pos);
@@ -482,6 +486,18 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
     }
 
     throw new Error('Unsupported argument types');
+  }
+
+  protected isClickableElement (element: EventTarget | null) {
+    if (!(element instanceof Element)) {
+      return false;
+    }
+
+    const clickableTagNames = [
+      'A',
+      'INPUT',
+    ];
+    return clickableTagNames.includes(element.tagName);
   }
 }
 
