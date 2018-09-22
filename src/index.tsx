@@ -5,6 +5,10 @@ import App from './App';
 import './index.css';
 import registerServiceWorker from './registerServiceWorker';
 
+if (module.hot) {
+  module.hot.accept();
+}
+
 ReactDOM.render(
   <App />,
   document.getElementById('root') as HTMLElement,
