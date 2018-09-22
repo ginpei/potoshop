@@ -24,7 +24,7 @@ class CreateNewPage extends React.Component<ICreateNewPagePros, ICreateNewPageSt
     return (
       <div className="CreateNewPage">
         <AppHeader/>
-        <div className="container" lang="ja">
+        <div className="container">
           <h1>Create New</h1>
           <form action="/" method="GET">
             <input type="hidden" name="newType" value="size"/>
