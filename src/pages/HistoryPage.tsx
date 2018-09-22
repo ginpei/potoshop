@@ -3,7 +3,6 @@ import AppHeader from '../components/AppHeader';
 import firebase from '../plugins/firebase';
 import { IImageRecord } from '../services/image';
 import * as image from '../services/image';
-// import * as user from '../services/user';
 import './HistoryPage.css';
 
 type IHistoryPagePros = any;
