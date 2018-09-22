@@ -50,7 +50,7 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
     this.onStrokeWidthChange = this.onStrokeWidthChange.bind(this);
     this.onColorChange = this.onColorChange.bind(this);
     this.onSave = this.onSave.bind(this);
-    this.onReset = this.onReset.bind(this);
+    this.onNew = this.onNew.bind(this);
   }
 
   public render () {
@@ -97,7 +97,7 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
           onStrokeWidthChange={this.onStrokeWidthChange}
           onColorChange={this.onColorChange}
           onSave={this.onSave}
-          onReset={this.onReset}
+          onNew={this.onNew}
           />
         {tutorialOverlay}
       </div>
@@ -178,7 +178,7 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
     window.location.href = '/history';
   }
 
-  protected onReset () {
+  protected onNew () {
     appHistory.push('/new');
   }
 

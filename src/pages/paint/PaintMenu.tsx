@@ -11,7 +11,7 @@ interface IPaintMenuProps {
   onStrokeWidthChange: (width: number) => void;
   onColorChange: (color: Color) => void;
   onSave: () => void;
-  onReset: () => void;
+  onNew: () => void;
 }
 // tslint:disable-next-line:no-empty-interface
 interface IPaintMenuState {
@@ -25,7 +25,7 @@ class PaintMenu extends React.Component<IPaintMenuProps, IPaintMenuState> {
     this.onColorChange = this.onColorChange.bind(this);
     this.onSaveClick = this.onSaveClick.bind(this);
     this.onHistoryClick = this.onHistoryClick.bind(this);
-    this.onResetClick = this.onResetClick.bind(this);
+    this.onNewClick = this.onNewClick.bind(this);
     this.onAboutClick = this.onAboutClick.bind(this);
   }
 
@@ -66,8 +66,8 @@ class PaintMenu extends React.Component<IPaintMenuProps, IPaintMenuState> {
             onClick={this.onHistoryClick}
             >History</PaintMenuFooterButton>
           <PaintMenuFooterButton
-            onClick={this.onResetClick}
-            >Reset</PaintMenuFooterButton>
+            onClick={this.onNewClick}
+            >New</PaintMenuFooterButton>
           <PaintMenuFooterButton
             onClick={this.onAboutClick}
             >About</PaintMenuFooterButton>
@@ -100,10 +100,10 @@ class PaintMenu extends React.Component<IPaintMenuProps, IPaintMenuState> {
     window.open('/history');
   }
 
-  protected onResetClick (event: React.MouseEvent<HTMLButtonElement>) {
-    const text = 'Are you sure you want to erase all you have drawn?';
+  protected onNewClick (event: React.MouseEvent<HTMLButtonElement>) {
+    const text = 'Are you sure you want to leave from the image you have drawn?';
     if (window.confirm(text)) {
-      this.props.onReset();
+      this.props.onNew();
     }
   }
 
