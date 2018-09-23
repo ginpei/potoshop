@@ -45,9 +45,7 @@ export async function uploadImage (args: IUploadImageArgs) {
 }
 
 export async function fetchList (uid: string): Promise<IImageRecord[]> {
-  const ref = firebase.firestore()
-    .collection('v1-images').doc(uid)
-    .collection('images');
+  const ref = db.doc(uid).collection('images');
   const images = await ref
     .orderBy('createdAt', 'desc')
     .get();
