@@ -45,9 +45,7 @@ export async function uploadImage (args: IUploadImageArgs) {
 }
 
 export async function fetchList (uid: string): Promise<IImageRecord[]> {
-  const ref = firebase.firestore()
-    .collection('v1-images').doc(uid)
-    .collection('images');
+  const ref = db.doc(uid).collection('images');
   const images = await ref
     .orderBy('createdAt', 'desc')
     .get();
@@ -57,4 +55,28 @@ export async function fetchList (uid: string): Promise<IImageRecord[]> {
     return data;
   });
   return list;
+}
+
+export function loadImage (url: string): Promise<HTMLImageElement> {
+  return new Promise<HTMLImageElement>((resolve, reject) => {
+    const image = new Image();
+    if (url.startsWith('https://') || url.startsWith('http://')) {
+      image.crossOrigin = 'Anonymous';
+    }
+    image.onload = () => setTimeout(() => resolve(image), 1);
+    image.onerror = reject;
+    image.src = url;
+  });
+}
+
+export function getImageUrl (uid: string, imageId: string): Promise<string> {
+  return new Promise<string>(async (resolve, reject) => {
+    const ref = db.doc(uid).collection('images').doc(imageId);
+    const record = (await ref.get()).data();
+    if (record) {
+      resolve(record.url);
+    } else {
+      reject(new Error('Failed to get record data, although succeeded to fetch'));
+    }
+  });
 }
