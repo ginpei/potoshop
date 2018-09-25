@@ -15,6 +15,10 @@ class HistoryPage extends React.Component<IHistoryPagePros, IHistoryPageState> {
   protected currentUser: firebase.User | null;
   protected unsubscribes: firebase.Unsubscribe[] = [];
 
+  protected get uid () {
+    return this.currentUser ? this.currentUser.uid : '';
+  }
+
   constructor (props: IHistoryPagePros) {
     super(props);
     this.state = {
@@ -43,6 +47,12 @@ class HistoryPage extends React.Component<IHistoryPagePros, IHistoryPageState> {
                       <figcaption>{new Date(record.createdAt).toLocaleString()}</figcaption>
                     </figure>
                   </a>
+                  <form action="/" method="GET">
+                    <input type="hidden" name="newType" value="history"/>
+                    <input type="hidden" name="uid" value={this.uid}/>
+                    <input type="hidden" name="id" value={record.id}/>
+                    <button>Edit this image</button>
+                  </form>
                 </div>
               ))
             }

@@ -19,8 +19,22 @@ export function getUrlParamsOf (name: string) {
     .map((q) => q.value);
   return values;
 }
-export function getUrlParamOf (name: string) {
-  return getUrlParamsOf(name)[0];
+
+export function getUrlParamOf (name: string, defaultValue?: string): string;
+export function getUrlParamOf (name: string, defaultValue?: number): number;
+export function getUrlParamOf (name: string, defaultValue?: boolean): boolean;
+export function getUrlParamOf (name: string, defaultValue?: any) {
+  const values = getUrlParamsOf(name);
+  const value = values.length > 0 ? values[0] : defaultValue;
+  let converted: any;
+  if (typeof defaultValue === 'number') {
+    converted = Number(value);
+  } else if (typeof defaultValue === 'boolean') {
+    converted = (value === 'false' || value === '0') ? false : Boolean(value);
+  } else {
+    converted = value;
+  }
+  return converted;
 }
 
 export const appHistory = createBrowserHistory();
@@ -59,3 +73,18 @@ export function between (min: number, n: number, max: number) {
   return Math.max(min, Math.min(n, max));
 }
 export type Ratio = number; // 0 as 0%, 1 as 100%
+
+// TODO rename
+export enum NewType {
+  none = '',
+  size = 'size',
+  history = 'history',
+}
+export function getNewType (str: string = getUrlParamOf('newType')) {
+  for (const type in NewType) {
+    if (str === type) {
+      return NewType[type];
+    }
+  }
+  return NewType.none;
+}

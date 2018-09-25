@@ -4,9 +4,9 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import AppHeader from '../../components/AppHeader';
 import PointerHandler from '../../components/PointerHandler';
-import { appHistory, appSpace, defaultStrokeColors, defaultStrokeWidth, getUrlParamOf, ISize } from '../../misc';
+import { appHistory, appSpace, defaultStrokeColors, defaultStrokeWidth, getNewType, getUrlParamOf, ISize, NewType } from '../../misc';
 import firebase from '../../plugins/firebase';
-import { readBlob, uploadImage } from '../../services/image';
+import { getImageUrl, loadImage, readBlob, uploadImage } from '../../services/image';
 import * as user from '../../services/user';
 import PaintCanvas from './PaintCanvas';
 import AppMenu from './PaintMenu';
@@ -15,9 +15,11 @@ import './PaintPage.css';
 type IPaintPagePros = any;
 interface IPaintPageState {
   height: number;
+  imageLoading: boolean;
   imageSize: ISize;
   justAfterStarted: boolean;
   menuVisible: boolean;
+  originalImage?: HTMLImageElement;
   strokeColor: Color;
   strokeWidth: number;
   width: number;
@@ -27,17 +29,20 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
   protected currentUser: firebase.User | null;
   protected elCanvas: HTMLCanvasElement | null;
   protected storageRef = firebase.storage().ref('v1-images');
+  protected newType = '';
 
   constructor (props: IPaintPagePros) {
     super(props);
     this.state = {
       height: 0,
+      imageLoading: false,
       imageSize: {
         height: 0,
         width: 0,
       },
       justAfterStarted: true,
       menuVisible: true,
+      originalImage: undefined,
       strokeColor: defaultStrokeColors,
       strokeWidth: defaultStrokeWidth,
       width: 0,
@@ -80,17 +85,18 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
 
     return (
       <div className="PaintPage">
-        <PaintCanvas
+        {!this.state.imageLoading && <PaintCanvas
           height={this.state.height}
           imageHeight={this.state.imageSize.height}
           imageWidth={this.state.imageSize.width}
           inactive={this.state.menuVisible}
+          originalImage={this.state.originalImage}
           strokeColor={this.state.strokeColor}
           strokeWidth={this.state.strokeWidth}
           width={this.state.width}
           onCanvasReceive={this.onCanvasReceive}
           onLongPoint={this.onCanvasLongTap}
-          />
+          />}
         <AppMenu
           visible={this.state.menuVisible}
           onOverlayClick={this.onMenuOverlayClick}
@@ -105,7 +111,7 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
   }
 
   public async componentWillMount () {
-    this.setUpNew();
+    this.renameMeProperlyLater();
 
     if (!firebase.auth().currentUser) {
       try {
@@ -119,6 +125,14 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
     user.saveLogin(this.currentUser!.uid);
 
     document.addEventListener('touchstart', this.onDocumentTouchStart, { passive: false });
+  }
+
+  public componentDidMount () {
+    if (this.newType === NewType.history) {
+      const uid = getUrlParamOf('uid', '');
+      const imageId = getUrlParamOf('id', '');
+      this.loadImageFromHistory(uid, imageId);
+    }
   }
 
   public componentWillUnmount () {
@@ -182,33 +196,64 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
     appHistory.push('/new');
   }
 
-  protected setUpNew () {
+  // TODO rename properly
+  protected renameMeProperlyLater () {
+    // this is called only from `componentWillMount()`
+
     const el = document.documentElement;
-    const state: any = {
+    this.setState({
       height: el.clientHeight,
       width: el.clientWidth,
-    };
+    });
 
-    const newType = getUrlParamOf('newType');
+    let imageSize: ISize | null = null;
+    const newType = getNewType();
     if (newType) {
-      if (newType === 'size') {
-        state.imageSize = {
+      this.newType = newType;
+      if (newType === NewType.size) {
+        imageSize = {
           height: Number(getUrlParamOf('height')) || 1,
           width: Number(getUrlParamOf('width')) || 1,
         };
+      } else if (newType === NewType.history) {
+        this.setState({
+          imageLoading: true,
+        });
       } else {
         console.warn('Invalid parameters');
       }
     }
 
-    if (!state.imageSize) {
-      state.imageSize = {
-        height: state.height - appSpace * 2,
-        width: state.width - appSpace * 2,
+    if (!imageSize) {
+      imageSize = {
+        height: this.state.height! - appSpace * 2,
+        width: this.state.width! - appSpace * 2,
       };
     }
+    this.setState({
+      imageSize,
+    });
+  }
 
-    this.setState(state);
+  protected async loadImageFromHistory (uid: string, imageId: string) {
+    if (!uid || !imageId) {
+      throw new Error('User ID and image ID must be given');
+    }
+
+    const url = await getImageUrl(uid, imageId);
+    try {
+      const image = await loadImage(url);
+      this.setState({
+        imageLoading: false,
+        imageSize: {
+          height: image.naturalHeight,
+          width: image.naturalWidth,
+        },
+        originalImage: image,
+      });
+    } catch (error) {
+      throw error;
+    }
   }
 }
 

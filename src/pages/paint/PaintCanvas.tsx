@@ -11,6 +11,7 @@ interface IPaintCanvasProps {
   inactive: boolean;
   onCanvasReceive: (el: HTMLCanvasElement | null) => void;
   onLongPoint: () => void;
+  originalImage?: HTMLImageElement;
   strokeColor: Color;
   strokeWidth: number;
   width: number;
@@ -157,10 +158,18 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
   }
 
   public componentDidMount () {
-    const elCanvas = this.refCanvas.current!;
-    this.ctx!.fillStyle = '#fff';
-    this.ctx!.fillRect(0, 0, this.props.imageWidth, this.props.imageHeight);
-    this.props.onCanvasReceive(elCanvas);
+    const { ctx } = this;
+    if (!ctx) {
+      throw new Error('Canvas is not ready');
+    }
+
+    if (this.props.originalImage) {
+      ctx.drawImage(this.props.originalImage, 0, 0);
+    } else {
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(0, 0, this.props.imageWidth, this.props.imageHeight);
+    }
+    this.props.onCanvasReceive(this.refCanvas.current);
   }
 
   public componentWillUnmount () {
