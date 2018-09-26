@@ -201,9 +201,11 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
     // this is called only from `componentWillMount()`
 
     const el = document.documentElement;
+    const screenHeight = el.clientHeight;
+    const screenWidth = el.clientWidth;
     this.setState({
-      height: el.clientHeight,
-      width: el.clientWidth,
+      height: screenHeight,
+      width: screenWidth,
     });
 
     let imageSize: ISize | null = null;
@@ -226,8 +228,8 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
 
     if (!imageSize) {
       imageSize = {
-        height: this.state.height! - appSpace * 2,
-        width: this.state.width! - appSpace * 2,
+        height: screenHeight - appSpace * 2,
+        width: screenWidth - appSpace * 2,
       };
     }
     this.setState({
