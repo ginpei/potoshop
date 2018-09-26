@@ -16,3 +16,8 @@ body {
   max-width: 800px;
   padding: 0 var(--app-space);
 }
+
+@keyframes poyon {
+  0% { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}

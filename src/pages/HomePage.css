@@ -1,0 +1,32 @@
+.HomePage {
+}
+.HomePage-menuList {
+  text-align: center;
+}
+a.HomePage-menuItem {
+  align-items: center;
+  border-radius: 3px;
+  border: 1px solid #036;
+  color: #036;
+  display: inline-flex;
+  flex-direction: column;
+  height: 150px;
+  justify-content: center;
+  margin: var(--app-space);
+  text-decoration: none;
+  vertical-align: middle;
+  width: 150px;
+}
+a.HomePage-menuItem:hover,
+a.HomePage-menuItem:active {
+  background-color: #036;
+  color: white;
+}
+a.HomePage-menuItem:active {
+  animation: poyon 300ms;
+}
+a.HomePage-menuItem > i.fa {
+  display: block;
+  font-size: 50px;
+  margin: var(--app-space);
+}

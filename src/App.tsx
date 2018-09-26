@@ -6,6 +6,7 @@ import { appHistory } from './misc';
 import AboutPage from './pages/AboutPage';
 import CreateNewPage from './pages/CreateNewPage';
 import HistoryPage from './pages/HistoryPage';
+import HomePage from './pages/HomePage';
 import PaintPage from './pages/paint/PaintPage';
 
 interface IAppState {
@@ -44,7 +45,8 @@ class App extends React.Component<any, IAppState> {
       <Router history={this.history}>
         <div className="App">
           <Switch>
-            <Route exact={true} path="/" component={PaintPage}/>
+            <Route exact={true} path="/" component={HomePage}/>
+            <Route exact={true} path="/paint" component={PaintPage}/>
             <Route exact={true} path="/new" component={CreateNewPage}/>
             <Route exact={true} path="/about" component={AboutPage}/>
             <Route exact={true} path="/history" component={HistoryPage}/>

@@ -26,7 +26,7 @@ class CreateNewPage extends React.Component<ICreateNewPagePros, ICreateNewPageSt
         <AppHeader/>
         <div className="container">
           <h1>Create New</h1>
-          <form action="/" method="GET">
+          <form action="/paint" method="GET">
             <input type="hidden" name="newType" value="size"/>
             <input className="CreateNewPage-sizeInput" type="number"
               name="width"
