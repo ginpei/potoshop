@@ -70,4 +70,22 @@ describe('misc', () => {
       expect(misc.getUrlParamOf('b', true)).toBe(false);
     });
   });
+
+  describe('between()', () => {
+    it('return the minimum value', () => {
+      expect(misc.between(10, 0, 20)).toBe(10);
+    });
+
+    it('return the given value', () => {
+      expect(misc.between(10, 15, 20)).toBe(15);
+    });
+
+    it('return the maximum value', () => {
+      expect(misc.between(10, 99, 20)).toBe(20);
+    });
+
+    it('throws is min is greater than max', () => {
+      expect(() => misc.between(10, 10, 9)).toThrow();
+    });
+  });
 });
