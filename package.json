@@ -54,14 +54,19 @@
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js --env=jsdom",
+    "test1": "node scripts/test.js --env=jsdom --maxWorkers=1",
     "lint": "tslint -c ./tslint.prod.json -p ."
   },
   "devDependencies": {
+    "@types/enzyme": "^3.1.14",
+    "@types/enzyme-adapter-react-16": "^1.0.3",
     "@types/jest": "^23.3.2",
     "@types/node": "^10.9.4",
     "@types/react": "^16.4.13",
     "@types/react-dom": "^16.0.7",
     "@types/react-redux": "^6.0.7",
+    "enzyme": "^3.6.0",
+    "enzyme-adapter-react-16": "^1.5.0",
     "typescript": "^3.0.3"
   },
   "jest": {
