@@ -1,5 +1,5 @@
 import * as enzyme from 'enzyme';
-import { shallow, ShallowWrapper } from 'enzyme';
+import { shallow } from 'enzyme';
 import * as Adapter from 'enzyme-adapter-react-16';
 import * as React from 'react';
 import PointerHandler from './PointerHandler';
