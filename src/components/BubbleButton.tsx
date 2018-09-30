@@ -7,6 +7,7 @@ interface IBubbleButtonProps {
   initialLeft?: number;
   initialTop?: number;
   onPress?: () => void;
+  size?: number;
 }
 interface IBubbleButtonState {
   dLeft: number;
@@ -18,6 +19,10 @@ interface IBubbleButtonState {
 
 class BubbleButton extends React.Component<IBubbleButtonProps, IBubbleButtonState> {
   protected el = React.createRef<HTMLDivElement>();
+
+  protected get size () {
+    return this.props.size || 50;
+  }
 
   constructor (props: IBubbleButtonProps) {
     super(props);
@@ -40,6 +45,7 @@ class BubbleButton extends React.Component<IBubbleButtonProps, IBubbleButtonStat
       this.state.dragging ? '-dragging' : undefined,
     ].join(' ');
     const style: React.CSSProperties = {
+      ['--bubble-button--size' as any]: `${this.size}px`,
       left: this.state.left + this.state.dLeft,
       top: this.state.top + this.state.dTop,
     };
