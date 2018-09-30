@@ -1,0 +1,19 @@
+.BubbleButton {
+  --bubble-button--size: 50px;
+
+  align-items: center;
+  background-color: #036;
+  border-radius: 50%;
+  border: 1px solid #9cf;
+  color: #9cf;
+  cursor: pointer;
+  display: flex;
+  font-size: calc(var(--bubble-button--size) / 2);
+  height: var(--bubble-button--size);
+  justify-content: center;
+  left: 0;
+  position: absolute;
+  text-shadow: 1px 1px #fff9;
+  top: 0;
+  width: var(--bubble-button--size);
+}

@@ -3,6 +3,7 @@ import { Color } from 'csstype';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import AppHeader from '../../components/AppHeader';
+import BubbleButton from '../../components/BubbleButton';
 import PointerHandler from '../../components/PointerHandler';
 import { appHistory, appSpace, defaultStrokeColors, defaultStrokeWidth, getNewType, getUrlParamOf, ISize, NewType } from '../../misc';
 import firebase from '../../plugins/firebase';
@@ -97,6 +98,9 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
           onCanvasReceive={this.onCanvasReceive}
           onLongPoint={this.onCanvasLongTap}
           />}
+        <BubbleButton>
+          <i className="fa fa-undo" aria-hidden="true"/>
+        </BubbleButton>
         <AppMenu
           visible={this.state.menuVisible}
           onOverlayClick={this.onMenuOverlayClick}
