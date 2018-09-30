@@ -138,8 +138,14 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
   }
 
   public componentDidMount () {
-    const el = this.el.current!;
+    // to enable passive:false, use reference instead of `onTouchStart` prop
+    const el = this.el.current;
+    if (!el) {
+      // component can be instantiated without being mounted for test
+      return;
+    }
     el.addEventListener('touchstart', this.onTouchStart, { passive: false });
+
     document.addEventListener('touchmove', this.onTouchMove);
     document.addEventListener('touchend', this.onTouchEnd);
     document.addEventListener('touchcancel', this.onTouchEnd);
@@ -155,6 +161,11 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
 
   public componentWillUnmount () {
     const el = this.el.current!;
+    if (!el) {
+      // component can be instantiated without being mounted for test
+      return;
+    }
+
     el.removeEventListener('touchstart', this.onTouchStart);
     document.removeEventListener('touchmove', this.onTouchMove);
     document.removeEventListener('touchend', this.onTouchEnd);
@@ -164,7 +175,7 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
     document.removeEventListener('mouseup', this.onMouseUp);
   }
 
-  protected onTouchStart (event: TouchEvent) {
+  public onTouchStart (event: TouchEvent) {
     const numTouches = event.touches.length;
     if (numTouches === 1) {
       if (this.isClickableElement(event.target)) {
@@ -184,7 +195,7 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
     }
   }
 
-  protected onTouchMove (event: TouchEvent) {
+  public onTouchMove (event: TouchEvent) {
     const numTouches = event.touches.length;
     if (this.pressing && numTouches === 1) {
       const pos = this.getPos(event, 0);
@@ -195,7 +206,7 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
     }
   }
 
-  protected onTouchEnd (event: TouchEvent) {
+  public onTouchEnd (event: TouchEvent) {
     if (this.longPressing) {
       this.stopLongPressing();
     }
@@ -207,20 +218,20 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
     }
   }
 
-  protected onMouseDown (event: MouseEvent) {
+  public onMouseDown (event: MouseEvent) {
     event.preventDefault();
     const pos = this.getPos(event);
     this.startPressing(pos);
   }
 
-  protected onMouseMove (event: MouseEvent) {
+  public onMouseMove (event: MouseEvent) {
     if (this.pressing) {
       const pos = this.getPos(event);
       this.movePressing(pos);
     }
   }
 
-  protected onMouseUp (event: MouseEvent) {
+  public onMouseUp (event: MouseEvent) {
     if (this.longPressing) {
       this.stopLongPressing();
     }
@@ -229,7 +240,7 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
     }
   }
 
-  protected startPressing (pos: IPos) {
+  public startPressing (pos: IPos) {
     this.pointStartedAt = Date.now();
     this.setState({
       pointStartedPos: pos,
@@ -249,7 +260,7 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
     }
   }
 
-  protected movePressing (pos: IPos) {
+  public movePressing (pos: IPos) {
     if (this.props.debug && this.pressing) {
       this.putDebugPress(pos);
     }
@@ -264,7 +275,7 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
     }
   }
 
-  protected stopPressing () {
+  public stopPressing () {
     if (this.pressing) {
       if (this.props.onPointEnd) {
         this.props.onPointEnd();
@@ -281,7 +292,7 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
     }
   }
 
-  protected cancelPressing () {
+  public cancelPressing () {
     if (this.pressing) {
       if (this.props.onPointCancel) {
         this.props.onPointCancel();
