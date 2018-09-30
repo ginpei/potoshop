@@ -5,6 +5,7 @@
   background-color: #036;
   border-radius: 50%;
   border: 1px solid #9cf;
+  box-sizing: border-box;
   color: #9cf;
   cursor: pointer;
   display: flex;
@@ -14,6 +15,10 @@
   left: 0;
   position: absolute;
   text-shadow: 1px 1px #fff9;
+  transition: all var(--app-animation-duration-quick) ease-out;
   top: 0;
   width: var(--bubble-button--size);
+}
+.BubbleButton.-dragging {
+  transition: none;
 }
