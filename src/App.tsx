@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { hot } from 'react-hot-loader';
 import { Route, Router, Switch } from 'react-router-dom';
 import './App.css';
 import ErrorOverlay from './components/ErrorOverlay';
@@ -79,4 +80,4 @@ class App extends React.Component<any, IAppState> {
   }
 }
 
-export default App;
+export default hot(module)(App);
