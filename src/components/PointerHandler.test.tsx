@@ -112,27 +112,4 @@ describe('<PointerHandler/>', () => {
       });
     });
   });
-
-  describe('long pressing', () => {
-    beforeEach(() => {
-      jest.useFakeTimers();
-    });
-
-    afterEach(() => {
-      jest.useRealTimers();
-    });
-
-    it('invokes onLongPoint callback when enough time elapse', () => {
-      const onLongPoint = jest.fn();
-      const wrapper = shallow<PointerHandler>(
-        <PointerHandler
-          duration={0}
-          onLongPoint={onLongPoint}
-          >.</PointerHandler>,
-      );
-      wrapper.instance().startPressing({ x: 10, y: 20 });
-      jest.advanceTimersByTime(1000);
-      expect(onLongPoint).toBeCalledWith();
-    });
-  });
 });
