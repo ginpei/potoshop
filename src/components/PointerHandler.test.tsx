@@ -8,7 +8,7 @@ import PointerHandler from './PointerHandler';
 enzyme.configure({ adapter: new Adapter() });
 
 describe('<PointerHandler/>', () => {
-  type Wrapper = ShallowWrapper<PointerHandler['props'], PointerHandler['state'], PointerHandler>;
+  // type Wrapper = ShallowWrapper<PointerHandler['props'], PointerHandler['state'], PointerHandler>;
 
   describe('pressing', () => {
     describe('startPressing()', () => {
@@ -88,12 +88,11 @@ describe('<PointerHandler/>', () => {
       describe('invokes callbacks', () => {
         let onPointEnd: jest.Mock;
         let onPointCancel: jest.Mock;
-        let wrapper: Wrapper;
 
         beforeAll(() => {
           onPointEnd = jest.fn();
           onPointCancel = jest.fn();
-          wrapper = shallow<PointerHandler>(
+          const wrapper = shallow<PointerHandler>(
             <PointerHandler
               onPointEnd={onPointEnd}
               onPointCancel={onPointCancel}
@@ -111,6 +110,29 @@ describe('<PointerHandler/>', () => {
           expect(onPointCancel).toBeCalledWith();
         });
       });
+    });
+  });
+
+  describe('long pressing', () => {
+    beforeEach(() => {
+      jest.useFakeTimers();
+    });
+
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    it('invokes onLongPoint callback when enough time elapse', () => {
+      const onLongPoint = jest.fn();
+      const wrapper = shallow<PointerHandler>(
+        <PointerHandler
+          duration={0}
+          onLongPoint={onLongPoint}
+          >.</PointerHandler>,
+      );
+      wrapper.instance().startPressing({ x: 10, y: 20 });
+      jest.advanceTimersByTime(1000);
+      expect(onLongPoint).toBeCalledWith();
     });
   });
 });
