@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { between, IPos, ISize } from '../misc';
+import { IPos, ISize } from '../misc';
 import './BubbleButton.css';
 import Draggable from './Draggable';
 
@@ -94,13 +94,26 @@ class BubbleButton extends React.Component<IBubbleButtonProps, IBubbleButtonStat
       x: areaSize.width - size.width,
       y: areaSize.height - size.height,
     };
+    const finishingPos: IPos = {
+      x: this.state.left + this.state.dLeft,
+      y: this.state.top + this.state.dTop,
+    };
+    const inLeftSide = finishingPos.x < (maxPos.x / 2);
+    const inTopSide = finishingPos.y < (maxPos.y / 2);
+    const edgeDistance: IPos = {
+      x: inLeftSide ? finishingPos.x : maxPos.x - finishingPos.x,
+      y: inTopSide ? finishingPos.y : maxPos.y - finishingPos.y,
+    };
 
-    const finishingLeft = this.state.left + this.state.dLeft;
-    const finishingTop = this.state.top + this.state.dTop;
-
-    const centerLeft = maxPos.x / 2;
-    const left = finishingLeft < centerLeft ? 0 : maxPos.x;
-    const top = between(0, finishingTop, maxPos.y);
+    let left;
+    let top;
+    if (edgeDistance.x < edgeDistance.y) {
+      left = inLeftSide ? 0 : maxPos.x;
+      top = finishingPos.y;
+    } else {
+      left = finishingPos.x;
+      top = inTopSide ? 0 : maxPos.y;
+    }
 
     this.setState({
       dLeft: 0,
