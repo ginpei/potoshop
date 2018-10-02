@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { IPos, ISize } from '../misc';
+import { appSpace, between, IPos, ISize } from '../misc';
 import './BubbleButton.css';
 import Draggable from './Draggable';
 
@@ -30,8 +30,8 @@ class BubbleButton extends React.Component<IBubbleButtonProps, IBubbleButtonStat
       dLeft: 0,
       dTop: 0,
       dragging: false,
-      left: this.props.initialLeft || 0,
-      top: this.props.initialTop || 0,
+      left: -999,
+      top: -999,
     };
     this.onDragStart = this.onDragStart.bind(this);
     this.onDragMove = this.onDragMove.bind(this);
@@ -63,6 +63,18 @@ class BubbleButton extends React.Component<IBubbleButtonProps, IBubbleButtonStat
     );
   }
 
+  public componentDidMount () {
+    const p = this.props;
+    const pos = this.calculateProperPos({
+      x: (p.initialLeft === undefined || p.initialLeft < 0) ? Infinity : p.initialLeft,
+      y: (p.initialTop === undefined || p.initialTop < 0) ? Infinity : p.initialTop,
+    });
+    this.setState({
+      left: pos.x,
+      top: pos.y,
+    });
+  }
+
   public onDragStart () {
     this.setState({
       dragging: true,
@@ -77,10 +89,33 @@ class BubbleButton extends React.Component<IBubbleButtonProps, IBubbleButtonStat
   }
 
   public onDragEnd () {
+    const pos = this.calculateProperPos({
+      x: this.state.left + this.state.dLeft,
+      y: this.state.top + this.state.dTop,
+    });
+
+    this.setState({
+      dLeft: 0,
+      dTop: 0,
+      dragging: false,
+      left: pos.x,
+      top: pos.y,
+    });
+  }
+
+  public onClick (event: React.MouseEvent<HTMLButtonElement>) {
+    if (this.props.onPress) {
+      this.props.onPress();
+    }
+  }
+
+  protected calculateProperPos (pos: IPos): IPos {
     const el = this.el.current;
     if (!el) {
       throw new Error('Element has to be mounted');
     }
+
+    const margin = appSpace / 2;
 
     const size: ISize = {
       height: el.offsetHeight,
@@ -90,44 +125,32 @@ class BubbleButton extends React.Component<IBubbleButtonProps, IBubbleButtonStat
       height: el.offsetParent.clientHeight,
       width: el.offsetParent.clientWidth,
     };
+    const minPos: IPos = {
+      x: margin,
+      y: margin,
+    };
     const maxPos: IPos = {
-      x: areaSize.width - size.width,
-      y: areaSize.height - size.height,
+      x: areaSize.width - size.width - margin,
+      y: areaSize.height - size.height - margin,
     };
-    const finishingPos: IPos = {
-      x: this.state.left + this.state.dLeft,
-      y: this.state.top + this.state.dTop,
-    };
-    const inLeftSide = finishingPos.x < (maxPos.x / 2);
-    const inTopSide = finishingPos.y < (maxPos.y / 2);
+    const inLeftSide = pos.x < (maxPos.x / 2);
+    const inTopSide = pos.y < (maxPos.y / 2);
     const edgeDistance: IPos = {
-      x: inLeftSide ? finishingPos.x : maxPos.x - finishingPos.x,
-      y: inTopSide ? finishingPos.y : maxPos.y - finishingPos.y,
+      x: inLeftSide ? pos.x : maxPos.x - pos.x,
+      y: inTopSide ? pos.y : maxPos.y - pos.y,
     };
 
-    let left;
-    let top;
+    let x;
+    let y;
     if (edgeDistance.x < edgeDistance.y) {
-      left = inLeftSide ? 0 : maxPos.x;
-      top = finishingPos.y;
+      x = inLeftSide ? minPos.x : maxPos.x;
+      y = between(minPos.y, pos.y, maxPos.y);
     } else {
-      left = finishingPos.x;
-      top = inTopSide ? 0 : maxPos.y;
+      x = between(minPos.x, pos.x, maxPos.x);
+      y = inTopSide ? minPos.y : maxPos.y;
     }
 
-    this.setState({
-      dLeft: 0,
-      dTop: 0,
-      dragging: false,
-      left,
-      top,
-    });
-  }
-
-  public onClick (event: React.MouseEvent<HTMLButtonElement>) {
-    if (this.props.onPress) {
-      this.props.onPress();
-    }
+    return { x, y };
   }
 }
 
