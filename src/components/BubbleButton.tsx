@@ -79,7 +79,7 @@ class BubbleButton extends React.Component<IBubbleButtonProps, IBubbleButtonStat
   public onDragEnd () {
     const el = this.el.current;
     if (!el) {
-      throw new Error('Element has to be not mounted');
+      throw new Error('Element has to be mounted');
     }
 
     const size: ISize = {
