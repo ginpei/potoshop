@@ -157,13 +157,17 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
     }
   }
 
-  protected onUndoClick () {
+  protected onUndoClick (prev: boolean) {
     const ctx = this.elCanvas && this.elCanvas.getContext('2d');
     if (!ctx) {
       return;
     }
 
-    const record = this.canvasHistory.goPrev();
+    // TODO remove goNext() here and add ability to do that
+    const record = (prev
+      ? this.canvasHistory.goNext()
+      : this.canvasHistory.goPrev()
+    );
     if (record && record.type === HistoryType.canvas) {
       ctx.putImageData(record.imageData, 0, 0);
     }
