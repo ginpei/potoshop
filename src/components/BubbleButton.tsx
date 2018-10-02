@@ -90,20 +90,24 @@ class BubbleButton extends React.Component<IBubbleButtonProps, IBubbleButtonStat
       height: el.offsetParent.clientHeight,
       width: el.offsetParent.clientWidth,
     };
-    const endPos: IPos = {
+    const maxPos: IPos = {
       x: areaSize.width - size.width,
       y: areaSize.height - size.height,
     };
 
-    const left = this.state.left + this.state.dLeft;
-    const top = this.state.top + this.state.dTop;
+    const finishingLeft = this.state.left + this.state.dLeft;
+    const finishingTop = this.state.top + this.state.dTop;
+
+    const centerLeft = maxPos.x / 2;
+    const left = finishingLeft < centerLeft ? 0 : maxPos.x;
+    const top = between(0, finishingTop, maxPos.y);
 
     this.setState({
       dLeft: 0,
       dTop: 0,
       dragging: false,
-      left: between(0, left, endPos.x),
-      top: between(0, top, endPos.y),
+      left,
+      top,
     });
   }
 
