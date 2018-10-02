@@ -49,6 +49,7 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
       width: 0,
     };
     this.onDocumentTouchStart = this.onDocumentTouchStart.bind(this);
+    this.onUndoClick = this.onUndoClick.bind(this);
     this.onTutorialLongPoint = this.onTutorialLongPoint.bind(this);
     this.onCanvasReceive = this.onCanvasReceive.bind(this);
     this.onCanvasLongTap = this.onCanvasLongTap.bind(this);
@@ -98,7 +99,9 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
           onCanvasReceive={this.onCanvasReceive}
           onLongPoint={this.onCanvasLongTap}
           />}
-        <BubbleButton>
+        <BubbleButton
+          onPress={this.onUndoClick}
+          >
           <i className="fa fa-undo" aria-hidden="true"/>
         </BubbleButton>
         <AppMenu
@@ -148,6 +151,12 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
     if (event.touches.length >= 2) {
       event.preventDefault();
     }
+  }
+
+  protected onUndoClick () {
+    // TODO
+    // tslint:disable-next-line
+    console.log('onUndoClick');
   }
 
   protected onTutorialLongPoint () {

@@ -10,6 +10,7 @@ interface IBubbleButtonProps {
   size?: number;
 }
 interface IBubbleButtonState {
+  clickable: boolean;
   dLeft: number;
   dTop: number;
   dragging: boolean;
@@ -27,6 +28,7 @@ class BubbleButton extends React.Component<IBubbleButtonProps, IBubbleButtonStat
   constructor (props: IBubbleButtonProps) {
     super(props);
     this.state = {
+      clickable: true,
       dLeft: 0,
       dTop: 0,
       dragging: false,
@@ -56,7 +58,12 @@ class BubbleButton extends React.Component<IBubbleButtonProps, IBubbleButtonStat
         onDragMove={this.onDragMove}
         onDragEnd={this.onDragEnd}
         >
-        <div className={className} ref={this.el} style={style}>
+        <div
+          className={className}
+          ref={this.el}
+          style={style}
+          onClick={this.onClick}
+          >
           {this.props.children}
         </div>
       </Draggable>
@@ -77,12 +84,16 @@ class BubbleButton extends React.Component<IBubbleButtonProps, IBubbleButtonStat
 
   public onDragStart () {
     this.setState({
+      clickable: true,
       dragging: true,
     });
   }
 
   public onDragMove (diff: IPos) {
+    const distance = 8;
+    const movedEnough = Math.max(Math.abs(diff.x), Math.abs(diff.y)) > distance;
     this.setState({
+      clickable: this.state.clickable && !movedEnough,
       dLeft: diff.x,
       dTop: diff.y,
     });
@@ -103,8 +114,8 @@ class BubbleButton extends React.Component<IBubbleButtonProps, IBubbleButtonStat
     });
   }
 
-  public onClick (event: React.MouseEvent<HTMLButtonElement>) {
-    if (this.props.onPress) {
+  public onClick (event: React.MouseEvent<HTMLDivElement>) {
+    if (this.state.clickable && this.props.onPress) {
       this.props.onPress();
     }
   }
