@@ -3,9 +3,11 @@ import { Color } from 'csstype';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import AppHeader from '../../components/AppHeader';
+import BubbleButton from '../../components/BubbleButton';
 import PointerHandler from '../../components/PointerHandler';
 import { appHistory, appSpace, defaultStrokeColors, defaultStrokeWidth, getNewType, getUrlParamOf, ISize, NewType } from '../../misc';
 import firebase from '../../plugins/firebase';
+import CanvasHistory, { HistoryType } from '../../services/CanvasHistory';
 import { getImageUrl, loadImage, readBlob, uploadImage } from '../../services/image';
 import * as user from '../../services/user';
 import PaintCanvas from './PaintCanvas';
@@ -30,6 +32,7 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
   protected elCanvas: HTMLCanvasElement | null;
   protected storageRef = firebase.storage().ref('v1-images');
   protected newType = '';
+  protected canvasHistory = new CanvasHistory();
 
   constructor (props: IPaintPagePros) {
     super(props);
@@ -48,8 +51,10 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
       width: 0,
     };
     this.onDocumentTouchStart = this.onDocumentTouchStart.bind(this);
+    this.onUndoClick = this.onUndoClick.bind(this);
     this.onTutorialLongPoint = this.onTutorialLongPoint.bind(this);
     this.onCanvasReceive = this.onCanvasReceive.bind(this);
+    this.onCanvasUpdated = this.onCanvasUpdated.bind(this);
     this.onCanvasLongTap = this.onCanvasLongTap.bind(this);
     this.onMenuOverlayClick = this.onMenuOverlayClick.bind(this);
     this.onStrokeWidthChange = this.onStrokeWidthChange.bind(this);
@@ -95,8 +100,14 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
           strokeWidth={this.state.strokeWidth}
           width={this.state.width}
           onCanvasReceive={this.onCanvasReceive}
+          onCanvasUpdated={this.onCanvasUpdated}
           onLongPoint={this.onCanvasLongTap}
           />}
+        <BubbleButton
+          onPress={this.onUndoClick}
+          >
+          <i className="fa fa-undo" aria-hidden="true"/>
+        </BubbleButton>
         <AppMenu
           visible={this.state.menuVisible}
           onOverlayClick={this.onMenuOverlayClick}
@@ -146,6 +157,18 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
     }
   }
 
+  protected onUndoClick () {
+    const ctx = this.elCanvas && this.elCanvas.getContext('2d');
+    if (!ctx) {
+      return;
+    }
+
+    const record = this.canvasHistory.goPrev();
+    if (record && record.type === HistoryType.canvas) {
+      ctx.putImageData(record.imageData, 0, 0);
+    }
+  }
+
   protected onTutorialLongPoint () {
     this.setState({
       justAfterStarted: false,
@@ -154,6 +177,18 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
 
   protected onCanvasReceive (el: HTMLCanvasElement | null) {
     this.elCanvas = el;
+
+    const ctx = el && el.getContext('2d');
+    if (ctx) {
+      const imageData = ctx.getImageData(0, 0, el!.width, el!.height);
+      this.canvasHistory.pushImageData(imageData);
+    } else {
+      this.canvasHistory.clear();
+    }
+  }
+
+  protected onCanvasUpdated (imageData: ImageData) {
+    this.canvasHistory.pushImageData(imageData);
   }
 
   protected onCanvasLongTap () {

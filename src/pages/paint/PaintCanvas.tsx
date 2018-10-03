@@ -10,6 +10,7 @@ interface IPaintCanvasProps {
   imageWidth: number;
   inactive: boolean;
   onCanvasReceive: (el: HTMLCanvasElement | null) => void;
+  onCanvasUpdated: (imageData: ImageData) => void;
   onLongPoint: () => void;
   originalImage?: HTMLImageElement;
   strokeColor: Color;
@@ -283,7 +284,7 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
       ctx.stroke();
     }
 
-    this.stashImage();
+    this.recordHistory();
     this.setState({
       lining: false,
     });
@@ -307,13 +308,17 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
     return canvasPos;
   }
 
-  protected stashImage () {
+  protected recordHistory () {
     if (!this.ctx) {
       throw new Error('Canvas is not ready');
     }
 
     const { imageHeight, imageWidth } = this.props;
     this.lastImage = this.ctx.getImageData(0, 0, imageWidth, imageHeight);
+
+    if (this.props.onCanvasUpdated) {
+      this.props.onCanvasUpdated(this.lastImage);
+    }
   }
 
   protected restoreLastImage () {
