@@ -6,7 +6,7 @@ import Draggable from './Draggable';
 interface IBubbleButtonProps {
   initialLeft?: number;
   initialTop?: number;
-  onPress?: (prev: boolean) => void; // TODO remove this argument, this is only for debugging
+  onPress?: () => void;
   size?: number;
 }
 interface IBubbleButtonState {
@@ -116,7 +116,7 @@ class BubbleButton extends React.Component<IBubbleButtonProps, IBubbleButtonStat
 
   public onClick (event: React.MouseEvent<HTMLDivElement>) {
     if (this.state.clickable && this.props.onPress) {
-      this.props.onPress(event.shiftKey);
+      this.props.onPress();
     }
   }
 
