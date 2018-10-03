@@ -38,7 +38,7 @@ class BubbleButton extends React.Component<IBubbleButtonProps, IBubbleButtonStat
     this.onDragStart = this.onDragStart.bind(this);
     this.onDragMove = this.onDragMove.bind(this);
     this.onDragEnd = this.onDragEnd.bind(this);
-    this.onClick = this.onClick.bind(this);
+    this.onPress = this.onPress.bind(this);
   }
 
   public render () {
@@ -57,12 +57,12 @@ class BubbleButton extends React.Component<IBubbleButtonProps, IBubbleButtonStat
         onDragStart={this.onDragStart}
         onDragMove={this.onDragMove}
         onDragEnd={this.onDragEnd}
+        onClick={this.onPress}
         >
         <div
           className={className}
           ref={this.el}
           style={style}
-          onClick={this.onClick}
           >
           {this.props.children}
         </div>
@@ -114,7 +114,7 @@ class BubbleButton extends React.Component<IBubbleButtonProps, IBubbleButtonStat
     });
   }
 
-  public onClick (event: React.MouseEvent<HTMLDivElement>) {
+  public onPress (pos: IPos) {
     if (this.state.clickable && this.props.onPress) {
       this.props.onPress();
     }

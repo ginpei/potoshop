@@ -19,6 +19,7 @@ interface IPointerHandlerProps {
   onPointEnd?: () => void;
   onPointMove?: (pos: IPos, startedPos: IPos) => void;
   onPointStart?: (pos: IPos) => void;
+  onPress?: (pos: IPos) => void;
 }
 interface IPointerHandlerState {
   height: number;
@@ -102,6 +103,7 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
     this.onMouseDown = this.onMouseDown.bind(this);
     this.onMouseMove = this.onMouseMove.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
+    this.onClick = this.onClick.bind(this);
   }
 
   public render () {
@@ -152,6 +154,7 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
     el.addEventListener('mousedown', this.onMouseDown);
     document.addEventListener('mousemove', this.onMouseMove);
     document.addEventListener('mouseup', this.onMouseUp);
+    el.addEventListener('click', this.onClick);
 
     this.setState({
       height: el.clientHeight,
@@ -173,6 +176,7 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
     el.removeEventListener('mousedown', this.onMouseDown);
     document.removeEventListener('mousemove', this.onMouseMove);
     document.removeEventListener('mouseup', this.onMouseUp);
+    el.removeEventListener('click', this.onClick);
   }
 
   public onTouchStart (event: TouchEvent) {
@@ -182,7 +186,10 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
         return;
       }
 
-      event.preventDefault();
+      if (!this.props.onPress) {
+        event.preventDefault();
+      }
+
       const pos = this.getPos(event, 0);
       this.startPressing(pos);
     } else if (this.pressing && numTouches === 2) {
@@ -237,6 +244,13 @@ class PointerHandler extends React.Component<IPointerHandlerProps, IPointerHandl
     }
     if (this.pressing) {
       this.stopPressing();
+    }
+  }
+
+  public onClick (event: MouseEvent) {
+    if (this.props.onPress) {
+      const pos = this.getPos(event);
+      this.props.onPress(pos);
     }
   }
 

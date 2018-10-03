@@ -3,6 +3,7 @@ import { IPos } from '../misc';
 import PointerHandler from './PointerHandler';
 
 interface IDraggableProps {
+  onClick?: (pos: IPos) => void;
   onDragEnd?: () => void;
   onDragMove?: (diff: IPos) => void;
   onDragStart?: () => void;
@@ -25,6 +26,7 @@ class Draggable extends React.Component<IDraggableProps, IDraggableState> {
     return (
       <PointerHandler
         containing={false}
+        onPress={this.props.onClick}
         onPointStart={this.onPointStart}
         onPointMove={this.onPointMove}
         onPointEnd={this.onPointEnd}
