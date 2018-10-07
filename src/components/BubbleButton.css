@@ -2,7 +2,7 @@
   --bubble-button--size: 50px;
 
   align-items: center;
-  background-color: #036;
+  background-color: var(--color-main);
   border-radius: 50%;
   border: 1px solid #9cf;
   box-sizing: border-box;

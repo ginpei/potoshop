@@ -1,5 +1,5 @@
 .AppHeader {
-  background-color: #036;
+  background-color: var(--color-main);
   color: white;
   height: var(--app-header-height);
   line-height: var(--app-header-height);
