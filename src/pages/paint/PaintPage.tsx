@@ -52,6 +52,7 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
     };
     this.onDocumentTouchStart = this.onDocumentTouchStart.bind(this);
     this.onUndoClick = this.onUndoClick.bind(this);
+    this.onRedoClick = this.onRedoClick.bind(this);
     this.onTutorialLongPoint = this.onTutorialLongPoint.bind(this);
     this.onCanvasReceive = this.onCanvasReceive.bind(this);
     this.onCanvasUpdated = this.onCanvasUpdated.bind(this);
@@ -104,9 +105,15 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
           onLongPoint={this.onCanvasLongTap}
           />}
         <BubbleButton
+          initialLeft={0}
           onPress={this.onUndoClick}
           >
           <i className="fa fa-undo" aria-hidden="true"/>
+        </BubbleButton>
+        <BubbleButton
+          onPress={this.onRedoClick}
+          >
+          <i className="fa fa-repeat" aria-hidden="true"/>
         </BubbleButton>
         <AppMenu
           visible={this.state.menuVisible}
@@ -164,6 +171,18 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
     }
 
     const record = this.canvasHistory.goPrev();
+    if (record && record.type === HistoryType.canvas) {
+      ctx.putImageData(record.imageData, 0, 0);
+    }
+  }
+
+  protected onRedoClick () {
+    const ctx = this.elCanvas && this.elCanvas.getContext('2d');
+    if (!ctx) {
+      return;
+    }
+
+    const record = this.canvasHistory.goNext();
     if (record && record.type === HistoryType.canvas) {
       ctx.putImageData(record.imageData, 0, 0);
     }
