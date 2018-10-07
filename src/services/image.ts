@@ -5,8 +5,10 @@ const storageRef = firebase.storage().ref('v1-images');
 
 export interface IImageRecord {
   createdAt: number;
+  height: number;
   id: string;
   url: string;
+  width: number;
 }
 
 export function readBlob (el: HTMLCanvasElement) {
@@ -17,15 +19,19 @@ export function readBlob (el: HTMLCanvasElement) {
 
 interface IUploadImageArgs {
   blob: Blob;
-  uid: string;
+  height: number;
   onStateChange?: (snapshot: firebase.storage.UploadTaskSnapshot) => void;
+  uid: string;
+  width: number;
 }
 export async function uploadImage (args: IUploadImageArgs) {
-  const { blob, uid } = args;
+  const { blob, height, uid, width } = args;
 
   // prepare record
   const imageRef = await db.doc(uid).collection('images').add({
     createdAt: Date.now(),
+    height,
+    width,
   });
 
   // store image

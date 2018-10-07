@@ -43,7 +43,13 @@ class HistoryPage extends React.Component<IHistoryPagePros, IHistoryPageState> {
                 <div className="HistoryPage-recordItem" key={record.id}>
                   <a href={record.url}>
                     <figure className="HistoryPage-record">
-                      <img className="HistoryPage-image" alt="" src={record.url}/>
+                      <img
+                        className="HistoryPage-image"
+                        alt=""
+                        src={record.url}
+                        width={record.width}
+                        height={record.height}
+                        />
                       <figcaption>{new Date(record.createdAt).toLocaleString()}</figcaption>
                     </figure>
                   </a>

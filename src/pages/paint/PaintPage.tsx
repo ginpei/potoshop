@@ -241,7 +241,9 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
 
     await uploadImage({
       blob: await readBlob(this.elCanvas),
+      height: this.elCanvas.height,
       uid: this.currentUser!.uid,
+      width: this.elCanvas.width,
     });
     window.location.href = '/history';
   }
