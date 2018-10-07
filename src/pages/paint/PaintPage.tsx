@@ -16,6 +16,7 @@ import './PaintPage.css';
 
 type IPaintPagePros = any;
 interface IPaintPageState {
+  dirty: boolean;
   height: number;
   imageLoading: boolean;
   imageSize: ISize;
@@ -37,6 +38,7 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
   constructor (props: IPaintPagePros) {
     super(props);
     this.state = {
+      dirty: false,
       height: 0,
       imageLoading: false,
       imageSize: {
@@ -50,6 +52,7 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
       strokeWidth: defaultStrokeWidth,
       width: 0,
     };
+    this.onBeforeUnload = this.onBeforeUnload.bind(this);
     this.onDocumentTouchStart = this.onDocumentTouchStart.bind(this);
     this.onUndoClick = this.onUndoClick.bind(this);
     this.onRedoClick = this.onRedoClick.bind(this);
@@ -143,6 +146,7 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
     user.saveLogin(this.currentUser!.uid);
 
     document.addEventListener('touchstart', this.onDocumentTouchStart, { passive: false });
+    window.addEventListener('beforeunload', this.onBeforeUnload);
   }
 
   public componentDidMount () {
@@ -155,6 +159,17 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
 
   public componentWillUnmount () {
     document.removeEventListener('touchstart', this.onDocumentTouchStart);
+    window.removeEventListener('beforeunload', this.onBeforeUnload);
+  }
+
+  protected onBeforeUnload (event: BeforeUnloadEvent) {
+    if (this.state.dirty) {
+      event.preventDefault();
+
+      // Chrome doesn't support preventDefault even not support message
+      // (remove this when it supports preventDefault way)
+      event.returnValue = 'Are you sure?';
+    }
   }
 
   protected onDocumentTouchStart (event: TouchEvent) {
@@ -208,6 +223,12 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
 
   protected onCanvasUpdated (imageData: ImageData) {
     this.canvasHistory.pushImageData(imageData);
+
+    if (!this.state.dirty) {
+      this.setState({
+        dirty: true,
+      });
+    }
   }
 
   protected onCanvasLongTap () {
@@ -245,10 +266,17 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
       uid: this.currentUser!.uid,
       width: this.elCanvas.width,
     });
+
+    this.setState({
+      dirty: false,
+    });
     window.location.href = '/history';
   }
 
   protected onNew () {
+    this.setState({
+      dirty: false,
+    });
     appHistory.push('/new');
   }
 
