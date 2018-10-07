@@ -4,3 +4,21 @@
   text-align-last: right;
   width: 6em;
 }
+.CreateNewPage-recordItem {
+  align-items: center;
+  border-radius: 3px;
+  border: 1px solid currentColor;
+  display: inline-flex;
+  height: 100px;
+  justify-content: center;
+  width: 100px;
+  vertical-align: middle;
+  overflow: hidden;
+  margin: calc(var(--app-space) / 2);
+}
+.CreateNewPage-image {
+  height: auto;;
+  max-height: 100px;
+  max-width: 100px;
+  width: auto;
+}
