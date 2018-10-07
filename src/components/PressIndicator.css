@@ -6,5 +6,5 @@
 .PressIndicator-progress {
   fill: none;
   stroke-linecap: round;
-  stroke: #0f99;
+  stroke: var(--color-highlight-t);
 }

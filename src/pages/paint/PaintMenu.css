@@ -78,11 +78,31 @@
   justify-content: space-evenly;
   margin-bottom: var(--app-space);
 }
+.StrokeWidth {
+  border-radius: 3px;
+  border: 1px solid transparent;
+}
+.StrokeWidth.-selected {
+  border-color: var(--color-highlight-t);
+  box-shadow:
+    1px 1px 0 #fff9 inset,
+    1px 1px 0 #fff9;
+}
 .StrokeWidth-button {
   background-color: transparent;
   border: none;
 }
 
+.ColorButton {
+  border-radius: 3px;
+  border: 1px solid transparent;
+}
+.ColorButton.-selected {
+  border-color: var(--color-highlight-t);
+  box-shadow:
+    1px 1px 0 #fff9 inset,
+    1px 1px 0 #fff9;
+}
 .ColorButton-button {
   border-radius: 50%;
   border: none;

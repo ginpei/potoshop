@@ -119,6 +119,8 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
           <i className="fa fa-repeat" aria-hidden="true"/>
         </BubbleButton>
         <AppMenu
+          strokeColor={this.state.strokeColor}
+          strokeWidth={this.state.strokeWidth}
           visible={this.state.menuVisible}
           onOverlayClick={this.onMenuOverlayClick}
           onStrokeWidthChange={this.onStrokeWidthChange}

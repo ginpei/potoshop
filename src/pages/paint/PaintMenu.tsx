@@ -7,6 +7,8 @@ import { Colors, PaintMenuBody, PaintMenuContent, PaintMenuFooter, PaintMenuFoot
 
 interface IPaintMenuProps {
   visible: boolean;
+  strokeColor: Color;
+  strokeWidth: number;
   onOverlayClick: () => void;
   onStrokeWidthChange: (width: number) => void;
   onColorChange: (color: Color) => void;
@@ -50,10 +52,12 @@ class PaintMenu extends React.Component<IPaintMenuProps, IPaintMenuState> {
         <div className="PaintMenu-penMenu">
           <StrokeWidths
             strokeWidths={strokeWidths}
+            value={this.props.strokeWidth}
             onChange={this.onStrokeWidthChange}
             />
           <Colors
             colors={strokeColors}
+            value={this.props.strokeColor}
             onChange={this.onColorChange}
             />
         </div>

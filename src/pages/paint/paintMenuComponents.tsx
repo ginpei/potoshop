@@ -46,6 +46,7 @@ export function PaintMenuFooterButton (props: any) {
 }
 
 interface IStrokeWidthButtonProps {
+  selected: boolean;
   width: number;
   onClick: (width: number) => void;
 }
@@ -54,9 +55,13 @@ function StrokeWidth (props: IStrokeWidthButtonProps) {
     M 40 10
     L 10 40
   `;
+  const className = [
+    'StrokeWidth',
+    props.selected ? '-selected' : '',
+  ].join(' ');
   const onClick = () => props.onClick(props.width);
   return (
-    <span className="StrokeWidth">
+    <span className={className}>
       <button className="StrokeWidth-button"
         onClick={onClick}
         >
@@ -74,6 +79,7 @@ function StrokeWidth (props: IStrokeWidthButtonProps) {
 
 interface IStrokeWidthsButtonProps {
   strokeWidths: number[];
+  value: number;
   onChange: (width: number) => void;
 }
 export function StrokeWidths (props: IStrokeWidthsButtonProps) {
@@ -85,6 +91,7 @@ export function StrokeWidths (props: IStrokeWidthsButtonProps) {
     return (
       <StrokeWidth
         key={width}
+        selected={width === props.value}
         width={width}
         onClick={onClick}
         />
@@ -100,12 +107,17 @@ export function StrokeWidths (props: IStrokeWidthsButtonProps) {
 
 interface IColorButtonProps {
   color: Color;
+  selected: boolean;
   onClick: (color: Color) => void;
 }
 function ColorButton (props: IColorButtonProps) {
+  const className = [
+    'ColorButton',
+    props.selected ? '-selected' : '',
+  ].join(' ');
   const onClick = () => props.onClick(props.color);
   return (
-    <span className="ColorButton">
+    <span className={className}>
       <button className="ColorButton-button"
         style={{ backgroundColor: props.color }}
         onClick={onClick}
@@ -116,6 +128,7 @@ function ColorButton (props: IColorButtonProps) {
 
 interface IColorsProps {
   colors: string[];
+  value: string;
   onChange: (color: Color) => void;
 }
 export function Colors (props: IColorsProps) {
@@ -127,6 +140,7 @@ export function Colors (props: IColorsProps) {
       <ColorButton
         key={color}
         color={color}
+        selected={color === props.value}
         onClick={onClick}
         />
   ));
