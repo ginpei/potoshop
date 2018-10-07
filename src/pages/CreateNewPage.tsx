@@ -1,7 +1,7 @@
 import * as React from 'react';
 import AppFooter from '../components/AppFooter';
 import AppHeader from '../components/AppHeader';
-import { appSpace } from '../misc';
+import { appHistory, appSpace } from '../misc';
 import './CreateNewPage.css';
 
 type ICreateNewPagePros = any;
@@ -21,13 +21,15 @@ class CreateNewPage extends React.Component<ICreateNewPagePros, ICreateNewPageSt
   }
 
   public render () {
+    const onSubmitNew = this.onSubmitNew.bind(this);
+
     return (
       <div className="CreateNewPage">
         <AppHeader/>
         <div className="container">
           <h1>Create New</h1>
-          <form action="/paint" method="GET">
-            <input type="hidden" name="newType" value="size"/>
+          <form action="/paint" method="GET" onSubmit={onSubmitNew}>
+            {/* <input type="hidden" name="newType" value="size"/> */}
             <input className="CreateNewPage-sizeInput" type="number"
               name="width"
               value={this.state.width}
@@ -53,6 +55,15 @@ class CreateNewPage extends React.Component<ICreateNewPagePros, ICreateNewPageSt
       height: el.clientHeight - appSpace * 2,
       width: el.clientWidth - appSpace * 2,
     });
+  }
+
+  protected onSubmitNew (event: React.FormEvent<HTMLFormElement>) {
+    // it would be better to gather parameters from DOM
+
+    const s = this.state;
+    event.preventDefault();
+    const path = `/paint?newType=size&width=${s.width}&height=${s.height}`;
+    appHistory.push(path);
   }
 
   protected onChange (event: React.ChangeEvent<HTMLInputElement>) {
