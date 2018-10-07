@@ -134,7 +134,7 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
   }
 
   public async componentWillMount () {
-    this.renameMeProperlyLater();
+    this.setUpSizes();
 
     if (!firebase.auth().currentUser) {
       try {
@@ -282,8 +282,7 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
     appHistory.push('/new');
   }
 
-  // TODO rename properly
-  protected renameMeProperlyLater () {
+  protected setUpSizes () {
     // this is called only from `componentWillMount()`
 
     const el = document.documentElement;
