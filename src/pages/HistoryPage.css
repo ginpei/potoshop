@@ -1,6 +1,10 @@
 .HistoryPage {
 }
+.HistoryPage-recordItem {
+  margin-bottom: calc(3 * var(--app-space));
+}
 .HistoryPage-record {
+  text-align: center;
 }
 .HistoryPage-image {
   border-radius: 3px;
