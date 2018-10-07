@@ -54,7 +54,7 @@ class HistoryPage extends React.Component<IHistoryPagePros, IHistoryPageState> {
                       <figcaption>{new Date(record.createdAt).toLocaleString()}</figcaption>
                     </figure>
                   </a>
-                  <form action="/" method="GET">
+                  <form action="/paint" method="GET">
                     <input type="hidden" name="newType" value="history"/>
                     <input type="hidden" name="uid" value={this.uid}/>
                     <input type="hidden" name="id" value={record.id}/>
