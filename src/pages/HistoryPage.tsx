@@ -1,4 +1,5 @@
 import * as React from 'react';
+import AppFooter from '../components/AppFooter';
 import AppHeader from '../components/AppHeader';
 import firebase from '../plugins/firebase';
 import { IImageRecord } from '../services/image';
@@ -64,6 +65,7 @@ class HistoryPage extends React.Component<IHistoryPagePros, IHistoryPageState> {
             }
           </div>
         </div>
+        <AppFooter/>
       </div>
     );
   }
