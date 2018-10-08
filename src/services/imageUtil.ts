@@ -154,10 +154,14 @@ export async function readImage (file: File): Promise<HTMLImageElement | null> {
     return null;
   }
 
-  const originalImage = await readFileAsImage(file);
-  const orientation = await getOrientation(file);
-  const modifiedImage = await applyImageOrientation(originalImage, orientation);
-  return modifiedImage;
+  const image = await readFileAsImage(file);
+  if (file.type === 'image/jpeg') {
+    const orientation = await getOrientation(file);
+    const modifiedImage = await applyImageOrientation(image, orientation);
+    return modifiedImage;
+  } else {
+    return image;
+  }
 }
 
 function readFileAsImage (file: File): Promise<HTMLImageElement> {
