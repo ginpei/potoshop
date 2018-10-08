@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import AppHeader from '../../components/AppHeader';
 import BubbleButton from '../../components/BubbleButton';
 import PointerHandler from '../../components/PointerHandler';
-import { appHistory, appSpace, defaultStrokeColors, defaultStrokeWidth, getNewType, getUrlParamOf, ISize, NewType } from '../../misc';
+import { appHistory, appSpace, CanvasType, defaultStrokeColors, defaultStrokeWidth, getCanvasType, getUrlParamOf, ISize } from '../../misc';
 import firebase from '../../plugins/firebase';
 import CanvasHistory, { HistoryType } from '../../services/CanvasHistory';
 import { getImageUrl, loadImage, readBlob, uploadImage } from '../../services/image';
@@ -32,7 +32,7 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
   protected currentUser: firebase.User | null;
   protected elCanvas: HTMLCanvasElement | null;
   protected storageRef = firebase.storage().ref('v1-images');
-  protected newType = '';
+  protected canvasType = '';
   protected canvasHistory = new CanvasHistory();
 
   constructor (props: IPaintPagePros) {
@@ -152,7 +152,7 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
   }
 
   public componentDidMount () {
-    if (this.newType === NewType.history) {
+    if (this.canvasType === CanvasType.history) {
       const uid = getUrlParamOf('uid', '');
       const imageId = getUrlParamOf('id', '');
       this.loadImageFromHistory(uid, imageId);
@@ -294,15 +294,15 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
     });
 
     let imageSize: ISize | null = null;
-    const newType = getNewType();
-    if (newType) {
-      this.newType = newType;
-      if (newType === NewType.size) {
+    const type = getCanvasType();
+    if (type) {
+      this.canvasType = type;
+      if (type === CanvasType.size) {
         imageSize = {
           height: Number(getUrlParamOf('height')) || 1,
           width: Number(getUrlParamOf('width')) || 1,
         };
-      } else if (newType === NewType.history) {
+      } else if (type === CanvasType.history) {
         this.setState({
           imageLoading: true,
         });

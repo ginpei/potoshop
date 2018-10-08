@@ -4,6 +4,7 @@ import AppHeader from '../components/AppHeader';
 import firebase from '../plugins/firebase';
 import { IImageRecord } from '../services/image';
 import * as image from '../services/image';
+import * as paths from '../services/paths';
 import './HistoryPage.css';
 
 type IHistoryPagePros = any;
@@ -54,12 +55,13 @@ class HistoryPage extends React.Component<IHistoryPagePros, IHistoryPageState> {
                       <figcaption>{new Date(record.createdAt).toLocaleString()}</figcaption>
                     </figure>
                   </a>
-                  <form action="/paint" method="GET">
-                    <input type="hidden" name="newType" value="history"/>
-                    <input type="hidden" name="uid" value={this.uid}/>
-                    <input type="hidden" name="id" value={record.id}/>
-                    <button>Edit this image</button>
-                  </form>
+                  <a
+                    href={paths.paintPage({
+                      id: record.id,
+                      type: 'history',
+                      uid: this.uid,
+                    })}
+                    >Edit this image</a>
                 </div>
               ))
             }

@@ -74,17 +74,16 @@ export function between (min: number, n: number, max: number) {
 }
 export type Ratio = number; // 0 as 0%, 1 as 100%
 
-// TODO rename
-export enum NewType {
+export enum CanvasType {
   none = '',
   size = 'size',
   history = 'history',
 }
-export function getNewType (str: string = getUrlParamOf('newType')) {
-  for (const type in NewType) {
+export function getCanvasType (str: string = getUrlParamOf('type')) {
+  for (const type in CanvasType) {
     if (str === type) {
-      return NewType[type];
+      return CanvasType[type];
     }
   }
-  return NewType.none;
+  return CanvasType.none;
 }

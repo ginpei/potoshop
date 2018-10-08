@@ -5,6 +5,7 @@ import AppHeader from '../components/AppHeader';
 import { appHistory, appSpace } from '../misc';
 import firebase from '../plugins/firebase';
 import * as image from '../services/image';
+import * as paths from '../services/paths';
 import './CreateNewPage.css';
 
 type ICreateNewPagePros = any;
@@ -44,7 +45,6 @@ class CreateNewPage extends React.Component<ICreateNewPagePros, ICreateNewPageSt
         <div className="container">
           <h1>Create New</h1>
           <form action="/paint" method="GET" onSubmit={onSubmitNew}>
-            {/* <input type="hidden" name="newType" value="size"/> */}
             <input className="CreateNewPage-sizeInput" type="number"
               name="width"
               value={this.state.width}
@@ -69,7 +69,11 @@ class CreateNewPage extends React.Component<ICreateNewPagePros, ICreateNewPageSt
                 <Link
                   className="CreateNewPage-recordItem"
                   key={record.id}
-                  to={`/paint?newType=history&uid=${this.uid}&id=${record.id}`}
+                  to={paths.paintPage({
+                    id: record.id,
+                    type: 'history',
+                    uid: this.uid,
+                  })}
                   >
                   <img
                     className="CreateNewPage-image"
@@ -108,7 +112,11 @@ class CreateNewPage extends React.Component<ICreateNewPagePros, ICreateNewPageSt
 
     const s = this.state;
     event.preventDefault();
-    const path = `/paint?newType=size&width=${s.width}&height=${s.height}`;
+    const path = paths.paintPage({
+      height: s.height,
+      type: 'size',
+      width: s.width,
+    });
     appHistory.push(path);
   }
 
