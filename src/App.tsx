@@ -32,6 +32,7 @@ class App extends React.Component<any, IAppState> {
       errorMessage: '',
     };
     this.onError = this.onError.bind(this);
+    this.onUnhandledRejection = this.onUnhandledRejection.bind(this);
     this.onIgnoreError = this.onIgnoreError.bind(this);
   }
 
@@ -63,15 +64,23 @@ class App extends React.Component<any, IAppState> {
 
   public componentWillMount () {
     window.addEventListener('error', this.onError);
+    window.addEventListener('unhandledrejection', this.onUnhandledRejection);
   }
 
   public componentWillUnmount () {
     window.removeEventListener('error', this.onError);
+    window.removeEventListener('unhandledrejection', this.onUnhandledRejection);
   }
 
   protected onError ({ error }: ErrorEvent) {
     this.setState({
       errorMessage: error.message,
+    });
+  }
+
+  protected onUnhandledRejection ({ reason }: PromiseRejectionEvent) {
+    this.setState({
+      errorMessage: reason.message,
     });
   }
 
