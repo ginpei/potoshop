@@ -9,6 +9,7 @@ import CreateNewPage from './pages/CreateNewPage';
 import HistoryPage from './pages/HistoryPage';
 import HomePage from './pages/HomePage';
 import PaintPage from './pages/paint/PaintPage';
+import UploadImagePage from './pages/UploadImagePage';
 
 interface IAppState {
   errorMessage: string;
@@ -51,6 +52,7 @@ class App extends React.Component<any, IAppState> {
             <Route exact={true} path="/new" component={CreateNewPage}/>
             <Route exact={true} path="/about" component={AboutPage}/>
             <Route exact={true} path="/history" component={HistoryPage}/>
+            <Route exact={true} path="/upload" component={UploadImagePage}/>
             <Route component={ErrorNotFoundPage}/>
           </Switch>
           {errorPage}

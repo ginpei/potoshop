@@ -37,6 +37,7 @@ class CreateNewPage extends React.Component<ICreateNewPagePros, ICreateNewPageSt
   public render () {
     const onChange = this.onChange.bind(this);
     const onSubmitNew = this.onSubmitNew.bind(this);
+    const onFileChange = this.onFileChange.bind(this);
     const records = this.state.imageRecords;
 
     return (
@@ -58,6 +59,12 @@ class CreateNewPage extends React.Component<ICreateNewPagePros, ICreateNewPageSt
               />
             <button>Create new</button>
           </form>
+        </div>
+        <div className="container">
+          <h1>Upload</h1>
+          <input type="file"
+            onChange={onFileChange}
+            />
         </div>
         <div className="container">
           <h1>Edit recent item</h1>
@@ -118,6 +125,18 @@ class CreateNewPage extends React.Component<ICreateNewPagePros, ICreateNewPageSt
       width: s.width,
     });
     appHistory.push(path);
+  }
+
+  protected onFileChange (event: React.ChangeEvent<HTMLInputElement>) {
+    const { files } = event.target;
+    if (!files) {
+      return;
+    }
+
+    const file = files[0];
+    appHistory.push(paths.uploadImagePage, {
+      file,
+    });
   }
 
   protected onChange (event: React.ChangeEvent<HTMLInputElement>) {

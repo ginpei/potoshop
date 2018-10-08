@@ -24,3 +24,5 @@ export const paintPage = (params?: IPaintPageParams) => {
     return `${path}?${buildParams(params)}`;
   }
 };
+
+export const uploadImagePage = '/upload';
