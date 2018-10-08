@@ -113,8 +113,6 @@ class UploadImagePage extends React.Component<IUploadImagePagePros, IUploadImage
   }
 
   protected async loadImage (file: File) {
-    // invoked only from componentWillMount()
-
     this.setState({
       imageReady: false,
     });
