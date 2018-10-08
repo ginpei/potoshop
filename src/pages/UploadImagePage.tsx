@@ -7,9 +7,10 @@ import './UploadImagePage.css';
 
 type IUploadImagePagePros = any;
 interface IUploadImagePageState {
+  imageReady: boolean;
+  noGivenImage: boolean;
   originalHeight: number;
   originalWidth: number;
-  ready: boolean;
   scale: number;
 }
 
@@ -28,9 +29,10 @@ class UploadImagePage extends React.Component<IUploadImagePagePros, IUploadImage
   constructor (props: IUploadImagePagePros) {
     super(props);
     this.state = {
+      imageReady: false,
+      noGivenImage: false,
       originalHeight: 0,
       originalWidth: 0,
-      ready: false,
       scale: 1,
     };
   }
@@ -38,13 +40,19 @@ class UploadImagePage extends React.Component<IUploadImagePagePros, IUploadImage
   public render () {
     const s = this.state;
     const onScaleChange = this.onScaleChange.bind(this);
+    const onFileChange = this.onFileChange.bind(this);
 
     return (
       <div className="UploadImagePage">
         <AppHeader/>
         <div className="container">
           <h1>Upload image</h1>
-          {s.ready && <div>
+          {!s.imageReady && s.noGivenImage && <div>
+            <input type="file"
+              onChange={onFileChange}
+              />
+          </div>}
+          {s.imageReady && <div>
             <p>Original size: {s.originalWidth} x {s.originalHeight}</p>
             <p>
               Resize:
@@ -69,15 +77,30 @@ class UploadImagePage extends React.Component<IUploadImagePagePros, IUploadImage
   }
 
   public async componentWillMount () {
-    const { file } = appHistory.location.state;
-    if (!file || !(file instanceof File)) {
-      console.warn('file', file);
-      throw new Error('File must be given. You got wrong locating');
+    const historyState = appHistory.location.state;
+    const file = historyState && historyState.file;
+    if (file && (file instanceof File)) {
+      await this.loadImage(file);
+      this.setState({
+        imageReady: true,
+      });
+    } else {
+      this.setState({
+        noGivenImage: true,
+      });
+    }
+  }
+
+  public async onFileChange (event: React.ChangeEvent<HTMLInputElement>) {
+    const { files } = event.target;
+    if (!files) {
+      return;
     }
 
+    const file = files[0];
     await this.loadImage(file);
     this.setState({
-      ready: true,
+      imageReady: true,
     });
   }
 
@@ -90,8 +113,10 @@ class UploadImagePage extends React.Component<IUploadImagePagePros, IUploadImage
   }
 
   protected async loadImage (file: File) {
+    // invoked only from componentWillMount()
+
     this.setState({
-      ready: false,
+      imageReady: false,
     });
 
     if (!imageUtil.isImageFile(file)) {
