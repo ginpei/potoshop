@@ -8,7 +8,6 @@ import './UploadImagePage.css';
 type IUploadImagePagePros = any;
 interface IUploadImagePageState {
   imageReady: boolean;
-  noGivenImage: boolean;
   originalHeight: number;
   originalWidth: number;
   scale: number;
@@ -30,7 +29,6 @@ class UploadImagePage extends React.Component<IUploadImagePagePros, IUploadImage
     super(props);
     this.state = {
       imageReady: false,
-      noGivenImage: false,
       originalHeight: 0,
       originalWidth: 0,
       scale: 1,
@@ -51,7 +49,7 @@ class UploadImagePage extends React.Component<IUploadImagePagePros, IUploadImage
         <AppHeader/>
         <div className="container">
           <h1>Upload image</h1>
-          {!s.imageReady && s.noGivenImage && <div>
+          {<div>
             <input type="file"
               onChange={onFileChange}
               />
@@ -90,10 +88,6 @@ class UploadImagePage extends React.Component<IUploadImagePagePros, IUploadImage
     const file = historyState && historyState.file;
     if (file && (file instanceof File)) {
       await this.loadImage(file);
-    } else {
-      this.setState({
-        noGivenImage: true,
-      });
     }
   }
 
@@ -136,7 +130,8 @@ class UploadImagePage extends React.Component<IUploadImagePagePros, IUploadImage
   }
 
   public async onFileChange (event: React.ChangeEvent<HTMLInputElement>) {
-    const { files } = event.target;
+    const elInput = event.target;
+    const { files } = elInput;
     if (!files) {
       return;
     }
@@ -146,6 +141,8 @@ class UploadImagePage extends React.Component<IUploadImagePagePros, IUploadImage
     this.setState({
       imageReady: true,
     });
+
+    elInput.value = '';
   }
 
   public onScaleChange (event: React.ChangeEvent<HTMLInputElement>) {
