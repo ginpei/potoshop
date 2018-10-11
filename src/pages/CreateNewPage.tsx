@@ -65,6 +65,7 @@ class CreateNewPage extends React.Component<ICreateNewPagePros, ICreateNewPageSt
           <input type="file"
             onChange={onFileChange}
             />
+          <p>Or you could paste or drop image file in <Link to={paths.uploadImagePage}>the upload page</Link>.</p>
         </div>
         <div className="container">
           <h1>Edit recent item</h1>
