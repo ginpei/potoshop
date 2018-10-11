@@ -50,7 +50,7 @@ class UploadImagePage extends React.Component<IUploadImagePagePros, IUploadImage
         <div className="container">
           <h1>Upload image</h1>
           {<div>
-            <input type="file"
+            <input type="file" accept="image/*"
               onChange={onFileChange}
               />
           </div>}

@@ -62,7 +62,7 @@ class CreateNewPage extends React.Component<ICreateNewPagePros, ICreateNewPageSt
         </div>
         <div className="container">
           <h1>Upload</h1>
-          <input type="file"
+          <input type="file" accept="image/*"
             onChange={onFileChange}
             />
           <p>Or you could paste or drop image file in <Link to={paths.uploadImagePage}>the upload page</Link>.</p>
