@@ -36,6 +36,9 @@ class UploadImagePage extends React.Component<IUploadImagePagePros, IUploadImage
       scale: 1,
     };
     this.onPaste = this.onPaste.bind(this);
+    this.onDragOver = this.onDragOver.bind(this);
+    this.onDragLeave = this.onDragLeave.bind(this);
+    this.onDrop = this.onDrop.bind(this);
   }
 
   public render () {
@@ -79,6 +82,9 @@ class UploadImagePage extends React.Component<IUploadImagePagePros, IUploadImage
 
   public async componentWillMount () {
     document.addEventListener('paste', this.onPaste);
+    document.addEventListener('dragover', this.onDragOver);
+    document.addEventListener('dragleave', this.onDragLeave);
+    document.addEventListener('drop', this.onDrop);
 
     const historyState = appHistory.location.state;
     const file = historyState && historyState.file;
@@ -93,11 +99,34 @@ class UploadImagePage extends React.Component<IUploadImagePagePros, IUploadImage
 
   public componentWillUnmount () {
     document.removeEventListener('paste', this.onPaste);
+    document.removeEventListener('dragover', this.onDragOver);
+    document.removeEventListener('dragleave', this.onDragLeave);
+    document.removeEventListener('drop', this.onDrop);
   }
 
   public async onPaste (event: ClipboardEvent) {
     const item = event.clipboardData.items[0];
     const file = item && item.getAsFile();
+    if (file && imageUtil.isImageFile(file)) {
+      await this.loadImage(file);
+    } else {
+      // TODO show nicer one
+      window.alert('Failed to obtain an image file from what you pasted.');
+    }
+  }
+
+  public async onDragOver (event: DragEvent) {
+    event.preventDefault();
+  }
+
+  public async onDragLeave (event: DragEvent) {
+    // TODO show something while dragging over a file
+  }
+
+  public async onDrop (event: DragEvent) {
+    event.preventDefault();
+
+    const file = event.dataTransfer && event.dataTransfer.files[0];
     if (file && imageUtil.isImageFile(file)) {
       await this.loadImage(file);
     } else {
