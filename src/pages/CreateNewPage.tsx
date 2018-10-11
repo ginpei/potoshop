@@ -100,7 +100,7 @@ class CreateNewPage extends React.Component<ICreateNewPagePros, ICreateNewPageSt
   }
 
   public componentWillMount () {
-    const el = document.documentElement;
+    const el = document.documentElement!;
     this.setState({
       height: el.clientHeight - appSpace * 2,
       width: el.clientWidth - appSpace * 2,
