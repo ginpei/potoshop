@@ -63,8 +63,10 @@ export async function fetchList (uid: string): Promise<IImageRecord[]> {
   return list;
 }
 
-export function loadImage (url: string): Promise<HTMLImageElement> {
+export function loadImage (data: string | Blob): Promise<HTMLImageElement> {
   return new Promise<HTMLImageElement>((resolve, reject) => {
+    const url = typeof data === 'string' ? data : URL.createObjectURL(data);
+
     const image = new Image();
     if (url.startsWith('https://') || url.startsWith('http://')) {
       image.crossOrigin = 'Anonymous';

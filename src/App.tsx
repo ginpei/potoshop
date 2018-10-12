@@ -9,6 +9,7 @@ import CreateNewPage from './pages/CreateNewPage';
 import HistoryPage from './pages/HistoryPage';
 import HomePage from './pages/HomePage';
 import PaintPage from './pages/paint/PaintPage';
+import UploadImagePage from './pages/UploadImagePage';
 
 interface IAppState {
   errorMessage: string;
@@ -31,6 +32,7 @@ class App extends React.Component<any, IAppState> {
       errorMessage: '',
     };
     this.onError = this.onError.bind(this);
+    this.onUnhandledRejection = this.onUnhandledRejection.bind(this);
     this.onIgnoreError = this.onIgnoreError.bind(this);
   }
 
@@ -51,6 +53,7 @@ class App extends React.Component<any, IAppState> {
             <Route exact={true} path="/new" component={CreateNewPage}/>
             <Route exact={true} path="/about" component={AboutPage}/>
             <Route exact={true} path="/history" component={HistoryPage}/>
+            <Route exact={true} path="/upload" component={UploadImagePage}/>
             <Route component={ErrorNotFoundPage}/>
           </Switch>
           {errorPage}
@@ -61,15 +64,23 @@ class App extends React.Component<any, IAppState> {
 
   public componentWillMount () {
     window.addEventListener('error', this.onError);
+    window.addEventListener('unhandledrejection', this.onUnhandledRejection);
   }
 
   public componentWillUnmount () {
     window.removeEventListener('error', this.onError);
+    window.removeEventListener('unhandledrejection', this.onUnhandledRejection);
   }
 
   protected onError ({ error }: ErrorEvent) {
     this.setState({
       errorMessage: error.message,
+    });
+  }
+
+  protected onUnhandledRejection ({ reason }: PromiseRejectionEvent) {
+    this.setState({
+      errorMessage: reason.message,
     });
   }
 

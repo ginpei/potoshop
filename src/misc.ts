@@ -78,6 +78,7 @@ export enum CanvasType {
   none = '',
   size = 'size',
   history = 'history',
+  upload = 'upload',
 }
 export function getCanvasType (str: string = getUrlParamOf('type')) {
   for (const type in CanvasType) {
