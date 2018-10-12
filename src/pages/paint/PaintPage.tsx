@@ -285,7 +285,7 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
   protected setUpSizes () {
     // this is called only from `componentWillMount()`
 
-    const el = document.documentElement;
+    const el = document.documentElement!;
     const screenHeight = el.clientHeight;
     const screenWidth = el.clientWidth;
     this.setState({
