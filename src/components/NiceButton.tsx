@@ -1,0 +1,51 @@
+/**
+ * @example
+ * <NiceButton>Nice!</NiceButton>
+ * @example
+ * <NiceButton icon="thumbs-up">Nice!</NiceButton>
+ * @example
+ * <NiceButton icon="fa-thumbs-up">Nice!</NiceButton>
+ * @example
+ * <NiceButton onClick={onClick}>Nice!</NiceButton>
+ */
+
+import * as React from 'react';
+import './NiceButton.css';
+
+interface INiceButtonProps {
+  icon?: string;
+  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+}
+interface INiceButtonState {
+}
+
+class NiceButton extends React.Component<INiceButtonProps, INiceButtonState> {
+  constructor (props: INiceButtonProps) {
+    super(props);
+    this.state = {
+    };
+    this.onClick = this.onClick.bind(this);
+  }
+
+  public render () {
+    const iconKey = this.props.icon;
+    const iconClassName = iconKey && [
+      'fa',
+      iconKey.startsWith('fa-') ? iconKey : `fa-${iconKey}`,
+      'NiceButton-icon',
+    ].join(' ');
+
+    return (
+      <button className="NiceButton" onClick={this.onClick}>
+        {iconClassName && <i className={iconClassName} aria-hidden="true"/>}
+        {this.props.children}
+      </button>
+    );
+  }
+
+  protected onClick (event: React.MouseEvent<HTMLButtonElement>) {
+    this.props.onClick!(event);
+  }
+}
+
+export default NiceButton;

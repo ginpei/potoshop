@@ -2,6 +2,7 @@ import * as React from 'react';
 import { readBlob } from 'src/services/image';
 import AppFooter from '../components/AppFooter';
 import AppHeader from '../components/AppHeader';
+import NiceButton from '../components/NiceButton';
 import { appHistory } from '../misc';
 import * as imageUtil from '../services/imageUtil';
 import * as paths from '../services/paths';
@@ -58,12 +59,10 @@ class UploadImagePage extends React.Component<IUploadImagePagePros, IUploadImage
               />
           </div>
           {s.imageReady && <div className="text-right">
-            <button className="UploadImagePage-edit"
+            <NiceButton
+              icon="fa-paint-brush"
               onClick={onEditClick}
-              >
-                <i className="fa fa-paint-brush" aria-hidden="true"/>
-                Edit
-              </button>
+              >Edit</NiceButton>
           </div>}
           {s.imageReady && <div>
             <p>Original size: {s.originalWidth} x {s.originalHeight}</p>
