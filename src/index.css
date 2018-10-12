@@ -20,6 +20,9 @@ body {
   max-width: 800px;
   padding: 0 var(--app-space);
 }
+.text-right {
+  text-align: right;
+}
 
 @keyframes poyon {
   0% { transform: scale(0.9); }

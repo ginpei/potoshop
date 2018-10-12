@@ -156,6 +156,8 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
       const uid = getUrlParamOf('uid', '');
       const imageId = getUrlParamOf('id', '');
       this.loadImageFromHistory(uid, imageId);
+    } else if (this.canvasType === CanvasType.upload) {
+      this.loadImageFromDisk();
     }
   }
 
@@ -302,12 +304,13 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
           height: Number(getUrlParamOf('height')) || 1,
           width: Number(getUrlParamOf('width')) || 1,
         };
-      } else if (type === CanvasType.history) {
+      } else if (type === CanvasType.history || type === CanvasType.upload) {
+        // see `loadImageFromHistory()` and `loadImageFromDisk()`
         this.setState({
           imageLoading: true,
         });
       } else {
-        console.warn('Invalid parameters');
+        console.warn('Invalid parameters', type);
       }
     }
 
@@ -341,6 +344,24 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
     } catch (error) {
       throw error;
     }
+  }
+
+  protected async loadImageFromDisk () {
+    const imageBlob: Blob | null = appHistory.location.state.imageBlob;
+    if (!imageBlob) {
+      // TODO fail more gracefully
+      throw new Error('Upload type must come with image');
+    }
+
+    const image = await loadImage(imageBlob);
+    this.setState({
+      imageLoading: false,
+      imageSize: {
+        height: image.naturalHeight,
+        width: image.naturalWidth,
+      },
+      originalImage: image,
+    });
   }
 }
 

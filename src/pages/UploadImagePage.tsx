@@ -1,8 +1,10 @@
 import * as React from 'react';
+import { readBlob } from 'src/services/image';
 import AppFooter from '../components/AppFooter';
 import AppHeader from '../components/AppHeader';
 import { appHistory } from '../misc';
 import * as imageUtil from '../services/imageUtil';
+import * as paths from '../services/paths';
 import './UploadImagePage.css';
 
 type IUploadImagePagePros = any;
@@ -41,6 +43,7 @@ class UploadImagePage extends React.Component<IUploadImagePagePros, IUploadImage
 
   public render () {
     const s = this.state;
+    const onEditClick = this.onEditClick.bind(this);
     const onScaleChange = this.onScaleChange.bind(this);
     const onFileChange = this.onFileChange.bind(this);
 
@@ -54,6 +57,14 @@ class UploadImagePage extends React.Component<IUploadImagePagePros, IUploadImage
               onChange={onFileChange}
               />
           </div>
+          {s.imageReady && <div className="text-right">
+            <button className="UploadImagePage-edit"
+              onClick={onEditClick}
+              >
+                <i className="fa fa-paint-brush" aria-hidden="true"/>
+                Edit
+              </button>
+          </div>}
           {s.imageReady && <div>
             <p>Original size: {s.originalWidth} x {s.originalHeight}</p>
             <p>
@@ -145,6 +156,11 @@ class UploadImagePage extends React.Component<IUploadImagePagePros, IUploadImage
     elInput.value = '';
   }
 
+  public async onEditClick (event: React.MouseEvent) {
+    const imageBlob = await this.getResultImageBlob();
+    appHistory.push(paths.paintPage({ type: 'upload' }), { imageBlob });
+  }
+
   public onScaleChange (event: React.ChangeEvent<HTMLInputElement>) {
     this.setState({
       scale: Number(event.target.value) || 1,
@@ -192,6 +208,15 @@ class UploadImagePage extends React.Component<IUploadImagePagePros, IUploadImage
       elCanvas.height = this.height;
       ctx.drawImage(this.originalImage, 0, 0, this.width, this.height);
     });
+  }
+
+  protected async getResultImageBlob () {
+    const elCanvas = this.refCanvas.current;
+    if (!elCanvas) {
+      throw new Error('Canvas is not ready');
+    }
+
+    return await readBlob(elCanvas);
   }
 }
 

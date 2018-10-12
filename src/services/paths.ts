@@ -8,7 +8,10 @@ interface IPaintPageHistoryParams {
   type: 'history';
   uid: string;
 }
-type IPaintPageParams = IPaintPageSizeParams | IPaintPageHistoryParams;
+interface IPaintPageUploadParams {
+  type: 'upload';
+}
+type IPaintPageParams = IPaintPageSizeParams | IPaintPageHistoryParams | IPaintPageUploadParams;
 
 const buildParams = (params: any) => {
   return Object.entries(params)
