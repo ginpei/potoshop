@@ -8,7 +8,6 @@ interface IDraggableProps {
   onDragMove?: (diff: IPos) => void;
   onDragStart?: () => void;
 }
-// tslint:disable-next-line:no-empty-interface
 interface IDraggableState {
 }
 

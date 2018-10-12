@@ -8,7 +8,6 @@ interface IPressIndicatorProps {
   size?: number;
   width?: number;
 }
-// tslint:disable-next-line:no-empty-interface
 interface IPressIndicatorState {
 }
 

@@ -15,7 +15,6 @@ interface IPaintMenuProps {
   onSave: () => void;
   onNew: () => void;
 }
-// tslint:disable-next-line:no-empty-interface
 interface IPaintMenuState {
 }
 
