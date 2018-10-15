@@ -44,7 +44,7 @@ body {
 .niceButtonBase:hover,
 .niceButtonBase:active {
   background-color: var(--color-main-bg);
-  color: var(--color-main-bg-fg);
+  color: var(--color-main-fg);
 }
 .niceButtonBase:active {
   animation: poyon 300ms;
