@@ -20,8 +20,9 @@ ShallowWrapper {
       "children": Array [
         <i
           aria-hidden="true"
-          className="fa fa-cloud-upload"
+          className="fa fa-cloud-upload niceButtonBase-leftIcon"
         />,
+        "Select file",
         <input
           accept={undefined}
           className="NiceFileInput-input"
@@ -29,7 +30,7 @@ ShallowWrapper {
           type="file"
         />,
       ],
-      "className": "NiceFileInput niceButton",
+      "className": "NiceFileInput niceButtonBase",
     },
     "ref": null,
     "rendered": Array [
@@ -39,12 +40,13 @@ ShallowWrapper {
         "nodeType": "host",
         "props": Object {
           "aria-hidden": "true",
-          "className": "fa fa-cloud-upload",
+          "className": "fa fa-cloud-upload niceButtonBase-leftIcon",
         },
         "ref": null,
         "rendered": null,
         "type": "i",
       },
+      "Select file",
       Object {
         "instance": null,
         "key": undefined,
@@ -71,8 +73,9 @@ ShallowWrapper {
         "children": Array [
           <i
             aria-hidden="true"
-            className="fa fa-cloud-upload"
+            className="fa fa-cloud-upload niceButtonBase-leftIcon"
           />,
+          "Select file",
           <input
             accept={undefined}
             className="NiceFileInput-input"
@@ -80,7 +83,7 @@ ShallowWrapper {
             type="file"
           />,
         ],
-        "className": "NiceFileInput niceButton",
+        "className": "NiceFileInput niceButtonBase",
       },
       "ref": null,
       "rendered": Array [
@@ -90,12 +93,13 @@ ShallowWrapper {
           "nodeType": "host",
           "props": Object {
             "aria-hidden": "true",
-            "className": "fa fa-cloud-upload",
+            "className": "fa fa-cloud-upload niceButtonBase-leftIcon",
           },
           "ref": null,
           "rendered": null,
           "type": "i",
         },
+        "Select file",
         Object {
           "instance": null,
           "key": undefined,
