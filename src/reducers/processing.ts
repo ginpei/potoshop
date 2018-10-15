@@ -3,6 +3,7 @@ const processingNames = new Set<string>();
 enum Types {
   start = 'processing/start',
   stop = 'processing/stop',
+  stopAll = 'processing/stopAll',
 }
 
 interface IProcessingStartAction {
@@ -15,9 +16,14 @@ interface IProcessingStopAction {
   type: Types.stop;
 }
 
+interface IProcessingStopAllAction {
+  type: Types.stopAll;
+}
+
 type ProcessingAction =
   IProcessingStartAction |
-  IProcessingStopAction;
+  IProcessingStopAction |
+  IProcessingStopAllAction;
 
 export const start = (name: string): IProcessingStartAction => {
   return {
@@ -33,6 +39,10 @@ export const stop = (name: string): IProcessingStopAction => {
   };
 };
 
+export const stopAll = () => ({
+  type: Types.stopAll,
+});
+
 export const dispatchStart = (dispatch: any) => {
   const name = `auto-processing-name-${Math.random()}`;
   dispatch(start(name));
@@ -47,6 +57,9 @@ export default (state: boolean = false, action: ProcessingAction) => {
     case Types.stop:
       processingNames.delete(action.name);
       return processingNames.size > 0;
+    case Types.stopAll:
+      processingNames.clear();
+      return false;
     default:
       return state;
   }

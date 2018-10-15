@@ -1,3 +1,4 @@
+import { Action, UnregisterCallback } from 'history';
 import * as React from 'react';
 import { hot } from 'react-hot-loader';
 import { Provider } from 'react-redux';
@@ -14,6 +15,7 @@ import HomePage from './pages/HomePage';
 import PaintPage from './pages/paint/PaintPage';
 import UploadImagePage from './pages/UploadImagePage';
 import rootReducer from './reducers/index';
+import * as processing from './reducers/processing';
 
 interface IAppState {
   errorMessage: string;
@@ -31,6 +33,7 @@ const ErrorNotFoundPage = () => {
 
 class App extends React.Component<any, IAppState> {
   protected history = appHistory;
+  protected unregisterHistoryListener: UnregisterCallback;
 
   constructor (props: any) {
     super(props);
@@ -72,13 +75,21 @@ class App extends React.Component<any, IAppState> {
   }
 
   public componentWillMount () {
+    this.unregisterHistoryListener = appHistory.listen(this.onHistoryChange.bind(this));
+
     window.addEventListener('error', this.onError);
     window.addEventListener('unhandledrejection', this.onUnhandledRejection);
   }
 
   public componentWillUnmount () {
+    this.unregisterHistoryListener();
+
     window.removeEventListener('error', this.onError);
     window.removeEventListener('unhandledrejection', this.onUnhandledRejection);
+  }
+
+  protected onHistoryChange (location: Location, action: Action) {
+    store.dispatch(processing.stopAll());
   }
 
   protected onError ({ error }: ErrorEvent) {

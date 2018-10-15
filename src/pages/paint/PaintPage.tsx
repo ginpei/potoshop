@@ -285,7 +285,7 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
     this.setState({
       dirty: false,
     });
-    window.location.href = '/history';
+    appHistory.push('/history');
   }
 
   protected onNew () {
