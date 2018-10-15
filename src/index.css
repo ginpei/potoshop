@@ -66,9 +66,18 @@ body {
   margin-right: var(--app-space-half);
 }
 
+.fade-in {
+  animation: fade-in backwards var(--app-animation-duration) var(--app-animation-duration);
+}
+
 @keyframes poyon {
   0% { transform: scale(0.9); }
   30% { transform: scale(1.1); }
   50% { transform: scale(0.95); }
   100% { transform: scale(1); }
+}
+
+@keyframes fade-in {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
 }

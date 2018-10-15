@@ -1,7 +1,9 @@
 // import * as firebase from 'firebase';
 import { Color } from 'csstype';
 import * as React from 'react';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import * as processing from 'src/reducers/processing';
 import AppHeader from '../../components/AppHeader';
 import BubbleButton from '../../components/BubbleButton';
 import PointerHandler from '../../components/PointerHandler';
@@ -14,7 +16,10 @@ import PaintCanvas from './PaintCanvas';
 import AppMenu from './PaintMenu';
 import './PaintPage.css';
 
-type IPaintPagePros = any;
+interface IPaintPagePros {
+  startProcessing: () => () => void;
+}
+
 interface IPaintPageState {
   dirty: boolean;
   height: number;
@@ -264,12 +269,18 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
       throw new Error('Canvas is not ready');
     }
 
-    await uploadImage({
-      blob: await readBlob(this.elCanvas),
-      height: this.elCanvas.height,
-      uid: this.currentUser!.uid,
-      width: this.elCanvas.width,
-    });
+    const stop = this.props.startProcessing();
+    try {
+      await uploadImage({
+        blob: await readBlob(this.elCanvas),
+        height: this.elCanvas.height,
+        uid: this.currentUser!.uid,
+        width: this.elCanvas.width,
+      });
+    } catch (error) {
+      stop();
+      throw error;
+    }
 
     this.setState({
       dirty: false,
@@ -365,4 +376,8 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
   }
 }
 
-export default PaintPage;
+const mapDispatchToProps = (dispatch: any) => ({
+  startProcessing: () => processing.dispatchStart(dispatch),
+});
+
+export default connect(null, mapDispatchToProps)(PaintPage);

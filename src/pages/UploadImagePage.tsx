@@ -1,15 +1,20 @@
 import * as React from 'react';
+import { connect } from 'react-redux';
 import NiceFileInput from 'src/components/NiceFileInput';
 import { readBlob } from 'src/services/image';
 import AppFooter from '../components/AppFooter';
 import AppHeader from '../components/AppHeader';
 import NiceButton from '../components/NiceButton';
 import { appHistory } from '../misc';
+import * as processing from '../reducers/processing';
 import * as imageUtil from '../services/imageUtil';
 import * as paths from '../services/paths';
 import './UploadImagePage.css';
 
-type IUploadImagePagePros = any;
+interface IUploadImagePagePros {
+  startProcessing: () => () => void;
+}
+
 interface IUploadImagePageState {
   imageReady: boolean;
   originalHeight: number;
@@ -101,7 +106,12 @@ class UploadImagePage extends React.Component<IUploadImagePagePros, IUploadImage
     const historyState = appHistory.location.state;
     const file = historyState && historyState.file;
     if (file && (file instanceof File)) {
-      await this.loadImage(file);
+      const stop = this.props.startProcessing();
+      try {
+        await this.loadImage(file);
+      } finally {
+        stop();
+      }
     }
   }
 
@@ -116,7 +126,12 @@ class UploadImagePage extends React.Component<IUploadImagePagePros, IUploadImage
     const item = event.clipboardData.items[0];
     const file = item && item.getAsFile();
     if (file && imageUtil.isImageFile(file)) {
-      await this.loadImage(file);
+      const stop = this.props.startProcessing();
+      try {
+        await this.loadImage(file);
+      } finally {
+        stop();
+      }
     } else {
       // TODO show nicer one
       window.alert('Failed to obtain an image file from what you pasted.');
@@ -136,7 +151,12 @@ class UploadImagePage extends React.Component<IUploadImagePagePros, IUploadImage
 
     const file = event.dataTransfer && event.dataTransfer.files[0];
     if (file && imageUtil.isImageFile(file)) {
-      await this.loadImage(file);
+      const stop = this.props.startProcessing();
+      try {
+        await this.loadImage(file);
+      } finally {
+        stop();
+      }
     } else {
       // TODO show nicer one
       window.alert('Failed to obtain an image file from what you pasted.');
@@ -151,12 +171,13 @@ class UploadImagePage extends React.Component<IUploadImagePagePros, IUploadImage
     }
 
     const file = files[0];
-    await this.loadImage(file);
-    this.setState({
-      imageReady: true,
-    });
-
-    elInput.value = '';
+    const stop = this.props.startProcessing();
+    try {
+      await this.loadImage(file);
+    } finally {
+      stop();
+      elInput.value = '';
+    }
   }
 
   public async onEditClick (event: React.MouseEvent) {
@@ -223,4 +244,8 @@ class UploadImagePage extends React.Component<IUploadImagePagePros, IUploadImage
   }
 }
 
-export default UploadImagePage;
+const mapDispatchToProps = (dispatch: any) => ({
+  startProcessing: () => processing.dispatchStart(dispatch),
+});
+
+export default connect(null, mapDispatchToProps)(UploadImagePage);

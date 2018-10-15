@@ -1,8 +1,11 @@
 import * as React from 'react';
 import { hot } from 'react-hot-loader';
+import { Provider } from 'react-redux';
 import { Route, Router, Switch } from 'react-router-dom';
+import { createStore } from 'redux';
 import './App.css';
 import ErrorOverlay from './components/ErrorOverlay';
+import Processing from './containers/Processing';
 import { appHistory } from './misc';
 import AboutPage from './pages/AboutPage';
 import CreateNewPage from './pages/CreateNewPage';
@@ -10,10 +13,13 @@ import HistoryPage from './pages/HistoryPage';
 import HomePage from './pages/HomePage';
 import PaintPage from './pages/paint/PaintPage';
 import UploadImagePage from './pages/UploadImagePage';
+import rootReducer from './reducers/index';
 
 interface IAppState {
   errorMessage: string;
 }
+
+const store = createStore(rootReducer);
 
 const ErrorNotFoundPage = () => {
   return (
@@ -45,20 +51,23 @@ class App extends React.Component<any, IAppState> {
     );
 
     return (
-      <Router history={this.history}>
-        <div className="App">
-          <Switch>
-            <Route exact={true} path="/" component={HomePage}/>
-            <Route exact={true} path="/paint" component={PaintPage}/>
-            <Route exact={true} path="/new" component={CreateNewPage}/>
-            <Route exact={true} path="/about" component={AboutPage}/>
-            <Route exact={true} path="/history" component={HistoryPage}/>
-            <Route exact={true} path="/upload" component={UploadImagePage}/>
-            <Route component={ErrorNotFoundPage}/>
-          </Switch>
-          {errorPage}
-        </div>
-      </Router>
+      <Provider store={store}>
+        <Router history={this.history}>
+          <div className="App">
+            <Switch>
+              <Route exact={true} path="/" component={HomePage}/>
+              <Route exact={true} path="/paint" component={PaintPage}/>
+              <Route exact={true} path="/new" component={CreateNewPage}/>
+              <Route exact={true} path="/about" component={AboutPage}/>
+              <Route exact={true} path="/history" component={HistoryPage}/>
+              <Route exact={true} path="/upload" component={UploadImagePage}/>
+              <Route component={ErrorNotFoundPage}/>
+            </Switch>
+            {errorPage}
+            <Processing/>
+          </div>
+        </Router>
+      </Provider>
     );
   }
 
