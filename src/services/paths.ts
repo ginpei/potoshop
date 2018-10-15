@@ -28,4 +28,7 @@ export const paintPage = (params?: IPaintPageParams) => {
   }
 };
 
+export const newPage = '/new';
 export const uploadImagePage = '/upload';
+export const historyPage = '/history';
+export const aboutPage = '/about';

@@ -11,6 +11,7 @@ import { appHistory, appSpace, CanvasType, defaultStrokeColors, defaultStrokeWid
 import firebase from '../../plugins/firebase';
 import CanvasHistory, { HistoryType } from '../../services/CanvasHistory';
 import { getImageUrl, loadImage, readBlob, uploadImage } from '../../services/image';
+import * as paths from '../../services/paths';
 import * as user from '../../services/user';
 import PaintCanvas from './PaintCanvas';
 import AppMenu from './PaintMenu';
@@ -285,14 +286,14 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
     this.setState({
       dirty: false,
     });
-    appHistory.push('/history');
+    appHistory.push(paths.historyPage);
   }
 
   protected onNew () {
     this.setState({
       dirty: false,
     });
-    appHistory.push('/new');
+    appHistory.push(paths.newPage);
   }
 
   protected setUpSizes () {

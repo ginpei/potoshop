@@ -2,6 +2,7 @@ import { Color } from 'csstype';
 import * as React from 'react';
 import AppHeader from '../../components/AppHeader';
 import { strokeColors, strokeWidths } from '../../misc';
+import * as paths from '../../services/paths';
 import './PaintMenu.css';
 import { Colors, PaintMenuBody, PaintMenuContent, PaintMenuFooter, PaintMenuFooterButton, StrokeWidths } from './paintMenuComponents';
 
@@ -100,7 +101,7 @@ class PaintMenu extends React.Component<IPaintMenuProps, IPaintMenuState> {
   }
 
   protected onHistoryClick (event: React.MouseEvent<HTMLButtonElement>) {
-    window.open('/history');
+    window.open(paths.historyPage);
   }
 
   protected onNewClick (event: React.MouseEvent<HTMLButtonElement>) {
@@ -111,7 +112,7 @@ class PaintMenu extends React.Component<IPaintMenuProps, IPaintMenuState> {
   }
 
   protected onAboutClick (event: React.MouseEvent<HTMLButtonElement>) {
-    window.open('/about');
+    window.open(paths.aboutPage);
   }
 }
 
