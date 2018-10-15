@@ -64,6 +64,7 @@ class UploadImagePage extends React.Component<IUploadImagePagePros, IUploadImage
             <NiceButton
               icon="fa-paint-brush"
               onClick={onEditClick}
+              primary={true}
               >Edit</NiceButton>
           </div>}
           {s.imageReady && <div>

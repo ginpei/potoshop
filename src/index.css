@@ -29,10 +29,10 @@ body {
 /* Nice button base */
 .niceButtonBase {
   align-items: center;
-  background-color: var(--color-main-bg);
+  background-color: var(--color-main-fg);
   border-radius: 3px;
   border: 1px solid var(--color-main-bg);
-  color: var(--color-main-bg-fg);
+  color: var(--color-main-bg-bg);
   cursor: pointer;
   display: inline-flex;
   height: 50px;
@@ -41,13 +41,17 @@ body {
   text-decoration: none;
   vertical-align: middle;
 }
-.niceButtonBase:hover,
+/* .niceButtonBase:hover,
 .niceButtonBase:active {
   background-color: var(--color-main-bg);
   color: var(--color-main-fg);
-}
+} */
 .niceButtonBase:active {
   animation: poyon 300ms;
+}
+.niceButtonBase.-primary {
+  background-color: var(--color-main-bg);
+  color: var(--color-main-fg);
 }
 .niceButtonBase-leftIcon {
   margin-right: var(--app-space-half);

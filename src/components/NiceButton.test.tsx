@@ -18,6 +18,16 @@ describe('<NiceButton/>', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
+  it('renders as primary button', () => {
+    const wrapper = shallow<NiceButton>(
+      <NiceButton
+        primary={true}
+        >Nice!</NiceButton>,
+    );
+    expect(wrapper.prop('className'))
+      .toBe('NiceButton niceButtonBase -primary');
+  });
+
   it('renders icon', () => {
     const wrapper = shallow<NiceButton>(
       <NiceButton

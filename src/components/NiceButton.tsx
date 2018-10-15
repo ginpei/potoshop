@@ -14,6 +14,7 @@ import * as React from 'react';
 interface INiceButtonProps {
   icon?: string;
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  primary?: boolean;
 }
 interface INiceButtonState {
 }
@@ -27,6 +28,12 @@ class NiceButton extends React.Component<INiceButtonProps, INiceButtonState> {
   }
 
   public render () {
+    const className = [
+      'NiceButton',
+      'niceButtonBase',
+      this.props.primary ? '-primary' : '',
+    ].join(' ');
+
     const iconKey = this.props.icon;
     const iconClassName = iconKey && [
       'fa',
@@ -35,7 +42,7 @@ class NiceButton extends React.Component<INiceButtonProps, INiceButtonState> {
     ].join(' ');
 
     return (
-      <button className="NiceButton niceButtonBase" onClick={this.onClick}>
+      <button className={className} onClick={this.onClick}>
         {iconClassName && <i className={iconClassName} aria-hidden="true"/>}
         {this.props.children}
       </button>
