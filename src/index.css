@@ -31,7 +31,7 @@ body {
   align-items: center;
   background-color: var(--color-main-fg);
   border-radius: 3px;
-  border: 1px solid var(--color-main-bg);
+  border: 1px solid currentColor;
   color: var(--color-main-bg-bg);
   cursor: pointer;
   display: inline-flex;
@@ -52,6 +52,15 @@ body {
 .niceButtonBase.-primary {
   background-color: var(--color-main-bg);
   color: var(--color-main-fg);
+}
+.niceButtonBase:disabled,
+.niceButtonBase.-disabled,
+.niceButtonBase.-primary:disabled,
+.niceButtonBase.-primary.-disabled {
+  animation: none;
+  background-color: var(--color-main-fg);
+  color: #999;
+  cursor: default;
 }
 .niceButtonBase-leftIcon {
   margin-right: var(--app-space-half);

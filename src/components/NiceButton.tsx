@@ -12,6 +12,7 @@
 import * as React from 'react';
 
 interface INiceButtonProps {
+  disabled?: boolean;
   icon?: string;
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   primary?: boolean;
@@ -42,7 +43,11 @@ class NiceButton extends React.Component<INiceButtonProps, INiceButtonState> {
     ].join(' ');
 
     return (
-      <button className={className} onClick={this.onClick}>
+      <button
+        className={className}
+        disabled={this.props.disabled}
+        onClick={this.onClick}
+        >
         {iconClassName && <i className={iconClassName} aria-hidden="true"/>}
         {this.props.children}
       </button>

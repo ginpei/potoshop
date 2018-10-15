@@ -60,13 +60,14 @@ class UploadImagePage extends React.Component<IUploadImagePagePros, IUploadImage
               onChange={onFileChange}
               />
           </div>
-          {s.imageReady && <div className="text-right">
+          <div className="text-right">
             <NiceButton
+              disabled={!s.imageReady}
               icon="fa-paint-brush"
               onClick={onEditClick}
               primary={true}
               >Edit</NiceButton>
-          </div>}
+          </div>
           {s.imageReady && <div>
             <p>Original size: {s.originalWidth} x {s.originalHeight}</p>
             <p>

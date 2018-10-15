@@ -28,6 +28,16 @@ describe('<NiceButton/>', () => {
       .toBe('NiceButton niceButtonBase -primary');
   });
 
+  it('renders as disabled', () => {
+    const wrapper = shallow<NiceButton>(
+      <NiceButton
+        disabled={true}
+        >Nice!</NiceButton>,
+    );
+    expect(wrapper.prop('disabled'))
+      .toBe(true);
+  });
+
   it('renders icon', () => {
     const wrapper = shallow<NiceButton>(
       <NiceButton
