@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
+import NiceFileInput from 'src/components/NiceFileInput';
 import AppFooter from '../components/AppFooter';
 import AppHeader from '../components/AppHeader';
 import { appHistory, appSpace } from '../misc';
@@ -62,7 +63,8 @@ class CreateNewPage extends React.Component<ICreateNewPagePros, ICreateNewPageSt
         </div>
         <div className="container">
           <h1>Upload</h1>
-          <input type="file" accept="image/*"
+          <NiceFileInput
+            accept="image/*"
             onChange={onFileChange}
             />
           <p>Or you could paste or drop image file in <Link to={paths.uploadImagePage}>the upload page</Link>.</p>

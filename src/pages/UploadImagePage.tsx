@@ -1,4 +1,5 @@
 import * as React from 'react';
+import NiceFileInput from 'src/components/NiceFileInput';
 import { readBlob } from 'src/services/image';
 import AppFooter from '../components/AppFooter';
 import AppHeader from '../components/AppHeader';
@@ -54,7 +55,8 @@ class UploadImagePage extends React.Component<IUploadImagePagePros, IUploadImage
         <div className="container">
           <h1>Upload image</h1>
           <div>
-            <input type="file" accept="image/*"
+            <NiceFileInput
+              accept="image/*"
               onChange={onFileChange}
               />
           </div>

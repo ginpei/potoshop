@@ -10,7 +10,6 @@
  */
 
 import * as React from 'react';
-import './NiceButton.css';
 
 interface INiceButtonProps {
   icon?: string;
@@ -32,11 +31,11 @@ class NiceButton extends React.Component<INiceButtonProps, INiceButtonState> {
     const iconClassName = iconKey && [
       'fa',
       iconKey.startsWith('fa-') ? iconKey : `fa-${iconKey}`,
-      'NiceButton-icon',
+      'niceButtonBase-leftIcon',
     ].join(' ');
 
     return (
-      <button className="NiceButton" onClick={this.onClick}>
+      <button className="NiceButton niceButtonBase" onClick={this.onClick}>
         {iconClassName && <i className={iconClassName} aria-hidden="true"/>}
         {this.props.children}
       </button>

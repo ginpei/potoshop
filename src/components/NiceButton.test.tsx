@@ -24,9 +24,8 @@ describe('<NiceButton/>', () => {
         icon="like"
         >Nice!</NiceButton>,
     );
-    expect(wrapper).toMatchSnapshot();
-    expect(wrapper.find('.NiceButton-icon').prop('className'))
-      .toBe('fa fa-like NiceButton-icon');
+    expect(wrapper.find('i').prop('className'))
+      .toBe('fa fa-like niceButtonBase-leftIcon');
   });
 
   it('renders prefixed icon', () => {
@@ -35,9 +34,8 @@ describe('<NiceButton/>', () => {
         icon="fa-like"
         >Nice!</NiceButton>,
     );
-    expect(wrapper).toMatchSnapshot();
-    expect(wrapper.find('.NiceButton-icon').prop('className'))
-      .toBe('fa fa-like NiceButton-icon');
+    expect(wrapper.find('i').prop('className'))
+      .toBe('fa fa-like niceButtonBase-leftIcon');
   });
 
   it('invokes onClick callback', () => {
@@ -47,7 +45,6 @@ describe('<NiceButton/>', () => {
         onClick={onClick}
         >Nice!</NiceButton>,
     );
-    expect(wrapper).toMatchSnapshot();
     wrapper.simulate('click');
     expect(onClick).toBeCalled();
   });
