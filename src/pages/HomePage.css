@@ -6,8 +6,8 @@
 a.HomePage-menuItem {
   align-items: center;
   border-radius: 3px;
-  border: 1px solid var(--color-main);
-  color: var(--color-main);
+  border: 1px solid var(--color-main-bg);
+  color: var(--color-main-bg);
   display: inline-flex;
   flex-direction: column;
   height: 150px;
@@ -19,8 +19,8 @@ a.HomePage-menuItem {
 }
 a.HomePage-menuItem:hover,
 a.HomePage-menuItem:active {
-  background-color: var(--color-main);
-  color: white;
+  background-color: var(--color-main-bg);
+  color: var(--color-main-bg-fg);
 }
 a.HomePage-menuItem:active {
   animation: poyon 300ms;

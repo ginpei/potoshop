@@ -5,7 +5,8 @@
   --app-space: 16px;
   --app-space-half: 8px;
   --ease-out-back: cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  --color-main: #036;
+  --color-main-bg: #036;
+  --color-main-fg: #fff;
   --color-highlight: #0f9;
   --color-highlight-t: #0f99;
 }
@@ -28,10 +29,10 @@ body {
 /* Nice button base */
 .niceButtonBase {
   align-items: center;
-  background-color: var(--color-main);
+  background-color: var(--color-main-bg);
   border-radius: 3px;
-  border: 1px solid var(--color-main);
-  color: #fff;
+  border: 1px solid var(--color-main-bg);
+  color: var(--color-main-bg-fg);
   cursor: pointer;
   display: inline-flex;
   height: 50px;
@@ -42,8 +43,8 @@ body {
 }
 .niceButtonBase:hover,
 .niceButtonBase:active {
-  background-color: var(--color-main);
-  color: white;
+  background-color: var(--color-main-bg);
+  color: var(--color-main-bg-fg);
 }
 .niceButtonBase:active {
   animation: poyon 300ms;
