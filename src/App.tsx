@@ -33,7 +33,7 @@ const ErrorNotFoundPage = () => {
 
 class App extends React.Component<any, IAppState> {
   protected history = appHistory;
-  protected unregisterHistoryListener: UnregisterCallback;
+  protected unregisterHistoryListener: UnregisterCallback | undefined;
 
   constructor (props: any) {
     super(props);
@@ -82,7 +82,9 @@ class App extends React.Component<any, IAppState> {
   }
 
   public componentWillUnmount () {
-    this.unregisterHistoryListener();
+    if (this.unregisterHistoryListener) {
+      this.unregisterHistoryListener();
+    }
 
     window.removeEventListener('error', this.onError);
     window.removeEventListener('unhandledrejection', this.onUnhandledRejection);
