@@ -14,7 +14,7 @@ interface IHistoryPageState {
 }
 
 class HistoryPage extends React.Component<IHistoryPagePros, IHistoryPageState> {
-  protected currentUser: firebase.User | null = null;
+  protected currentUser: firebase.User | null;
   protected unsubscribes: firebase.Unsubscribe[] = [];
 
   protected get uid () {
@@ -80,7 +80,7 @@ class HistoryPage extends React.Component<IHistoryPagePros, IHistoryPageState> {
     this.unsubscribes.forEach(v => v());
   }
 
-  protected async onAuthStateChanged (user: firebase.User | null) {
+  protected async onAuthStateChanged (user: firebase.User) {
     this.currentUser = user;
     this.setState({
       imageRecords: await this.fetchList(),

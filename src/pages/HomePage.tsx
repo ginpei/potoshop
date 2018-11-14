@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
+import NiceButton from 'src/components/NiceButton';
 import AppFooter from '../components/AppFooter';
 import AppHeader from '../components/AppHeader';
-import NiceButton from '../components/NiceButton';
 import './HomePage.css';
 
 type IHomePagePros = any;

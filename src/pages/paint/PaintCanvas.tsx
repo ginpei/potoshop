@@ -37,7 +37,7 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
   protected pinchDistance = 0;
   protected canvasOffset: IPos = emptyPos;
 
-  protected vCtx: CanvasRenderingContext2D | null = null;
+  protected vCtx: CanvasRenderingContext2D | null;
   protected get ctx (): CanvasRenderingContext2D | null {
     if (!this.vCtx) {
       const el = this.refCanvas.current;
