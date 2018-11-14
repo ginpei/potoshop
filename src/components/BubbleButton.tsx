@@ -122,7 +122,7 @@ class BubbleButton extends React.Component<IBubbleButtonProps, IBubbleButtonStat
 
   protected calculateProperPos (pos: IPos): IPos {
     const el = this.el.current;
-    if (!el) {
+    if (!el || !el.offsetParent) {
       throw new Error('Element has to be mounted');
     }
 
