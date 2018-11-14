@@ -24,7 +24,6 @@ ShallowWrapper {
         />,
         "Select file",
         <input
-          accept={undefined}
           className="NiceFileInput-input"
           onChange={[Function]}
           type="file"
@@ -77,7 +76,6 @@ ShallowWrapper {
           />,
           "Select file",
           <input
-            accept={undefined}
             className="NiceFileInput-input"
             onChange={[Function]}
             type="file"
@@ -134,8 +132,6 @@ ShallowWrapper {
         },
       },
     },
-    "attachTo": undefined,
-    "hydrateIn": undefined,
   },
 }
 `;

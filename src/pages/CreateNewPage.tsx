@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import NiceFileInput from 'src/components/NiceFileInput';
 import AppFooter from '../components/AppFooter';
 import AppHeader from '../components/AppHeader';
+import NiceFileInput from '../components/NiceFileInput';
 import { appHistory, appSpace } from '../misc';
 import firebase from '../plugins/firebase';
 import * as image from '../services/image';
@@ -18,7 +18,7 @@ interface ICreateNewPageState {
 }
 
 class CreateNewPage extends React.Component<ICreateNewPagePros, ICreateNewPageState> {
-  protected currentUser: firebase.User | null;
+  protected currentUser: firebase.User | undefined;
   protected unsubscribes: firebase.Unsubscribe[] = [];
 
   protected get uid () {

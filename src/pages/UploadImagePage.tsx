@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import NiceFileInput from 'src/components/NiceFileInput';
-import { readBlob } from 'src/services/image';
 import AppFooter from '../components/AppFooter';
 import AppHeader from '../components/AppHeader';
 import NiceButton from '../components/NiceButton';
+import NiceFileInput from '../components/NiceFileInput';
 import { appHistory } from '../misc';
 import * as processing from '../reducers/processing';
+import { readBlob } from '../services/image';
 import * as imageUtil from '../services/imageUtil';
 import * as paths from '../services/paths';
 import './UploadImagePage.css';

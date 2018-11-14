@@ -3,12 +3,12 @@ import { Color } from 'csstype';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import * as processing from 'src/reducers/processing';
 import AppHeader from '../../components/AppHeader';
 import BubbleButton from '../../components/BubbleButton';
 import PointerHandler from '../../components/PointerHandler';
 import { appHistory, appSpace, CanvasType, defaultStrokeColors, defaultStrokeWidth, getCanvasType, getUrlParamOf, ISize } from '../../misc';
 import firebase from '../../plugins/firebase';
+import * as processing from '../../reducers/processing';
 import CanvasHistory, { HistoryType } from '../../services/CanvasHistory';
 import { getImageUrl, loadImage, readBlob, uploadImage } from '../../services/image';
 import * as paths from '../../services/paths';
@@ -35,8 +35,8 @@ interface IPaintPageState {
 }
 
 class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
-  protected currentUser: firebase.User | null;
-  protected elCanvas: HTMLCanvasElement | null;
+  protected currentUser: firebase.User | null = null;
+  protected elCanvas: HTMLCanvasElement | null = null;
   protected storageRef = firebase.storage().ref('v1-images');
   protected canvasType = '';
   protected canvasHistory = new CanvasHistory();

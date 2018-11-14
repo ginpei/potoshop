@@ -20,7 +20,7 @@ export function readBlob (el: HTMLCanvasElement) {
 interface IUploadImageArgs {
   blob: Blob;
   height: number;
-  onStateChange?: (snapshot: firebase.storage.UploadTaskSnapshot) => void;
+  // onStateChange?: (snapshot: firebase.storage.UploadTaskSnapshot) => void;
   uid: string;
   width: number;
 }
@@ -37,9 +37,9 @@ export async function uploadImage (args: IUploadImageArgs) {
   // store image
   const path = `${uid}/${imageRef.id}.png`;
   const task = storageRef.child(path).put(blob);
-  if (args.onStateChange) {
-    task.on('state_changed', args.onStateChange);
-  }
+  // if (args.onStateChange) {
+  //   task.on('state_changed', args.onStateChange);
+  // }
   const uploadedRef = (await task).ref;
 
   // remember image url
