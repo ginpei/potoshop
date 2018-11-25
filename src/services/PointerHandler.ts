@@ -392,4 +392,5 @@ export default class PointerHandler {
       'INPUT',
     ];
     return clickableTagNames.includes(element.tagName);
-  }}
+  }
+}
