@@ -1,7 +1,7 @@
 import { Color } from 'csstype';
 import * as React from 'react';
 import { AnimationFrameId, appSpace, between, emptyPos, IPos, IPosPair, Ratio } from '../../misc';
-import PointerHandler from '../../services/PointerHandlerDebug';
+import MultiPointerHandler from '../../services/MultiPointerHandler';
 import './PaintCanvas.css';
 
 interface IPaintCanvasProps {
@@ -37,7 +37,7 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
   protected pinchDistance = 0;
   protected canvasOffset: IPos = emptyPos;
   protected el = React.createRef<HTMLDivElement>();
-  protected pointerHandler: PointerHandler | null = null;
+  protected pointerHandler: MultiPointerHandler | null = null;
 
   protected vCtx: CanvasRenderingContext2D | null = null;
   protected get ctx (): CanvasRenderingContext2D | null {
@@ -155,7 +155,7 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
     if (!el) {
       throw new Error('Mount but no element');
     }
-    this.pointerHandler = new PointerHandler({
+    this.pointerHandler = new MultiPointerHandler({
       // debug: window.location.search.slice(1).split('&').includes('point=1'),
       el,
       onLongPoint: this.onLongPoint,

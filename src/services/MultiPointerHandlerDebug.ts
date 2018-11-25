@@ -1,13 +1,13 @@
 import { IPos, IPosPair } from '../misc';
-import PointerHandler, { IPointerHandlerProps } from './PointerHandler';
+import MultiPointerHandler, { IMultiPointerHandlerProps } from './MultiPointerHandler';
 
-export default class PointerHandlerDebug extends PointerHandler {
+export default class PointerHandlerDebug extends MultiPointerHandler {
   protected elPressOverlap: HTMLCanvasElement;
   protected elPinchOverlap: HTMLCanvasElement;
   protected pressContext: CanvasRenderingContext2D;
   protected pinchContext: CanvasRenderingContext2D;
 
-  constructor (props: IPointerHandlerProps) {
+  constructor (props: IMultiPointerHandlerProps) {
     super(props);
 
     this.elPressOverlap = document.createElement('canvas');
