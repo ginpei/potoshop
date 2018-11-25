@@ -33,13 +33,15 @@ export default class PointerHandlerDebug extends PointerHandler {
     super.start();
 
     const { el } = this.props;
+    const width = el.clientWidth;
+    const height = el.clientHeight;
 
-    this.elPressOverlap.width = this.state.width;
-    this.elPressOverlap.height = this.state.height;
+    this.elPressOverlap.width = width;
+    this.elPressOverlap.height = height;
     el.appendChild(this.elPressOverlap);
 
-    this.elPinchOverlap.width = this.state.width;
-    this.elPinchOverlap.height = this.state.height;
+    this.elPinchOverlap.width = width;
+    this.elPinchOverlap.height = height;
     el.appendChild(this.elPinchOverlap);
   }
 
@@ -172,6 +174,7 @@ export default class PointerHandlerDebug extends PointerHandler {
   }
 
   protected clearDebugCanvas (ctx: CanvasRenderingContext2D) {
-    ctx.clearRect(0, 0, this.state.width, this.state.height);
+    const { width, height } = this.elPressOverlap;
+    ctx.clearRect(0, 0, width, height);
   }
 }

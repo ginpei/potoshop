@@ -26,10 +26,8 @@ export interface IPointerHandlerProps {
 }
 
 export interface IPointerHandlerState {
-  height: number;
   longPressProgress: number;
   pointStartedPos: IPos;
-  width: number;
 }
 
 export default class PointerHandler {
@@ -77,10 +75,8 @@ export default class PointerHandler {
   constructor (props: IPointerHandlerProps) {
     this.props = props;
     this.state = {
-      height: 0,
       longPressProgress: 0,
       pointStartedPos: emptyPos,
-      width: 0,
     };
     this.onTouchStart = this.onTouchStart.bind(this);
     this.onTouchMove = this.onTouchMove.bind(this);
@@ -141,11 +137,6 @@ export default class PointerHandler {
     document.addEventListener('mousemove', this.onMouseMove);
     document.addEventListener('mouseup', this.onMouseUp);
     el.addEventListener('click', this.onClick);
-
-    this.setState({
-      height: el.clientHeight,
-      width: el.clientWidth,
-    });
   }
 
   public stop () {

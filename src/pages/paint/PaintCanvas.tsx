@@ -1,7 +1,7 @@
 import { Color } from 'csstype';
 import * as React from 'react';
 import { AnimationFrameId, appSpace, between, emptyPos, IPos, IPosPair, Ratio } from '../../misc';
-import PointerHandler from '../../services/PointerHandler';
+import PointerHandler from '../../services/PointerHandlerDebug';
 import './PaintCanvas.css';
 
 interface IPaintCanvasProps {
