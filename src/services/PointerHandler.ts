@@ -27,12 +27,12 @@ export interface IPointerHandlerProps {
 
 export interface IPointerHandlerState {
   longPressProgress: number;
-  pointStartedPos: IPos;
 }
 
 export default class PointerHandler {
   protected props: IPointerHandlerProps;
   protected state: IPointerHandlerState;
+  protected pointStartedPos: IPos = emptyPos;
   protected pointStartedAt: unixMs = 0;
   protected tmLongPressing: AnimationFrameId = 0;
   protected pinching = false;
@@ -76,7 +76,6 @@ export default class PointerHandler {
     this.props = props;
     this.state = {
       longPressProgress: 0,
-      pointStartedPos: emptyPos,
     };
     this.onTouchStart = this.onTouchStart.bind(this);
     this.onTouchMove = this.onTouchMove.bind(this);
@@ -117,7 +116,7 @@ export default class PointerHandler {
   //       {debugPressOverlap}
   //       {debugPinchOverlap}
   //       <PressIndicator
-  //         pos={this.state.pointStartedPos}
+  //         pos={this.pointStartedPos}
   //         progress={this.state.longPressProgress}
   //         size={this.props.size}
   //         width={this.props.width}
@@ -229,9 +228,7 @@ export default class PointerHandler {
 
   public startPressing (pos: IPos) {
     this.pointStartedAt = Date.now();
-    this.setState({
-      pointStartedPos: pos,
-    });
+    this.pointStartedPos = pos;
 
     if (this.props.onPointStart) {
       this.props.onPointStart(pos);
@@ -244,7 +241,7 @@ export default class PointerHandler {
 
   public movePressing (pos: IPos) {
     if (this.pressing && this.props.onPointMove) {
-      const originalPos = this.state.pointStartedPos;
+      const originalPos = this.pointStartedPos;
       this.props.onPointMove(pos, originalPos);
     }
 
@@ -260,9 +257,7 @@ export default class PointerHandler {
       }
 
       this.pointStartedAt = 0;
-      this.setState({
-        pointStartedPos: emptyPos,
-      });
+      this.pointStartedPos = emptyPos;
     }
   }
 
@@ -314,7 +309,7 @@ export default class PointerHandler {
   }
 
   protected isPressMoved (pos: IPos) {
-    const p0 = this.state.pointStartedPos;
+    const p0 = this.pointStartedPos;
     const distance = Math.max(Math.abs(p0.x - pos.x), Math.abs(p0.y - pos.y));
     return distance > this.moveThreshold;
   }
