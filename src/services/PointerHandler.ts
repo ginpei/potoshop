@@ -35,7 +35,6 @@ export interface IPointerHandlerState {
 export default class PointerHandler {
   protected props: IPointerHandlerProps;
   protected state: IPointerHandlerState;
-  // protected el = React.createRef<HTMLDivElement>();
   protected pointStartedAt: unixMs = 0;
   protected tmLongPressing: AnimationFrameId = 0;
   protected pinching = false;
