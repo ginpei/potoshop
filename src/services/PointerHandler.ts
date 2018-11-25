@@ -113,8 +113,7 @@ export default class PointerHandler {
   }
 
   public setState (state: Partial<IPointerHandlerState>) {
-    // throw new Error('setState have to be avoided');
-    Object.entries(([key, value]: [string, any]) => {
+    Object.entries(state).forEach(([key, value]) => {
       this.state[key] = value;
     });
   }
