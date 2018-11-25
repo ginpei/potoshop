@@ -8,13 +8,6 @@ import NiceFileInput from './NiceFileInput';
 enzyme.configure({ adapter: new Adapter() });
 
 describe('<NiceFileInput/>', () => {
-  it('renders', () => {
-    const wrapper = shallow<NiceFileInput>(
-      <NiceFileInput/>,
-    );
-    expect(wrapper).toMatchSnapshot();
-  });
-
   it('applies accept attr', () => {
     const wrapper = shallow<NiceFileInput>(
       <NiceFileInput

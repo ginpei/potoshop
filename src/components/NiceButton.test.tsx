@@ -10,14 +10,6 @@ enzyme.configure({ adapter: new Adapter() });
 describe('<NiceButton/>', () => {
   // type Wrapper = ShallowWrapper<PointerHandler['props'], PointerHandler['state'], PointerHandler>;
 
-  it('renders with children', () => {
-    const wrapper = shallow<NiceButton>(
-      <NiceButton
-        >Nice!</NiceButton>,
-    );
-    expect(wrapper).toMatchSnapshot();
-  });
-
   it('renders as primary button', () => {
     const wrapper = shallow<NiceButton>(
       <NiceButton
