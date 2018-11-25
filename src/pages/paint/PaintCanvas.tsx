@@ -429,27 +429,6 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
     const distance = Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
     return distance;
   }
-
-  protected getPos (event: MouseEvent): IPos;
-  protected getPos (event: TouchEvent, index: number): IPos;
-  protected getPos (event: any, index?: number): IPos {
-    if (event instanceof MouseEvent) {
-      const pos: IPos = {
-        x: event.clientX,
-        y: event.clientY,
-      };
-      return pos;
-    } else if (event instanceof TouchEvent && typeof index === 'number') {
-      const t = event.touches[index];
-      const pos: IPos = {
-        x: t.clientX,
-        y: t.clientY,
-      };
-      return pos;
-    }
-
-    throw new Error('Unsupported argument types');
-  }
 }
 
 export default PaintCanvas;
