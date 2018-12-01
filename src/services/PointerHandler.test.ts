@@ -17,8 +17,11 @@ describe('PointerHandler', () => {
       pointerHandler = new PointerHandler({
         el,
       });
+      pointerHandler.start();
 
-      pointerHandler.startPressing({ x: 10, y: 20 });
+      expect(() => {
+        pointerHandler.startPressing({ x: 10, y: 20 });
+      }).not.toThrow();
     });
 
     it('invokes onPointStart callback', () => {
