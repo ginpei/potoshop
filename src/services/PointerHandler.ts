@@ -10,7 +10,6 @@ export interface IPointerHandlerProps {
   containing?: boolean;
   // debug?: boolean;
   duration?: number;
-  el: HTMLElement;
   moveThreshold?: number;
   size?: number;
   width?: number;
@@ -29,6 +28,7 @@ export interface IPointerHandlerState {
 export default class PointerHandler {
   protected props: IPointerHandlerProps;
   protected state: IPointerHandlerState;
+  protected el: HTMLElement | null = null;
   protected pointStartedPos: IPos = emptyPos;
   protected pointStartedAt: unixMs = 0;
   protected tmLongPressing: AnimationFrameId = 0;
@@ -107,8 +107,8 @@ export default class PointerHandler {
   //   );
   // }
 
-  public start () {
-    const { el } = this.props;
+  public start (el: HTMLElement) {
+    this.el = el;
 
     el.addEventListener('touchstart', this.onTouchStart, { passive: false });
     document.addEventListener('touchmove', this.onTouchMove);
@@ -121,7 +121,11 @@ export default class PointerHandler {
   }
 
   public stop () {
-    const { el } = this.props;
+    const { el } = this;
+    if (!el) {
+      return;
+    }
+    this.el = null;
 
     el.removeEventListener('touchstart', this.onTouchStart);
     document.removeEventListener('touchmove', this.onTouchMove);

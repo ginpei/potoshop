@@ -29,10 +29,9 @@ export default class PointerHandlerDebug extends MultiPointerHandler {
     this.pinchContext = pinchContext;
   }
 
-  public start () {
-    super.start();
+  public start (el: HTMLElement) {
+    super.start(el);
 
-    const { el } = this.props;
     const width = el.clientWidth;
     const height = el.clientHeight;
 

@@ -37,7 +37,7 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
   protected pinchDistance = 0;
   protected canvasOffset: IPos = emptyPos;
   protected el = React.createRef<HTMLDivElement>();
-  protected pointerHandler: MultiPointerHandler | null = null;
+  protected pointerHandler: MultiPointerHandler;
 
   protected vCtx: CanvasRenderingContext2D | null = null;
   protected get ctx (): CanvasRenderingContext2D | null {
@@ -102,6 +102,7 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
       scale: 1,
       translation: emptyPos,
     };
+
     this.onPointStart = this.onPointStart.bind(this);
     this.onPointMove = this.onPointMove.bind(this);
     this.onPointEnd = this.onPointEnd.bind(this);
@@ -110,6 +111,18 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
     this.onPinchStart = this.onPinchStart.bind(this);
     this.onPinchMove = this.onPinchMove.bind(this);
     this.onPinchEnd = this.onPinchEnd.bind(this);
+
+    this.pointerHandler = new MultiPointerHandler({
+      // debug: window.location.search.slice(1).split('&').includes('point=1'),
+      onLongPoint: this.onLongPoint,
+      onPinchEnd: this.onPinchEnd,
+      onPinchMove: this.onPinchMove,
+      onPinchStart: this.onPinchStart,
+      onPointCancel: this.onPointCancel,
+      onPointEnd: this.onPointEnd,
+      onPointMove: this.onPointMove,
+      onPointStart: this.onPointStart,
+    });
   }
 
   public render () {
@@ -155,19 +168,7 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
     if (!el) {
       throw new Error('Mount but no element');
     }
-    this.pointerHandler = new MultiPointerHandler({
-      // debug: window.location.search.slice(1).split('&').includes('point=1'),
-      el,
-      onLongPoint: this.onLongPoint,
-      onPinchEnd: this.onPinchEnd,
-      onPinchMove: this.onPinchMove,
-      onPinchStart: this.onPinchStart,
-      onPointCancel: this.onPointCancel,
-      onPointEnd: this.onPointEnd,
-      onPointMove: this.onPointMove,
-      onPointStart: this.onPointStart,
-    });
-    this.pointerHandler.start();
+    this.pointerHandler.start(el);
 
     const { ctx } = this;
     if (!ctx) {

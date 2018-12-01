@@ -12,14 +12,17 @@ describe('PointerHandler', () => {
     el = document.createElement('div');
   });
 
+  afterEach(() => {
+    pointerHandler.stop();
+  });
+
   describe('startPressing()', () => {
     it('does not occur any errors if no callbacks are given', () => {
       pointerHandler = new PointerHandler({
-        el,
       });
-      pointerHandler.start();
 
       expect(() => {
+        pointerHandler.start(el);
         pointerHandler.startPressing({ x: 10, y: 20 });
       }).not.toThrow();
     });
@@ -27,9 +30,9 @@ describe('PointerHandler', () => {
     it('invokes onPointStart callback', () => {
       const onPointStart = jest.fn();
       pointerHandler = new PointerHandler({
-        el,
         onPointStart,
       });
+      pointerHandler.start(el);
       pointerHandler.startPressing({ x: 10, y: 20 });
       expect(onPointStart).toBeCalledWith({ x: 10, y: 20 });
     });
@@ -38,8 +41,8 @@ describe('PointerHandler', () => {
   describe('movePressing()', () => {
     it('does not occur any errors if no callbacks are given', () => {
       pointerHandler = new PointerHandler({
-        el,
       });
+      pointerHandler.start(el);
       pointerHandler.startPressing({ x: 10, y: 20 });
       pointerHandler.movePressing({ x: 123, y: 234 });
     });
@@ -47,9 +50,9 @@ describe('PointerHandler', () => {
     it('invokes onPointMove callback', () => {
       const onPointMove = jest.fn();
       pointerHandler = new PointerHandler({
-        el,
         onPointMove,
       });
+      pointerHandler.start(el);
       pointerHandler.startPressing({ x: 10, y: 20 });
       pointerHandler.movePressing({ x: 123, y: 234 });
       expect(onPointMove).toBeCalledWith({ x: 123, y: 234 }, { x: 10, y: 20 });
@@ -59,8 +62,8 @@ describe('PointerHandler', () => {
   describe('stopPressing()', () => {
     it('does not occur any errors if no callbacks are given', () => {
       pointerHandler = new PointerHandler({
-        el,
       });
+      pointerHandler.start(el);
       pointerHandler.startPressing({ x: 10, y: 20 });
       pointerHandler.stopPressing();
     });
@@ -68,9 +71,9 @@ describe('PointerHandler', () => {
     it('invokes onPointEnd callback', () => {
       const onPointEnd = jest.fn();
       pointerHandler = new PointerHandler({
-        el,
         onPointEnd,
       });
+      pointerHandler.start(el);
       pointerHandler.startPressing({ x: 10, y: 20 });
       pointerHandler.movePressing({ x: 123, y: 234 });
       pointerHandler.stopPressing();
@@ -81,8 +84,8 @@ describe('PointerHandler', () => {
   describe('cancelPressing()', () => {
     it('does not occur any errors if no callbacks are given', () => {
       pointerHandler = new PointerHandler({
-        el,
       });
+      pointerHandler.start(el);
       pointerHandler.startPressing({ x: 10, y: 20 });
       pointerHandler.cancelPressing();
     });
@@ -95,10 +98,10 @@ describe('PointerHandler', () => {
         onPointEnd = jest.fn();
         onPointCancel = jest.fn();
         pointerHandler = new PointerHandler({
-          el,
           onPointCancel,
           onPointEnd,
         });
+      pointerHandler.start(el);
         pointerHandler.startPressing({ x: 10, y: 20 });
         pointerHandler.cancelPressing();
       });
