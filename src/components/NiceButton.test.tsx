@@ -8,8 +8,6 @@ import NiceButton from './NiceButton';
 enzyme.configure({ adapter: new Adapter() });
 
 describe('<NiceButton/>', () => {
-  // type Wrapper = ShallowWrapper<PointerHandler['props'], PointerHandler['state'], PointerHandler>;
-
   it('renders as primary button', () => {
     const wrapper = shallow<NiceButton>(
       <NiceButton
