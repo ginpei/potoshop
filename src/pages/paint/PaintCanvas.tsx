@@ -165,22 +165,20 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
 
   public componentDidMount () {
     const el = this.el.current;
-    if (!el) {
-      throw new Error('Mount but no element');
+    if (el) {
+      this.pointerHandler.start(el);
     }
-    this.pointerHandler.start(el);
 
     const { ctx } = this;
-    if (!ctx) {
-      throw new Error('Canvas is not ready');
+    if (ctx) {
+      if (this.props.originalImage) {
+        ctx.drawImage(this.props.originalImage, 0, 0);
+      } else {
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0, 0, this.props.imageWidth, this.props.imageHeight);
+      }
     }
 
-    if (this.props.originalImage) {
-      ctx.drawImage(this.props.originalImage, 0, 0);
-    } else {
-      ctx.fillStyle = '#fff';
-      ctx.fillRect(0, 0, this.props.imageWidth, this.props.imageHeight);
-    }
     this.props.onCanvasReceive(this.refCanvas.current);
   }
 
