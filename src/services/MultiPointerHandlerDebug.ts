@@ -11,7 +11,12 @@ export default class PointerHandlerDebug extends MultiPointerHandler {
     super(props);
 
     this.elPressOverlap = document.createElement('canvas');
-    this.elPressOverlap.classList.add('PointerHandler-debugCanvas');
+    Object.assign(this.elPressOverlap.style, {
+      left: '0',
+      pointerEvents: 'none',
+      position: 'absolute',
+      top: '0',
+    });
 
     const pressContext = this.elPressOverlap.getContext('2d');
     if (!pressContext) {
@@ -20,7 +25,12 @@ export default class PointerHandlerDebug extends MultiPointerHandler {
     this.pressContext = pressContext;
 
     this.elPinchOverlap = document.createElement('canvas');
-    this.elPinchOverlap.classList.add('PointerHandler-debugCanvas');
+    Object.assign(this.elPinchOverlap.style, {
+      left: '0',
+      pointerEvents: 'none',
+      position: 'absolute',
+      top: '0',
+    });
 
     const pinchContext = this.elPinchOverlap.getContext('2d');
     if (!pinchContext) {
