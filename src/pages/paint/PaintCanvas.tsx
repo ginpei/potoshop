@@ -1,7 +1,7 @@
 import { Color } from 'csstype';
 import * as React from 'react';
-import PointerHandler from '../../components/PointerHandler';
 import { AnimationFrameId, appSpace, between, emptyPos, IPos, IPosPair, Ratio } from '../../misc';
+import MultiPointerHandler from '../../services/MultiPointerHandler';
 import './PaintCanvas.css';
 
 interface IPaintCanvasProps {
@@ -36,6 +36,8 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
   protected pinchCenter: IPos = emptyPos;
   protected pinchDistance = 0;
   protected canvasOffset: IPos = emptyPos;
+  protected el = React.createRef<HTMLDivElement>();
+  protected pointerHandler: MultiPointerHandler;
 
   protected vCtx: CanvasRenderingContext2D | null = null;
   protected get ctx (): CanvasRenderingContext2D | null {
@@ -100,6 +102,7 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
       scale: 1,
       translation: emptyPos,
     };
+
     this.onPointStart = this.onPointStart.bind(this);
     this.onPointMove = this.onPointMove.bind(this);
     this.onPointEnd = this.onPointEnd.bind(this);
@@ -108,6 +111,18 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
     this.onPinchStart = this.onPinchStart.bind(this);
     this.onPinchMove = this.onPinchMove.bind(this);
     this.onPinchEnd = this.onPinchEnd.bind(this);
+
+    this.pointerHandler = new MultiPointerHandler({
+      // debug: window.location.search.slice(1).split('&').includes('point=1'),
+      onLongPoint: this.onLongPoint,
+      onPinchEnd: this.onPinchEnd,
+      onPinchMove: this.onPinchMove,
+      onPinchStart: this.onPinchStart,
+      onPointCancel: this.onPointCancel,
+      onPointEnd: this.onPointEnd,
+      onPointMove: this.onPointMove,
+      onPointStart: this.onPointStart,
+    });
   }
 
   public render () {
@@ -116,36 +131,26 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
       this.state.pinching ? '-active' : undefined,
     ].join(' ');
 
-    const debug = window.location.search.slice(1).split('&').includes('point=1');
     const canvasClassName = [
       'PaintCanvas-canvas',
       this.state.lining || this.state.pinching && '-active',
     ].join(' ');
 
     return (
-      <PointerHandler
-        debug={debug}
-        onPointStart={this.onPointStart}
-        onPointMove={this.onPointMove}
-        onPointEnd={this.onPointEnd}
-        onPointCancel={this.onPointCancel}
-        onLongPoint={this.onLongPoint}
-        onPinchStart={this.onPinchStart}
-        onPinchMove={this.onPinchMove}
-        onPinchEnd={this.onPinchEnd}
-        >
-        <div className="PaintCanvas" style={this.styles}>
-          <canvas className={canvasClassName}
-            style={this.canvasStyle}
-            width={this.props.imageWidth}
-            height={this.props.imageHeight}
-            ref={this.refCanvas}
-            />
-          <div className={sizeClassName}>
-            x{this.pinchingScale.toFixed(2)}
-          </div>
+      <div className="PaintCanvas"
+        ref={this.el}
+        style={this.styles}
+      >
+        <canvas className={canvasClassName}
+          style={this.canvasStyle}
+          width={this.props.imageWidth}
+          height={this.props.imageHeight}
+          ref={this.refCanvas}
+          />
+        <div className={sizeClassName}>
+          x{this.pinchingScale.toFixed(2)}
         </div>
-      </PointerHandler>
+      </div>
     );
   }
 
@@ -159,6 +164,12 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
   }
 
   public componentDidMount () {
+    const el = this.el.current;
+    if (!el) {
+      throw new Error('Mount but no element');
+    }
+    this.pointerHandler.start(el);
+
     const { ctx } = this;
     if (!ctx) {
       throw new Error('Canvas is not ready');
@@ -174,6 +185,10 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
   }
 
   public componentWillUnmount () {
+    if (this.pointerHandler) {
+      this.pointerHandler.stop();
+    }
+
     this.props.onCanvasReceive(null);
   }
 
@@ -414,27 +429,6 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
     const [p1, p2] = positions;
     const distance = Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
     return distance;
-  }
-
-  protected getPos (event: MouseEvent): IPos;
-  protected getPos (event: TouchEvent, index: number): IPos;
-  protected getPos (event: any, index?: number): IPos {
-    if (event instanceof MouseEvent) {
-      const pos: IPos = {
-        x: event.clientX,
-        y: event.clientY,
-      };
-      return pos;
-    } else if (event instanceof TouchEvent && typeof index === 'number') {
-      const t = event.touches[index];
-      const pos: IPos = {
-        x: t.clientX,
-        y: t.clientY,
-      };
-      return pos;
-    }
-
-    throw new Error('Unsupported argument types');
   }
 }
 
