@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { IPos } from '../misc';
-import PointerHandler from './PointerHandler';
+import PointerHandler from '../services/PointerHandler';
 
 interface IDraggableProps {
   onClick?: (pos: IPos) => void;
@@ -12,6 +12,9 @@ interface IDraggableState {
 }
 
 class Draggable extends React.Component<IDraggableProps, IDraggableState> {
+  protected el = React.createRef<HTMLDivElement>();
+  protected pointerHandler: PointerHandler;
+
   constructor (props: IDraggableProps) {
     super(props);
     this.state = {
@@ -19,20 +22,34 @@ class Draggable extends React.Component<IDraggableProps, IDraggableState> {
     this.onPointStart = this.onPointStart.bind(this);
     this.onPointMove = this.onPointMove.bind(this);
     this.onPointEnd = this.onPointEnd.bind(this);
+
+    this.pointerHandler = new PointerHandler({
+      containing: false,
+      onPointEnd: this.onPointEnd,
+      onPointMove: this.onPointMove,
+      onPointStart: this.onPointStart,
+      onPress: this.props.onClick,
+    });
   }
 
   public render () {
     return (
-      <PointerHandler
-        containing={false}
-        onPress={this.props.onClick}
-        onPointStart={this.onPointStart}
-        onPointMove={this.onPointMove}
-        onPointEnd={this.onPointEnd}
-        >
+      <div ref={this.el}>
         {this.props.children}
-      </PointerHandler>
+      </div>
     );
+  }
+
+  public componentDidMount () {
+    const el = this.el.current;
+    if (!el) {
+      throw new Error('Mount but no element');
+    }
+    this.pointerHandler.start(el);
+  }
+
+  public componentWillUnmount () {
+    this.pointerHandler.stop();
   }
 
   protected onPointStart (pos: IPos) {
