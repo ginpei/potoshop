@@ -183,10 +183,7 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
   }
 
   public componentWillUnmount () {
-    if (this.pointerHandler) {
-      this.pointerHandler.stop();
-    }
-
+    this.pointerHandler.stop();
     this.props.onCanvasReceive(null);
   }
 
