@@ -2,10 +2,7 @@
 import { Color } from 'csstype';
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
-import AppHeader from '../../components/AppHeader';
 import BubbleButton from '../../components/BubbleButton';
-import PointerHandler from '../../components/PointerHandler';
 import { appHistory, appSpace, CanvasType, defaultStrokeColors, defaultStrokeWidth, getCanvasType, getUrlParamOf, ISize } from '../../misc';
 import firebase from '../../plugins/firebase';
 import * as processing from '../../reducers/processing';
@@ -26,7 +23,6 @@ interface IPaintPageState {
   height: number;
   imageLoading: boolean;
   imageSize: ISize;
-  justAfterStarted: boolean;
   menuVisible: boolean;
   originalImage?: HTMLImageElement;
   strokeColor: Color;
@@ -51,7 +47,6 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
         height: 0,
         width: 0,
       },
-      justAfterStarted: false,
       menuVisible: false,
       originalImage: undefined,
       strokeColor: defaultStrokeColors,
@@ -62,7 +57,6 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
     this.onDocumentTouchStart = this.onDocumentTouchStart.bind(this);
     this.onUndoClick = this.onUndoClick.bind(this);
     this.onRedoClick = this.onRedoClick.bind(this);
-    this.onTutorialLongPoint = this.onTutorialLongPoint.bind(this);
     this.onCanvasReceive = this.onCanvasReceive.bind(this);
     this.onCanvasUpdated = this.onCanvasUpdated.bind(this);
     this.onCanvasLongTap = this.onCanvasLongTap.bind(this);
@@ -74,30 +68,6 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
   }
 
   public render () {
-    const tutorialOverlay = !this.state.justAfterStarted ? undefined : (
-      <PointerHandler
-        onLongPoint={this.onTutorialLongPoint}
-        >
-        <div className="AppTutorialOverlay">
-          <AppHeader fullscreen={true}/>
-          <div className="AppTutorialOverlay-body">
-            <h1>Potoshop</h1>
-            <p>
-              Where you can draw and share.
-              <br/>
-              Hint: long tap to open menu.
-            </p>
-            <p><Link to="/about">This service uses cookie.</Link></p>
-            <p className="AppTutorialOverlay-emphasized">Try long tap to start.</p>
-          </div>
-        </div>
-      </PointerHandler>
-    );
-
-    if (this.state.justAfterStarted) {
-      return tutorialOverlay;
-    }
-
     return (
       <div className="PaintPage">
         {!this.state.imageLoading && <PaintCanvas
@@ -134,7 +104,6 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
           onSave={this.onSave}
           onNew={this.onNew}
           />
-        {tutorialOverlay}
       </div>
     );
   }
@@ -211,12 +180,6 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
     if (record && record.type === HistoryType.canvas) {
       ctx.putImageData(record.imageData, 0, 0);
     }
-  }
-
-  protected onTutorialLongPoint () {
-    this.setState({
-      justAfterStarted: false,
-    });
   }
 
   protected onCanvasReceive (el: HTMLCanvasElement | null) {
