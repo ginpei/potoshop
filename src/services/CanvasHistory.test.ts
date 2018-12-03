@@ -1,4 +1,4 @@
-import CanvasHistory, { HistoryType, ICommentHistory } from './CanvasHistory';
+import CanvasHistory, { HistoryRecordType, ICommentHistoryRecord } from './CanvasHistory';
 
 describe('CanvasHistory', () => {
   let history: CanvasHistory;
@@ -45,8 +45,8 @@ describe('CanvasHistory', () => {
 
       it('current', () => {
         const record = history.current;
-        expect(record.type).toBe(HistoryType.comment);
-        expect((record as ICommentHistory).body).toBe('Hello');
+        expect(record.type).toBe(HistoryRecordType.comment);
+        expect((record as ICommentHistoryRecord).body).toBe('Hello');
       });
 
       it('does not go prev', () => {
@@ -80,13 +80,13 @@ describe('CanvasHistory', () => {
 
         it('current', () => {
           const record = history.current;
-          expect(record.type).toBe(HistoryType.comment);
-          expect((record as ICommentHistory).body).toBe('World!');
+          expect(record.type).toBe(HistoryRecordType.comment);
+          expect((record as ICommentHistoryRecord).body).toBe('World!');
         });
 
         it('goes to prev', () => {
           const record = history.goPrev();
-          expect((record as ICommentHistory).body).toBe('Beautiful');
+          expect((record as ICommentHistoryRecord).body).toBe('Beautiful');
           expect(history.index).toBe(1);
         });
 
@@ -112,19 +112,19 @@ describe('CanvasHistory', () => {
 
         it('current', () => {
           const record = history.current;
-          expect(record.type).toBe(HistoryType.comment);
-          expect((record as ICommentHistory).body).toBe('Beautiful');
+          expect(record.type).toBe(HistoryRecordType.comment);
+          expect((record as ICommentHistoryRecord).body).toBe('Beautiful');
         });
 
         it('goes to prev', () => {
           const record = history.goPrev();
-          expect((record as ICommentHistory).body).toBe('Hello');
+          expect((record as ICommentHistoryRecord).body).toBe('Hello');
           expect(history.index).toBe(0);
         });
 
         it('does not go next', () => {
           const record = history.goNext();
-          expect((record as ICommentHistory).body).toBe('World!');
+          expect((record as ICommentHistoryRecord).body).toBe('World!');
           expect(history.index).toBe(2);
         });
       });

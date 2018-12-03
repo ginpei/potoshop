@@ -6,7 +6,7 @@ import BubbleButton from '../../components/BubbleButton';
 import { appHistory, appSpace, CanvasType, defaultStrokeColors, defaultStrokeWidth, getCanvasType, getUrlParamOf, ISize } from '../../misc';
 import firebase from '../../plugins/firebase';
 import * as processing from '../../reducers/processing';
-import CanvasHistory, { HistoryType, IImageHistory, Record } from '../../services/CanvasHistory';
+import CanvasHistory, { HistoryRecord, HistoryRecordType, IImageHistoryRecord } from '../../services/CanvasHistory';
 import { getImageUrl, loadImage, readBlob, uploadImage } from '../../services/image';
 import * as paths from '../../services/paths';
 import * as user from '../../services/user';
@@ -325,15 +325,15 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
     });
   }
 
-  protected restoreHistoryRecord (record: Record | null) {
+  protected restoreHistoryRecord (record: HistoryRecord | null) {
     if (!record) {
       // do nothing
-    } else if (record.type === HistoryType.canvas) {
+    } else if (record.type === HistoryRecordType.canvas) {
       this.restoreImageFromRecord(record);
     }
   }
 
-  protected restoreImageFromRecord (record: IImageHistory) {
+  protected restoreImageFromRecord (record: IImageHistoryRecord) {
     const ctx = this.elCanvas && this.elCanvas.getContext('2d');
     if (!ctx) {
       throw new Error('Element is not ready');

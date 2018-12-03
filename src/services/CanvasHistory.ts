@@ -1,4 +1,4 @@
-export enum HistoryType {
+export enum HistoryRecordType {
   create,
   comment,
   canvas,
@@ -10,20 +10,20 @@ export enum HistoryType {
 //   width: number;
 // }
 
-export interface ICommentHistory { // maybe used mainly for test
+export interface ICommentHistoryRecord { // maybe used mainly for test
   body: string;
-  type: HistoryType.comment;
+  type: HistoryRecordType.comment;
 }
 
-export interface IImageHistory {
-  type: HistoryType.canvas;
+export interface IImageHistoryRecord {
+  type: HistoryRecordType.canvas;
   imageData: ImageData;
 }
 
-export type Record = IImageHistory | ICommentHistory;
+export type HistoryRecord = IImageHistoryRecord | ICommentHistoryRecord;
 
 export default class CanvasHistory {
-  protected history: Record[] = [];
+  protected history: HistoryRecord[] = [];
   // TODO allow starting "_"
   // tslint:disable-next-line:variable-name
   protected _index = 0;
@@ -46,15 +46,15 @@ export default class CanvasHistory {
   }
 
   public pushComment (body: string) {
-    this.push({ type: HistoryType.comment, body });
+    this.push({ type: HistoryRecordType.comment, body });
   }
 
   public pushImageData (imageData: ImageData) {
-    const type = HistoryType.canvas;
+    const type = HistoryRecordType.canvas;
     this.push({ type, imageData });
   }
 
-  public goPrev (): Record | null {
+  public goPrev (): HistoryRecord | null {
     if (this._index <= 0) {
       return null;
     }
@@ -64,7 +64,7 @@ export default class CanvasHistory {
     return record;
   }
 
-  public goNext (): Record | null {
+  public goNext (): HistoryRecord | null {
     if (this._index + 1 > this.history.length - 1) {
       return null;
     }
@@ -74,7 +74,7 @@ export default class CanvasHistory {
     return record;
   }
 
-  protected push (record: Record) {
+  protected push (record: HistoryRecord) {
     this.history.splice(this._index + 1);
     this.history.push(record);
     this._index = this.history.length - 1;
