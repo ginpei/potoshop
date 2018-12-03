@@ -6,7 +6,7 @@ import BubbleButton from '../../components/BubbleButton';
 import { appHistory, appSpace, CanvasType, defaultStrokeColors, defaultStrokeWidth, getCanvasType, getUrlParamOf, ISize } from '../../misc';
 import firebase from '../../plugins/firebase';
 import * as processing from '../../reducers/processing';
-import CanvasHistory, { HistoryType } from '../../services/CanvasHistory';
+import CanvasHistory, { HistoryType, IImageHistory, Record } from '../../services/CanvasHistory';
 import { getImageUrl, loadImage, readBlob, uploadImage } from '../../services/image';
 import * as paths from '../../services/paths';
 import * as user from '../../services/user';
@@ -159,27 +159,13 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
   }
 
   protected onUndoClick () {
-    const ctx = this.elCanvas && this.elCanvas.getContext('2d');
-    if (!ctx) {
-      return;
-    }
-
     const record = this.canvasHistory.goPrev();
-    if (record && record.type === HistoryType.canvas) {
-      ctx.putImageData(record.imageData, 0, 0);
-    }
+    this.restoreHistoryRecord(record);
   }
 
   protected onRedoClick () {
-    const ctx = this.elCanvas && this.elCanvas.getContext('2d');
-    if (!ctx) {
-      return;
-    }
-
     const record = this.canvasHistory.goNext();
-    if (record && record.type === HistoryType.canvas) {
-      ctx.putImageData(record.imageData, 0, 0);
-    }
+    this.restoreHistoryRecord(record);
   }
 
   protected onCanvasReceive (el: HTMLCanvasElement | null) {
@@ -337,6 +323,23 @@ class PaintPage extends React.Component<IPaintPagePros, IPaintPageState> {
       },
       originalImage: image,
     });
+  }
+
+  protected restoreHistoryRecord (record: Record | null) {
+    if (!record) {
+      // do nothing
+    } else if (record.type === HistoryType.canvas) {
+      this.restoreImageFromRecord(record);
+    }
+  }
+
+  protected restoreImageFromRecord (record: IImageHistory) {
+    const ctx = this.elCanvas && this.elCanvas.getContext('2d');
+    if (!ctx) {
+      throw new Error('Element is not ready');
+    }
+
+    ctx.putImageData(record.imageData, 0, 0);
   }
 }
 
