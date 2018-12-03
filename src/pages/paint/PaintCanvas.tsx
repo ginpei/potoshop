@@ -379,29 +379,23 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
 
   protected getSafeTranslation (scale: Ratio): IPos {
     const p = this.props;
-    const safePos = {
-      x: 0,
-      y: 0,
-    };
     const t = this.pinchingTranslation;
-
-    if (p.imageWidth * scale < p.width - appSpace * 2) {
-      safePos.x = (p.width - p.imageWidth * scale) / 2;
-    } else {
-      const max = appSpace;
-      const min = -p.imageWidth * scale + (p.width - appSpace);
-      safePos.x = between(min, t.x, max);
-    }
-
-    if (p.imageHeight * scale < p.height - appSpace * 2) {
-      safePos.y = (p.height - p.imageHeight * scale) / 2;
-    } else {
-      const max = appSpace;
-      const min = -p.imageHeight * scale + (p.height - appSpace);
-      safePos.y = between(min, t.y, max);
-    }
+    const safePos = {
+      x: this.calculateSafeTransitionPos(p.imageWidth, p.width, t.x, scale),
+      y: this.calculateSafeTransitionPos(p.imageHeight, p.height, t.y, scale),
+    };
 
     return safePos;
+  }
+
+  protected calculateSafeTransitionPos (imageSize: number, size: number, transition: number, scale: Ratio) {
+    if (imageSize * scale < size - appSpace * 2) {
+      return (size - imageSize * scale) / 2;
+    } else {
+      const max = appSpace;
+      const min = -imageSize * scale + (size - appSpace);
+      return between(min, transition, max);
+    }
   }
 
   protected calculateCenter (positions: IPos[]) {
