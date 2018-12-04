@@ -4,7 +4,7 @@ import { AnimationFrameId, appSpace, between, emptyPos, IPos, IPosPair, Ratio } 
 import MultiPointerHandler from '../../services/MultiPointerHandler';
 import './PaintCanvas.css';
 
-interface IPaintCanvasProps {
+export interface IPaintCanvasProps {
   height: number;
   imageHeight: number;
   imageWidth: number;
@@ -31,7 +31,7 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
   protected tmPressing: AnimationFrameId = 0;
   protected lastPos: IPos = emptyPos;
   protected lined = false;
-  protected lastImage: ImageData = new ImageData(1, 1);
+  protected lastImage: ImageData;
   protected pinchStartedPos: IPosPair = [emptyPos, emptyPos];
   protected pinchCenter: IPos = emptyPos;
   protected pinchDistance = 0;
@@ -102,6 +102,8 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
       scale: 1,
       translation: emptyPos,
     };
+
+    this.lastImage = this.createEmptyImageData();
 
     this.onPointStart = this.onPointStart.bind(this);
     this.onPointMove = this.onPointMove.bind(this);
@@ -230,6 +232,10 @@ class PaintCanvas extends React.Component<IPaintCanvasProps, IPaintCanvasState> 
 
   protected onPinchEnd () {
     this.stopPinching();
+  }
+
+  protected createEmptyImageData (): ImageData {
+    return new ImageData(1, 1);
   }
 
   protected startLining (pos: IPos) {
