@@ -48,4 +48,4 @@ jobs:
             ./cc-test-reporter before-build
             NODE_ENV=test npm test -- --coverage
             # upload test report to Code Climate using `after-build`
-            ./cc-test-reporter after-build --coverage-input-type clover --exit-code $?
+            ./cc-test-reporter after-build --coverage-input-type clover --exit-code $? --prefix /home/circleci/repo/coverage
