@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@types/jsdom": "^12.2.0",
-    "@types/react-router-dom": "^4.3.0",
+    "@types/react-router-dom": "^5.1.0",
     "@types/webpack-env": "^1.13.6",
     "firebase": "^6.2.4",
     "font-awesome": "^4.7.0",
